@@ -1,10 +1,15 @@
 <template>
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/">Home</router-link>
   </nav>
   <router-view />
 </template>
+
+<script setup>
+import { useCounterStore } from "@/stores/counter";
+// 可以在组件中的任意位置访问 `store` 变量 ✨
+const store = useCounterStore();
+</script>
 
 <style>
 #app {
