@@ -1,18 +1,21 @@
+<script setup lang="ts"></script>
+
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div class="HQwsRJFy aLqVEhhA">
+    <div class="iViO9oMI aLqVEhhA"><a href="//www.douyin.com/" class="B3AsdZT9 BmcsyffA"></a></div>
   </div>
+  <main>HelloWorld</main>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
-
-export default defineComponent({
-  name: "HomeView",
-  components: {
-    HelloWorld,
-  },
-});
-</script>
+<style scoped>
+.iViO9oMI {
+  -webkit-app-region: no-drag;
+  background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;
+  background: var(--logo-small-url);
+  display: block;
+  height: 34px;
+  opacity: 1;
+  transition: opacity 0.3s;
+  width: 30px;
+}
+</style>
