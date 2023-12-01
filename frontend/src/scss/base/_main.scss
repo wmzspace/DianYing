@@ -12,6 +12,8 @@ body {
 }
 
 .main-background {
+  //background: #fff;
+  //background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
   background: #fff;
   background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
   height: 100vh;
@@ -26,4 +28,33 @@ body {
 
 .border-2 {
   border: thick solid red !important;
+}
+
+
+// 隐藏滚动条
+.hide-scroll-bar {
+  ::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+    height: 0 !important;
+    width: 0 !important;
+  }
+}
+
+.hide-scroll-bar {
+  scrollbar-width: none; /* firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  //overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.arco-trigger-menu {
+  padding: 10px !important;
+  border-radius: 12px !important;
+
+  .arco-trigger-menu-inner .arco-trigger-menu-item {
+    border-radius: 12px;
+    margin: 5px 0;
+  }
+
+
 }
