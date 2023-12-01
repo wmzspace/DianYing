@@ -5,11 +5,18 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import ArcoVue from '@arco-design/web-vue'
+// 额外引入图标库
+import ArcoVueIcon from '@arco-design/web-vue/es/icon'
 import App from './App.vue'
 import '@arco-design/web-vue/dist/arco.css'
 import router from './router'
 import LayoutA from '@/layout/LayoutA.vue'
 
 const app = createApp(App)
-
-app.use(createPinia()).use(router).use(ArcoVue).component('layout-a', LayoutA).mount('#app')
+app
+  .use(createPinia())
+  .use(router)
+  .use(ArcoVue)
+  .use(ArcoVueIcon)
+  .component('layout-a', LayoutA)
+  .mount('#app')

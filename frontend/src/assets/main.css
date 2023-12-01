@@ -2,7 +2,7 @@
 
 
 .border {
-    border: thick solid green;
+    border: thick solid green !important;
 }
 
 
@@ -18,7 +18,7 @@
     /*-webkit-app-region: no-drag;*/
     /*background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;*/
     /*background: var(--logo-small-url);*/
-    background: var(--logo-url);
+    /*background: var(logo-url);*/
     width: 91px;
     display: block;
     /*height: 34px;*/

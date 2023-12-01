@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { Icon } from '@arco-design/web-vue'
+
+const IconFont = Icon.addFromIconFontCn({
+  src: 'https://at.alicdn.com/t/font_180975_ue66sq60vyd.js'
+})
+</script>
 
 <template>
   <div class="menu-demo border">
@@ -20,8 +26,15 @@
           "
         ></div>
       </a-menu-item>
-      <a-menu-item key="1">首页</a-menu-item>
-      <a-menu-item key="2">推荐</a-menu-item>
+      <a-menu-item key="1">
+        <!--        <a-image src="/images/home.svg" width="24" height="24" :preview="false"></a-image>-->
+        <div class="nav-icon" style="background-position: 0 0"></div>
+        首页
+      </a-menu-item>
+      <a-menu-item key="2">
+        <div class="nav-icon" style="background-position: -72px 0"></div>
+        推荐
+      </a-menu-item>
       <a-menu-item key="3">关注</a-menu-item>
       <a-menu-item key="4">朋友</a-menu-item>
       <a-menu-item key="5">我的</a-menu-item>
