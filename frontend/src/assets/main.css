@@ -11,12 +11,23 @@ body {
     background: var(--color-bg-b0) !important;
 }
 
-.test {
+.main-background {
     background: #fff;
     background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) var(--color-bg-b0);
     height: 100vh;
     position: fixed;
     width: 100vw;
+}
+
+.logo {
+    -webkit-app-region: no-drag;
+    background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;
+    background: var(--logo-small-url);
+    display: block;
+    height: 34px;
+    opacity: 1;
+    transition: opacity 0.3s;
+    width: 30px;
 }
 
 #app {
