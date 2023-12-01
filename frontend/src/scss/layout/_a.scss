@@ -1,32 +1,147 @@
 
-.menu-demo {
-  .arco-menu-item.arco-menu-selected {
-    background-color: $color-fill-hover !important;
-  }
-
+#a-side-bar {
   box-sizing: border-box;
-  //width: 100%;
   height: 100%;
-  width: 100%;
-
-  * {
-    background-color: transparent !important;
-  }
-
+  width: 160px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  //width: 100%;
-  //padding: 40px;
-  //background-color: var(--color-neutral-2);
-}
 
-.nav-icon {
-  //background-position: 0px 0px;
+  .nav-menu {
+    background-color: transparent;
+    width: min-content;
+    align-items: flex-end;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
 
-  background-size: 816px;
-  background-repeat: no-repeat;
-  background-image: url("/public/images/nav_dark.png");
-  height: 24px;
-  width: 24px;
+  // Sidebar Nav Icon Display
+  $index-list: 0, 1, 2, 3, 15;
+  @for $i from 1 through length($index_list) {
+    $unselected-position-x: -48px*((nth($index-list,$i)));
+    .arco-menu-item:nth-child(#{$i}) .nav-a .nav-icon {
+      background-position-x: $unselected-position-x;
+    }
+    .arco-menu-item:nth-child(#{$i}).arco-menu-selected .nav-a .nav-icon {
+      background-position-x: $unselected-position-x - 24px;
+    }
+  }
+
+  .arco-menu-vertical .arco-menu-inner {
+    padding: 0;
+  }
+
+  .arco-menu-item {
+    background-color: transparent;
+    margin: 0px 16px 2px;
+    padding: 0;
+    height: 40px;
+    justify-content: flex-start;
+    border-radius: 12px;
+    opacity: 0.5;
+
+    &.arco-menu-selected {
+      background-color: $color-fill-hover !important;
+      opacity: 1;
+    }
+  }
+
+  .nav-a {
+    align-items: center;
+    box-sizing: border-box;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    outline: rgb(255, 255, 255) none 0;
+    padding: 8px 16px;
+    position: relative;
+    user-select: none;
+    width: 128px;
+  }
+
+  .nav-icon {
+    background-image: url("/public/images/nav_dark.png");
+    background-size: 816px;
+    box-sizing: border-box;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    display: block;
+    font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
+    height: 24px;
+    margin: 0 12px 0 0;
+    outline: rgb(255, 255, 255) none 0;
+    padding: 0;
+    pointer-events: auto;
+    user-select: none;
+    width: 24px;
+  }
+
+  .nav-text {
+    display: block;
+    width: 28px;
+    align-self: flex-start;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    word-break: keep-all;
+    line-height: 16px;
+
+    span {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 24px;
+      padding: 0;
+      margin: -4px 0px 0px;
+      max-width: 70px;
+      font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
+      //height: auto;
+      //height: 40px;
+    }
+  }
+
+  .logo {
+    height: 68px;
+    //height: 58px;
+    position: relative;
+
+    div {
+      height: 165%;
+      justify-content: center;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      display: flex;
+      align-items: center;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      //z-index: 2;
+
+      .logo-img {
+        /*-webkit-app-region: no-drag;*/
+        /*background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;*/
+        /*background: $logo-small-url;*/
+        background: $logo-url;
+        width: 91px;
+        //width: 100%;
+        display: block;
+        /*height: 34px;*/
+        height: 28px;
+        opacity: 1;
+        transition: opacity 0.3s;
+        //margin: 10px 0 10px 10px;
+        //border: thin solid red;
+        /*width: 100%;*/
+        color: white;
+        border-radius: 2px;
+        /*width: 30px;*/
+      }
+    }
+  }
+
+
 }

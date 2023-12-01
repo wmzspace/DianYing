@@ -19,16 +19,11 @@ body {
   width: 100vw;
 }
 
-.logo {
-  /*-webkit-app-region: no-drag;*/
-  /*background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;*/
-  /*background: $logo-small-url;*/
-  background: $logo-url;
-  width: 91px;
-  display: block;
-  /*height: 34px;*/
-  height: 28px;
-  opacity: 1;
-  transition: opacity 0.3s;
-  /*width: 30px;*/
+
+.border-1 {
+  border: thick solid green !important;
+}
+
+.border-2 {
+  border: thick solid red !important;
 }

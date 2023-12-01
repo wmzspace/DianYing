@@ -1,51 +1,51 @@
-@import './base.css';
+/*@import './base.css';*/
 
 
-.border {
-    border: thick solid green !important;
-}
-
-
-.main-background {
-    background: #fff;
-    background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) var(--color-bg-b0);
-    height: 100vh;
-    position: fixed;
-    width: 100vw;
-}
-
-.logo {
-    /*-webkit-app-region: no-drag;*/
-    /*background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;*/
-    /*background: var(--logo-small-url);*/
-    /*background: var(logo-url);*/
-    width: 91px;
-    display: block;
-    /*height: 34px;*/
-    height: 28px;
-    opacity: 1;
-    transition: opacity 0.3s;
-    /*width: 30px;*/
-}
-
-#app {
-    /*max-width: 1280px;*/
-}
-
-
-@media (hover: hover) {
-
-}
-
-/*@media (min-width: 1024px) {*/
-/*  body {*/
-/*    display: flex;*/
-/*    place-items: center;*/
-/*  }*/
-
-/*  #app {*/
-/*    display: grid;*/
-/*    grid-template-columns: 1fr 1fr;*/
-/*    padding: 0 2rem;*/
-/*  }*/
+/*.border {*/
+/*    border: thick solid green !important;*/
 /*}*/
+
+
+/*.main-background {*/
+/*    background: #fff;*/
+/*    background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) var(--color-bg-b0);*/
+/*    height: 100vh;*/
+/*    position: fixed;*/
+/*    width: 100vw;*/
+/*}*/
+
+/*.logo {*/
+/*    !*-webkit-app-region: no-drag;*!*/
+/*    !*background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;*!*/
+/*    !*background: var(--logo-small-url);*!*/
+/*    !*background: var(logo-url);*!*/
+/*    width: 91px;*/
+/*    display: block;*/
+/*    !*height: 34px;*!*/
+/*    height: 28px;*/
+/*    opacity: 1;*/
+/*    transition: opacity 0.3s;*/
+/*    !*width: 30px;*!*/
+/*}*/
+
+/*#app {*/
+/*    !*max-width: 1280px;*!*/
+/*}*/
+
+
+/*@media (hover: hover) {*/
+
+/*}*/
+
+/*!*@media (min-width: 1024px) {*!*/
+/*!*  body {*!*/
+/*!*    display: flex;*!*/
+/*!*    place-items: center;*!*/
+/*!*  }*!*/
+
+/*!*  #app {*!*/
+/*!*    display: grid;*!*/
+/*!*    grid-template-columns: 1fr 1fr;*!*/
+/*!*    padding: 0 2rem;*!*/
+/*!*  }*!*/
+/*!*}*!*/
