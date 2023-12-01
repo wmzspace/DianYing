@@ -1,0 +1,34 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+html,
+body {
+  background: $color-bg-b0 !important;
+}
+
+.main-background {
+  background: #fff;
+  background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
+  height: 100vh;
+  position: fixed;
+  width: 100vw;
+}
+
+.logo {
+  /*-webkit-app-region: no-drag;*/
+  /*background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;*/
+  /*background: $logo-small-url;*/
+  background: $logo-url;
+  width: 91px;
+  display: block;
+  /*height: 34px;*/
+  height: 28px;
+  opacity: 1;
+  transition: opacity 0.3s;
+  /*width: 30px;*/
+}

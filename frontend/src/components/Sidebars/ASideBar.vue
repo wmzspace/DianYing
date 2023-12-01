@@ -12,32 +12,21 @@
             margin: 10px 0 10px 10px;
             border: thin solid red;
             /*width: 100%;*/
+            color: white;
             border-radius: 2px;
             /*background-color: transparent !important;*/
             /*background-color: var(--color-fill-3);*/
             /*cursor: text;*/
           "
-        />
+        ></div>
       </a-menu-item>
-      <a-menu-item key="1">Home</a-menu-item>
-      <a-menu-item key="2">Solution</a-menu-item>
-      <a-menu-item key="3">Cloud Service</a-menu-item>
-      <a-menu-item key="4">Cooperation</a-menu-item>
+      <a-menu-item key="1">首页</a-menu-item>
+      <a-menu-item key="2">推荐</a-menu-item>
+      <a-menu-item key="3">关注</a-menu-item>
+      <a-menu-item key="4">朋友</a-menu-item>
+      <a-menu-item key="5">我的</a-menu-item>
     </a-menu>
   </div>
 </template>
 
-<style scoped lang="scss">
-.menu-demo {
-  box-sizing: border-box;
-  //width: 100%;
-  height: 100%;
-  width: min-content;
-  * {
-    background-color: transparent !important;
-  }
-
-  //padding: 40px;
-  //background-color: var(--color-neutral-2);
-}
-</style>
+<style scoped lang="scss"></style>
