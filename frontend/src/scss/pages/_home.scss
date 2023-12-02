@@ -1,0 +1,32 @@
+#home {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: scroll;
+  position: relative;
+
+  #waterfall-scroll-container {
+    box-sizing: border-box;
+    display: block;
+    font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
+    height: 6000px;
+    margin: 0px 22px;
+    outline: rgb(0, 0, 0) none 0px;
+    padding: 0px;
+    position: relative;
+    transform: matrix(1, 0, 0, 1, 0, -16);
+    width: 2135px;
+
+    // Video Cards Display
+    @for $i from 1 through 10 {
+      .video-card:nth-child(#{$i}) {
+        margin: 0px;
+        outline: rgb(0, 0, 0) none 0px;
+        padding: 0px;
+        position: absolute;
+        transform: matrix(1, 0, 0, 1, 400 * ($i - 1), 40);
+        will-change: transform;
+      }
+    }
+  }
+}

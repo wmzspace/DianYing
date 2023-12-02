@@ -8,7 +8,7 @@
 
 <template>
   <div id="a-side-bar">
-    <div class="logo">
+    <div class="logo border-4">
       <div><a class="logo-img"></a></div>
     </div>
     <a-menu

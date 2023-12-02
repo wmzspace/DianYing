@@ -16,18 +16,27 @@ body {
   //background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
   background: #fff;
   background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
-  height: 100vh;
+  //height: 100vh;
+  height: 200vh;
   position: fixed;
   width: 100vw;
 }
 
 
 .border-1 {
-  border: thick solid green !important;
+  border: 0.1px solid green !important;
 }
 
 .border-2 {
-  border: thick solid red !important;
+  border: 0.1px solid red !important;
+}
+
+.border-3 {
+  border: 0.1px solid blue !important;
+}
+
+.border-4 {
+  border: 0.1px solid yellow !important;
 }
 
 
