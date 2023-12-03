@@ -8,8 +8,8 @@ import VideoCard from '@/components/Cards/VideoCard.vue'
   <div id="home">
     <div style="flex-grow: 1; position: relative; width: 100%">
       <div id="waterfall-scroll-container">
-        <VideoCard class="video-card" />
-        <VideoCard class="video-card" />
+        <!--        <VideoCard class="video-card" />-->
+        <!--        <VideoCard class="video-card" />-->
       </div>
     </div>
   </div>
