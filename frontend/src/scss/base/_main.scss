@@ -6,9 +6,26 @@
   font-weight: normal;
 }
 
-html,
+html {
+  background: rgba(22, 24, 35, 1);
+}
+
+body, body > div:first-child, html {
+  height: 100%;
+}
+
+body, html {
+  margin: 0;
+  overscroll-behavior-x: contain;
+  padding: 0;
+}
+
 body {
-  background: $color-bg-b0 !important;
+  min-width: 628px !important;
+}
+
+#app {
+  height: 100%;
 }
 
 .main-background {
@@ -17,9 +34,15 @@ body {
   background: #fff;
   background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
   //height: 100vh;
-  height: 200vh;
-  position: fixed;
-  width: 100vw;
+  //height: 200vh;
+  //position: fixed;
+  //width: 200%;
+  width: 100%;
+  display: flex;
+  //background-position: top;
+  //background-size: cover;
+  height: 100%;
+  //width: 100vw;
 }
 
 

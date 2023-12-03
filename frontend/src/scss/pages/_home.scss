@@ -6,16 +6,19 @@
   position: relative;
 
   #waterfall-scroll-container {
+    //@extend .hide-scroll-bar;
+
     box-sizing: border-box;
     display: block;
     font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
-    height: 6000px;
+    //height: 6000px !important;
     margin: 0px 22px;
     outline: rgb(0, 0, 0) none 0px;
+    min-height: 450px;
     padding: 0px;
     position: relative;
     transform: matrix(1, 0, 0, 1, 0, -16);
-    width: 2135px;
+    //width: 2135px;
 
     // Video Cards Display
     @for $i from 1 through 10 {

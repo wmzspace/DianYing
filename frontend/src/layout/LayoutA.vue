@@ -10,7 +10,11 @@ const layoutClass = computed(() => route.meta.layoutClass)
 
 <template>
   <div class="main-background">
-    <a-layout class="layout-a border-1" id="layout-a">
+    <a-layout
+      class="layout-a border-1"
+      id="layout-a"
+      style="--container-background: linear-gradient(180deg, #060716 80%, #06071600)"
+    >
       <!-- Main Sidebar -->
       <a-layout-sider class="border-3">
         <ASideBar />
@@ -30,7 +34,7 @@ const layoutClass = computed(() => route.meta.layoutClass)
       <!-- / Layout Header's Conditionally Fixed Wrapper -->
 
       <!-- Page Content -->
-      <a-layout class="border-4">
+      <a-layout class="border-1" id="layout-a-right">
         <a-layout-header class="border-2">
           <AHeader />
         </a-layout-header>
