@@ -1,27 +1,85 @@
 <script setup lang="ts">
 import VideoCard from '@/components/Cards/VideoCard.vue'
 import type { VideoMedia } from '@/types'
-const videos: VideoMedia[] = [
-  {
-    id: 1,
-    title: '测试标题',
-    url: '/videos/1.mp4',
-    height: 600
-  }
-]
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { videos } from '@/mock'
+
+// const actualColumnWidth = ref(300)
+
+let timer = setTimeout(() => {})
+const calculateVideoPositions = (minColumnWidth = 240, maxColumnWidth: number = 450) => {
+  // clearTimeout(timer) // FIXME: bug
+  timer = setTimeout(() => {
+    const MAX_COLUMNS = 8
+    const GUTTER = 16
+
+    const containerWidth = (document.getElementById('waterfall-scroll-container') as HTMLElement)
+      .clientWidth
+    const columns = Math.min(Math.floor(containerWidth / (minColumnWidth + GUTTER)), MAX_COLUMNS)
+    const columnWidth =
+      columns < MAX_COLUMNS
+        ? Math.min(
+            maxColumnWidth,
+            Math.max(
+              minColumnWidth,
+              Math.floor((containerWidth - (columns - 1) * GUTTER) / columns)
+            )
+          )
+        : Math.floor((containerWidth - (MAX_COLUMNS - 1) * GUTTER) / columns)
+    const columnHeights = Array(columns).fill(0)
+
+    videos.forEach((video, index) => {
+      const columnIndex = columnHeights.indexOf(Math.min(...columnHeights))
+      const left = columnIndex * (columnWidth + GUTTER)
+      const top = columnHeights[columnIndex]
+      video.left = left
+      video.top = top
+      video.actualWidth = columnWidth
+      if (video.height && video.width) {
+        video.actualHeight =
+          (video.height * columnWidth) / video.width +
+          document.getElementsByClassName('arco-card-body')[index].clientHeight
+      }
+      columnHeights[columnIndex] +=
+        document.getElementsByClassName('video-card')[index].clientHeight + GUTTER
+    })
+  }, 500)
+}
+
+onMounted(() => {
+  window.addEventListener('resize', () => calculateVideoPositions())
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', () => calculateVideoPositions())
+})
 </script>
 
 <template>
-  <!--  <main>HelloWorld</main>-->
-  <!--  <div style="width: 100px; height: 100px; background-color: white">123</div>-->
   <div id="home">
     <div style="flex-grow: 1; position: relative; width: 100%">
       <div id="waterfall-scroll-container">
-        <VideoCard class="video-card" :src="videos[0]" />
-        <VideoCard class="video-card" :src="videos[0]" />
-        <VideoCard class="video-card" :src="videos[0]" />
-        <VideoCard class="video-card" :src="videos[0]" />
-        <!--        <VideoCard class="video-card" />-->
+        <VideoCard
+          v-for="(video, index) in videos"
+          :key="index"
+          class="video-card"
+          :src="video"
+          :style="{
+            position: 'absolute',
+            top: `${video.top}px`,
+            left: `${video.left}px`,
+            width: `${video.actualWidth}px`,
+            height: `${video.actualHeight}px`
+          }"
+          @loadeddata="
+            (element: HTMLElement) => {
+              // element: <video>
+              video.width = element.clientWidth
+              video.height = element.clientHeight
+              calculateVideoPositions()
+            }
+          "
+        />
       </div>
     </div>
   </div>
