@@ -57,31 +57,31 @@ onUnmounted(() => {
 
 <template>
   <div id="home">
-    <div style="flex-grow: 1; position: relative; width: 100%">
-      <div id="waterfall-scroll-container">
-        <VideoCard
-          v-for="(video, index) in videos"
-          :key="index"
-          class="video-card"
-          :src="video"
-          :style="{
-            position: 'absolute',
-            top: `${video.top}px`,
-            left: `${video.left}px`,
-            width: `${video.actualWidth}px`,
-            height: `${video.actualHeight}px`
-          }"
-          @loadeddata="
-            (element: HTMLElement) => {
-              // element: <video>
-              video.width = element.clientWidth
-              video.height = element.clientHeight
-              calculateVideoPositions()
-            }
-          "
-        />
-      </div>
+    <!--    <div style="flex-grow: 1; position: relative; width: 100%">-->
+    <div id="waterfall-scroll-container">
+      <VideoCard
+        v-for="(video, index) in videos"
+        :key="index"
+        class="video-card"
+        :src="video"
+        :style="{
+          position: 'absolute',
+          top: `${video.top}px`,
+          left: `${video.left}px`,
+          width: `${video.actualWidth}px`,
+          height: `${video.actualHeight}px`
+        }"
+        @loadeddata="
+          (element: HTMLElement) => {
+            // element: <video>
+            video.width = element.clientWidth
+            video.height = element.clientHeight
+            calculateVideoPositions()
+          }
+        "
+      />
     </div>
+    <!--    </div>-->
   </div>
 </template>
 

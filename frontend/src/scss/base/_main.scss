@@ -7,6 +7,7 @@
 }
 
 html {
+  //@extend .show-border;
   background: rgba(22, 24, 35, 1);
 }
 
@@ -45,46 +46,47 @@ body {
   //width: 100vw;
 }
 
+.show-border{
+  .border-1 {
+    border: 0.1px solid green !important;
+  }
 
-//.border-1 {
-//  border: 0.1px solid green !important;
-//}
-//
-//.border-2 {
-//  border: 0.1px solid red !important;
-//}
-//
-//.border-3 {
-//  border: 0.1px solid blue !important;
-//}
-//
-//.border-4 {
-//  border: 0.1px solid yellow !important;
-//}
-//
-//.border-5 {
-//  border: thick solid yellow !important;
-//}
-//
-//.border-6 {
-//  border: thick solid white !important;
-//}
+  .border-2 {
+    border: 0.1px solid red !important;
+  }
+
+  .border-3 {
+    border: 0.1px solid blue !important;
+  }
+
+  .border-4 {
+    border: 0.1px solid yellow !important;
+  }
+
+  .border-5 {
+    border: thick solid yellow !important;
+  }
+
+  .border-6 {
+    border: thick solid white !important;
+  }
+
+}
+
 
 
 // 隐藏滚动条
 .hide-scroll-bar {
-  ::-webkit-scrollbar {
-    display: none; /* Chrome Safari */
-    height: 0 !important;
-    width: 0 !important;
-  }
+  //scrollbar-width: none; /* firefox */
+  //-ms-overflow-style: none; /* IE 10+ */
+  ////overflow-x: hidden;
+  //overflow-y: auto;
 }
 
-.hide-scroll-bar {
-  scrollbar-width: none; /* firefox */
-  -ms-overflow-style: none; /* IE 10+ */
-  //overflow-x: hidden;
-  overflow-y: auto;
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+  height: 0 !important;
+  width: 0 !important;
 }
 
 .arco-trigger-menu {
