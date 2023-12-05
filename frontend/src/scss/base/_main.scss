@@ -9,6 +9,7 @@
 html {
   //@extend .show-border;
   background: rgba(22, 24, 35, 1);
+
 }
 
 body, body > div:first-child, html {
@@ -23,14 +24,17 @@ body, html {
 
 body {
   min-width: 628px !important;
+
 }
 
 #app {
   height: 100%;
+
 }
 
 .main-background {
   //background: #fff;
+
   //background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
   background: #fff;
   background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;

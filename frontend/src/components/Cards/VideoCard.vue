@@ -1,64 +1,50 @@
 <template>
   <a-card>
     <template #cover>
-      <!--        style="max-height: 400px"-->
-
-      <!--        style="width: 100%; transform: translateY(-20px)"-->
-      <!--      TODO: Cover-->
-      <!--      <a-image-->
-      <!--        :src="props.src.cover"-->
-      <!--        :style="{ width: props.src.width, height: props.src.height }"-->
-      <!--      ></a-image>-->
+      <a-image
+        v-if="!isPlaying && props.src.cover !== undefined"
+        :src="props.src.cover"
+        :title="props.src.title"
+        width="100%"
+        style="z-index: 10"
+        @mouseover="
+          (e: Event) => {
+            let video = (e.target as HTMLVideoElement).parentElement?.parentElement?.querySelector(
+              'video'
+            ) as HTMLVideoElement | null
+            playVideo(video)
+          }
+        "
+        @mouseout="
+          (e: Event) => {
+            let video = (e.target as HTMLVideoElement).parentElement?.parentElement?.querySelector(
+              'video'
+            ) as HTMLVideoElement | null
+            stopVideo(video)
+          }
+        "
+      >
+      </a-image>
       <video
+        v-show="isPlaying || props.src.cover == undefined"
         :src="props.src.url"
         :title="props.src.title"
-        style="width: 100%; height: 100%"
+        style="width: 100%; height: 100%; z-index: 9"
         controls
+        muted
         @mouseover="
           (e) => {
-            let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
-            if (video === null) {
-              return
-            }
-
-            if (video.paused) {
-              video.currentTime = 0
-              video.play()
-              video.controls = true
-            }
+            playVideo(e.target as HTMLVideoElement | null)
           }
         "
         @mouseout="
           (e) => {
-            let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
-            if (video === null) {
-              return
-            }
-            if (video.played) {
-              video.currentTime = 0 // 设置视频播放位置为开头
-              video.pause()
-              video.controls = false // 隐藏视频控制条
-            }
+            stopVideo(e.target as HTMLVideoElement | null)
           }
         "
-        @loadeddata="
-          (e) => {
-            let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
-            if (video === null) {
-              return
-            }
-            video.currentTime = 0 // 设置视频播放位置为开头
-            video.pause()
-            video.controls = false // 隐藏视频控制条
-            $emit('loadeddata', (e.target as HTMLElement).parentElement)
-          }
-        "
+        @loadeddata="onLoadedData"
+        @play="onPlayVideo"
       ></video>
-      <!--        <img-->
-      <!--          :style="{ width: '100%', transform: 'translateY(-20px)' }"-->
-      <!--          alt="dessert"-->
-      <!--          src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a20012a2d4d5b9db43dfc6a01fe508c0.png~tplv-uwbnlip3yd-webp.webp"-->
-      <!--        />-->
     </template>
     <a-card-meta>
       <template #title
@@ -93,12 +79,64 @@
 <script setup lang="ts">
 import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/es/icon'
 import type { VideoMedia } from '@/types'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+const emit = defineEmits(['loadeddata'])
 
 const props = defineProps<{
   src: VideoMedia
   // likes?: number
 }>()
+
+const isPlaying = ref(false)
+
+const onPlayVideo = (e: Event) => {
+  console.log('play!')
+  isPlaying.value = true
+}
+
+const stopVideo = (e: HTMLVideoElement | null) => {
+  let video = e
+  if (video === null) {
+    return
+  }
+  if (video.played) {
+    video.currentTime = 0 // 设置视频播放位置为开头
+    video.pause()
+    video.controls = false // 隐藏视频控制条
+  }
+  isPlaying.value = false
+}
+const playVideo = (e: HTMLVideoElement | null) => {
+  let video = e
+  if (video === null) {
+    return
+  }
+
+  if (video.paused) {
+    video.currentTime = 0
+    video.play()
+    video.controls = true
+  }
+
+  isPlaying.value = true
+}
+
+const onLoadedData = (e: Event) => {
+  let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
+  if (video === null) {
+    return
+  }
+  video.currentTime = 0 // 设置视频播放位置为开头
+  video.pause()
+  video.controls = false // 隐藏视频控制条
+  emit('loadeddata', (e.target as HTMLElement).parentElement)
+  // let img = (e.target as HTMLVideoElement).parentElement?.parentElement?.querySelector(
+  //   'img'
+  // ) as HTMLElement
+  // console.log(video.clientWidth)
+  // img.style.width = `${video.clientWidth}px`
+  // img.style.height = `${video.clientHeight}px`
+}
 
 // onMounted(() => {
 //   video.addEventListener('loadeddata', () => {

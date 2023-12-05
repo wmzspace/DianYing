@@ -217,7 +217,7 @@ $shadows: (
         0: $shadow-0,
         1: $shadow-1,
         2: $shadow-2,
-        3: $shadow-3,
+        //3: $shadow-3,
 );
 
 @each $name, $value in $shadows {

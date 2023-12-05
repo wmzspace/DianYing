@@ -1,6 +1,7 @@
 $header-height: 68px;
 $sidebar-width: 160px;
 #layout-a {
+  font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
 
   #layout-a-right {
     box-sizing: border-box;
@@ -535,37 +536,48 @@ $sidebar-width: 160px;
 }
 
 #popover-a-avatar {
-  .arco-trigger-popup-wrapper {
+  font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
+
+  .arco-trigger-popup-wrapper, {
+    box-shadow: $shadow-1;
+    position: static;
 
     * {
       color: white !important; // FIXME: optimize
     }
 
     .arco-popover-popup-content {
-      background-color: rgb(37, 38, 50) !important;
+      background-color: $video-card-background-color;
       border: none;
+      border-radius: 16px;
       //height: 0;
       position: static;
-
       top: 8px;
       right: 23px;
       //transform: t;
       animation: slide-in 0.2s ease-out;
       overflow: hidden !important;
-      width: 300px;
-      height: 600px;
+      width: 450px;
+      //height: 250px;
+      //height: 400px;
 
-      .profile-user {
-        @extend .border-5;
-        display: flex;
+      .arco-popover-title {
+        .profile-header {
+          @extend .border-5;
+          display: flex;
+          justify-content: space-between;
+          //padding: 20px 24px 2px;
+          padding: 5px 10px;
+          width: 100%;
 
-        .arco-avatar {
-          margin: auto 0;
-        }
+          .arco-avatar {
+            margin: auto 0;
+          }
 
-        .basic-info {
-          @extend .border-6;
-          padding: 0 0 0 10px;
+          //.basic-info {
+          //  @extend .border-6;
+          //  display: inline-flex;
+          //  padding: 0 0 0 10px;
 
           .name {
             font-size: 14px;
@@ -576,17 +588,151 @@ $sidebar-width: 160px;
             text-overflow: ellipsis;
             white-space: nowrap;
             width: 157px;
+            opacity: 0.34;
+
+            .arco-menu-icon, svg {
+              opacity: 0.5;
+            }
           }
 
-          .statistic {
-            font-size: 13px;
-            font-weight: 400;
-            height: 21px;
-            line-height: 21px;
-            opacity: 0.5;
+          .trust-login-switch {
+            list-style-type: disc;
+
+            .trust-login-switch-title {
+              font-size: 12px;
+              font-weight: 400;
+              height: 22px;
+              letter-spacing: 0.6px;
+              line-height: 22px;
+              opacity: 0.34;
+              margin-right: 8px;
+            }
+
+            .trust-login-switch-button {
+
+            }
           }
+
+          //
+          //  .statistic {
+          //    font-size: 13px;
+          //    font-weight: 400;
+          //    height: 21px;
+          //    line-height: 21px;
+          //    opacity: 0.5;
+          //  }
+          //}
+        }
+
+      }
+
+      .arco-popover-content {
+
+        display: flex;
+        flex-direction: column;
+        //margin: 14px 16px;
+        justify-content: center;
+
+        .arco-list-wrapper {
+          width: 100%;
+
+          .arco-list-content {
+            display: flex;
+
+            width: 100% !important;
+
+            .arco-list-item {
+              padding: 0 10px;
+              border: none;
+
+              .arco-statistic {
+                @extend .border-5;
+                display: flex;
+                height: 98px;
+                text-align: left;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+
+                .arco-statistic-title {
+                  padding: 0;
+                  margin: 0;
+                  width: 72px;
+                  display: flex;
+                }
+
+                .arco-statistic-content {
+                  .arco-statistic-value {
+                    opacity: 0.9;
+                    font-size: 16px;
+                    font-weight: 500;
+                    line-height: 24px;
+                    margin-bottom: 2px;
+                    margin-top: 2px;
+                    justify-content: center;
+                    display: flex;
+
+                    .arco-statistic-suffix {
+                      font-size: 13px;
+                    }
+                  }
+
+                  .arco-statistic-extra {
+                    text-align: center;
+                    margin: 0;
+                    font-size: 12px;
+                    font-weight: 400;
+                    height: 20px;
+                    line-height: 20px;
+                    opacity: 0.34;
+                  }
+                }
+              }
+            }
+          }
+
+
+        }
+
+        .arco-divider-horizontal {
+          border: none;
+          background-color: $color-line-l3;
+          display: block;
+          height: 1px;
+          min-height: 1px;
+          position: relative;
+          width: 100%;
+          margin: 20px 0;
+        }
+
+        .profile-menu {
+          .arco-menu-inner, .arco-menu-overflow-wrap {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-around;
+            padding: 0;
+
+            .arco-menu-item {
+              background-color: transparent;
+              padding: 0;
+            }
+
+            .arco-divider-vertical{
+              //border: none;
+              border-color: $color-line-l2;
+              //background-color: $color-line-l3;
+              //width: 10px!important;
+            }
+          }
+
+          background-color: transparent;
+          //width: 560px;
+          //padding: 24px;
+          //border: 30px solid rgb(var(--gray-2));
         }
       }
+
 
       .actions {
         &.arco-menu {
@@ -631,7 +777,7 @@ $sidebar-width: 160px;
       height: 0;
     }
     to {
-      height: 600px
+      height: 250px
     }
   }
 
@@ -639,6 +785,7 @@ $sidebar-width: 160px;
 
 
 #popover-a-search {
+  font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
 
   .arco-trigger-popup-wrapper {
     width: 100%;
@@ -648,7 +795,7 @@ $sidebar-width: 160px;
     }
 
     .arco-popover-popup-content {
-      background-color: rgb(37, 38, 50) !important;
+      background-color: $video-card-background-color;
       border: none;
 
 

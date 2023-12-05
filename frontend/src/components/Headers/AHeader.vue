@@ -103,60 +103,111 @@ const setSearchBarPopWidth = () => {
           </a-trigger>
         </a-menu-item>
         <a-menu-item disabled>
-          <a-popover position="br" id="popover-a-avatar">
+          <a-popover
+            position="br"
+            id="popover-a-avatar"
+            :trigger="['focus', 'hover']"
+            :popup-visible="true"
+          >
             <a-button class="button">
               <a-avatar>
                 <img alt="avatar" src="/images/avatar.jpeg" />
               </a-avatar>
             </a-button>
             <template #title>
-              <div class="profile-user">
-                <a-avatar>
-                  <img alt="avatar" src="/images/avatar.jpeg" />
-                </a-avatar>
-                <div class="basic-info">
-                  <div class="name">@19岁带饭冲锋</div>
-                  <div class="statistic">
-                    <span> 关注 <span>10</span></span>
-                    <span> 粉丝 <span>8000</span></span>
-                  </div>
+              <div class="profile-header">
+                <!--                <div class="basic-info">-->
+                <!--                  <a-avatar>-->
+                <!--                    <img alt="avatar" src="/images/avatar.jpeg" />-->
+                <!--                  </a-avatar>-->
+                <div class="name">
+                  19岁带饭冲锋🌈
+                  <icon-right />
                 </div>
+                <!--                  <div class="statistic">-->
+                <!--                    <span> 关注 <span>10</span></span>-->
+                <!--                    <span> 粉丝 <span>8000</span></span>-->
+                <!--                  </div>-->
+                <div class="trust-login-switch">
+                  <span class="trust-login-switch-title">保存登录信息</span>
+                  <a-switch
+                    class="trust-login-switch-button"
+                    size="small"
+                    unchecked-color="rgba(255,255,255,0.2)"
+                    checked-color="rgb(254, 44, 85)"
+                  />
+                </div>
+                <!--                  </div>-->
               </div>
-              <a-menu class="actions">
+            </template>
+            <template #content>
+              <a-list :bordered="false">
+                <a-list-item>
+                  <a-statistic :value="9" :precision="0">
+                    <template #title>
+                      <a-image src="/images/my_works.svg" style="margin: 0 auto" />
+                    </template>
+                    <template #extra>
+                      <p>我的作品</p>
+                    </template>
+                  </a-statistic>
+                </a-list-item>
+                <a-list-item>
+                  <a-statistic :value="1699" :precision="0">
+                    <template #title>
+                      <a-image src="/images/my_likes.svg" style="margin: 0 auto" />
+                    </template>
+                    <template #extra>
+                      <p>我的喜欢</p>
+                    </template>
+                  </a-statistic>
+                </a-list-item>
+                <a-list-item>
+                  <a-statistic :value="163" :precision="0">
+                    <template #title>
+                      <a-image src="/images/my_favorites.svg" style="margin: 0 auto" />
+                    </template>
+                    <template #extra>
+                      <p>我的收藏</p>
+                    </template>
+                  </a-statistic>
+                </a-list-item>
+                <a-list-item>
+                  <a-statistic :value="30" :precision="0">
+                    <template #title>
+                      <a-image src="/images/my_histories.svg" style="margin: 0 auto" />
+                    </template>
+                    <template #suffix><span>天内</span></template>
+                    <template #extra>
+                      <p>观看历史</p>
+                    </template>
+                  </a-statistic>
+                </a-list-item>
+              </a-list>
+
+              <a-divider />
+              <a-menu class="profile-menu" :mode="'horizontal'">
                 <a-menu-item>
-                  <template #icon>
-                    <icon-heart-fill />
-                  </template>
-                  我的作品
+                  <span>切换账号</span>
                 </a-menu-item>
                 <a-menu-item>
-                  <template #icon>
-                    <icon-heart-fill />
-                  </template>
-                  我的喜欢
+                  <span>退出登录</span>
                 </a-menu-item>
                 <a-menu-item>
-                  <template #icon>
-                    <icon-star-fill />
-                  </template>
-                  我的收藏
+                  <span>创作中心</span>
+                </a-menu-item>
+                <a-divider direction="vertical" />
+                <a-menu-item>
+                  <img src="images/theme.svg" align="center" />
+                  <span style="opacity: 0.34">换肤</span>
+                </a-menu-item>
+                <a-menu-item>
+                  <img src="images/settings.svg" align="center" />
+                  <span style="opacity: 0.34">设置</span>
                 </a-menu-item>
               </a-menu>
             </template>
-            <template #content></template>
           </a-popover>
-          <!--          <a-trigger :trigger="['click']" :unmount-on-close="false">-->
-          <!--            <a-button>-->
-          <!--                        <a-avatar>-->
-          <!--                          <img alt="avatar" src="/images/avatar.jpeg" />-->
-          <!--                        </a-avatar>-->
-          <!--            </a-button>-->
-          <!--            <template #content>-->
-          <!--              <div>-->
-          <!--                <a-empty />-->
-          <!--              </div>-->
-          <!--            </template>-->
-          <!--          </a-trigger>-->
         </a-menu-item>
 
         <!--        <a-menu-item key="2">Solution</a-menu-item>-->

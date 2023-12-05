@@ -22,6 +22,7 @@ export const videos: VideoMedia[] = reactive([
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
+    cover: prefix_url + '/videos/3.jpeg',
     url: prefix_url + '/videos/2.mp4',
     top: 0,
     left: 0
