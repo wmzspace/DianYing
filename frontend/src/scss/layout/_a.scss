@@ -534,24 +534,8 @@ $sidebar-width: 160px;
   }
 }
 
-#popover-a {
+#popover-a-avatar {
   .arco-trigger-popup-wrapper {
-    //position: absolute;
-    //top: 0;
-    //right: 0;
-    //transform: none !important;
-    //transform: translateY(-100%);
-    //transform-origin: 0 !important;
-    //transform: translateX(-10%) !important;
-    //overflow: hidden !important;
-    //z-index:-10 !important;
-    //transform:none;
-    //animation: slide-in 0.2s ease-out;
-    //transition: height 0.5s ease !important;
-    //transform: none;
-
-    //transform: translateX(-14%) translateY(6%);
-    //width: 300px;
 
     * {
       color: white !important; // FIXME: optimize
@@ -607,22 +591,26 @@ $sidebar-width: 160px;
       .actions {
         &.arco-menu {
           background-color: transparent;
+
           .arco-menu-inner {
             padding: 0;
+
             .arco-menu-item {
-              *{
-                color:white !important;
+              * {
+                color: white !important;
               }
-              .arco-menu-icon{
+
+              .arco-menu-icon {
                 //padding: 1;
                 //color:red !important;
                 font-size: 20px;
               }
+
               //padding: 0;
               width: 100%;
-              margin:10px 0;
+              margin: 10px 0;
               border-radius: 15px;
-              background-color: rgba(255,255,255,0.1);
+              background-color: rgba(255, 255, 255, 0.1);
             }
           }
         }
@@ -636,24 +624,38 @@ $sidebar-width: 160px;
     }
   }
 
-  //&.arco-popover {
-  //  background-color: rgb(37, 38, 50) !important;
-  //}
+
+  @keyframes slide-in {
+    from {
+
+      height: 0;
+    }
+    to {
+      height: 600px
+    }
+  }
 
 }
 
-@keyframes slide-in {
-  from {
-    //top:-100px;
 
-    //width: 140px;
-    height: 0;
-    //transform: translateY(-100%);
+#popover-a-search {
+
+  .arco-trigger-popup-wrapper {
+    width: 100%;
+
+    * {
+      color: white !important; // FIXME: optimize
+    }
+
+    .arco-popover-popup-content {
+      background-color: rgb(37, 38, 50) !important;
+      border: none;
+
+
+    }
   }
-  to {
-    //top:0;
-    //width: 140px;
-    //transform: translateY(0)
-    height: 600px
+
+  .arco-trigger-arrow, .arco-popover-popup-arrow {
+    display: none;
   }
 }

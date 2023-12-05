@@ -16,8 +16,8 @@
         controls
         @mouseover="
           (e) => {
-            let video: HTMLVideoElement | null = e.target as HTMLVideoElement
-            if (!video) {
+            let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
+            if (video === null) {
               return
             }
 
@@ -30,8 +30,8 @@
         "
         @mouseout="
           (e) => {
-            let video: HTMLVideoElement | null = e.target as HTMLVideoElement
-            if (!video) {
+            let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
+            if (video === null) {
               return
             }
             if (video.played) {
@@ -43,7 +43,10 @@
         "
         @loadeddata="
           (e) => {
-            let video: HTMLVideoElement = e.target as HTMLVideoElement
+            let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
+            if (video === null) {
+              return
+            }
             video.currentTime = 0 // 设置视频播放位置为开头
             video.pause()
             video.controls = false // 隐藏视频控制条

@@ -1,38 +1,53 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@arco-design/web-vue'
-import { ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 
 const searchButtonProps: ButtonProps = {
   // type: 'dashed',
   long: true
 }
 
-const like = ref(false)
-const star = ref(false)
-const onLikeChange = () => {
-  like.value = !like.value
-}
-const onStarChange = () => {
-  star.value = !star.value
+const searchBar = ref()
+const setSearchBarPopWidth = () => {
+  let searchBarWidth = document.querySelector('#a-header .search-bar')?.clientWidth
+  nextTick(() => {
+    let searchBarPopover: HTMLElement | null = document.getElementById(
+      'popover-a-search'
+    ) as HTMLElement | null
+    if (searchBarPopover !== null) {
+      searchBarPopover.style.width = `${searchBarWidth}px`
+    }
+  })
 }
 </script>
 
 <template>
   <div id="a-header">
     <header>
-      <a-popover position="bottom">
+      <a-popover
+        position="bottom"
+        id="popover-a-search"
+        @popup-visible-change="
+          (visible) => {
+            if (visible) {
+              setSearchBarPopWidth()
+            }
+          }
+        "
+      >
         <a-input-search
           class="search-bar"
           placeholder="搜索您感兴趣的内容"
           search-button
           :button-props="searchButtonProps"
+          ref="searchBar"
         >
           <template #button-icon>
             <icon-search :stroke-width="8" :size="15" style="margin-right: -4px" />
           </template>
           <template #button-default> 搜索</template>
         </a-input-search>
-        <template #content> </template>
+        <template #content></template>
       </a-popover>
 
       <a-menu
@@ -88,7 +103,7 @@ const onStarChange = () => {
           </a-trigger>
         </a-menu-item>
         <a-menu-item disabled>
-          <a-popover position="br" id="popover-a">
+          <a-popover position="br" id="popover-a-avatar">
             <a-button class="button">
               <a-avatar>
                 <img alt="avatar" src="/images/avatar.jpeg" />
