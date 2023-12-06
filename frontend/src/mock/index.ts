@@ -2,6 +2,11 @@ import type { VideoMedia } from '@/types'
 import { reactive } from 'vue'
 import { prefix_url } from '@/api'
 
+export const getVideoById = (videoId: number | string) => {
+  const id = typeof videoId === 'string' ? parseInt(videoId) : videoId
+  return videos.filter((v) => v.id === id)[0]
+}
+
 export const videos: VideoMedia[] = reactive([
   {
     id: 1,

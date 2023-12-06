@@ -241,7 +241,13 @@ $sidebar-width: 160px;
 
     }
 
-
+    .arco-layout-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: unset;
+      min-height: 100%;
+    }
   }
 
   .arco-layout-sider {

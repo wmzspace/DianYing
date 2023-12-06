@@ -15,6 +15,7 @@
         v-if="!isPlaying && props.src.cover !== undefined"
         :src="props.src.cover"
         :title="props.src.title"
+        @click="router.push(`/video/${props.src.id}`)"
         width="100%"
         style="z-index: 10"
         @mouseover="
@@ -37,6 +38,7 @@
       </a-image>
       <video
         v-show="isPlaying || props.src.cover == undefined"
+        @click="router.push(`/video/${props.src.id}`)"
         :src="props.src.url"
         :title="props.src.title"
         style="width: 100%; height: 100%; z-index: 9"
@@ -99,12 +101,16 @@
 import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/es/icon'
 import type { VideoMedia } from '@/types'
 import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 const emit = defineEmits(['loadeddata'])
 
 const props = defineProps<{
   src: VideoMedia
   // likes?: number
 }>()
+
+const router = useRouter()
 
 const isPlaying = ref(false)
 const isLoaded = ref(false)

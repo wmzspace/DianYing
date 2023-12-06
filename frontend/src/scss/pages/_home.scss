@@ -27,8 +27,15 @@
     //@for $i from 1 through 10 {
     //.video-card:nth-child(#{$i}) {
     .video-card {
+      &:hover {
+        //animation: zoomInOut 0.5s;
+        transition: transform 0.3s ease-in-out;
+        transform: scale(1.05);
+      }
+
       //@extend .border-6;
       border: none;
+      cursor: pointer;
       //width: 300px !important;
       //max-width: 350px;
       //min-width: 300px;

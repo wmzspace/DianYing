@@ -19,6 +19,15 @@ const routes: Array<RouteRecordRaw> = [
       layout: 'a'
     },
     component: () => import('@/views/HomeView.vue')
+  },
+  {
+    path: '/video/:videoId',
+    name: '详情',
+    meta: {
+      layout: 'a'
+    },
+    component: () => import('@/views/VideoDetailView.vue'),
+    props: true
   }
   // {
   //   path: '/tables',

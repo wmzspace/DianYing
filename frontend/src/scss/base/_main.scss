@@ -7,7 +7,7 @@
 }
 
 html {
-  //@extend .show-border;
+  @extend .show-border;
   background: rgba(22, 24, 35, 1);
 
 }
@@ -50,7 +50,7 @@ body {
   //width: 100vw;
 }
 
-.show-border{
+.show-border {
   .border-1 {
     border: 0.1px solid green !important;
   }
@@ -76,7 +76,6 @@ body {
   }
 
 }
-
 
 
 // 隐藏滚动条
