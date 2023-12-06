@@ -22,7 +22,7 @@ $sidebar-width: 160px;
       width: 100%;
       height: $header-height;
       position: relative;
-      z-index: 502;
+      z-index: 10;
       $header-nav-width: 350px;
 
       #a-header {
@@ -242,11 +242,14 @@ $sidebar-width: 160px;
     }
 
     .arco-layout-content {
-      flex: 1;
       display: flex;
+      flex: 1;
       flex-direction: column;
       overflow-y: unset;
       min-height: 100%;
+      margin: 0;
+      padding: 0;
+      outline: none;
     }
   }
 

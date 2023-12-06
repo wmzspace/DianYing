@@ -1,27 +1,74 @@
 #video-detail {
+  height: 100%;
+  //height: max-content;
+  width: 100%;
+  min-width: 852px;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 64px;
+  padding: 0 40px;
+  max-width: 134.2vh;
+
+
+
+  @media (min-width: 1032px) {
+    display: flex;
+    max-width: calc(175.2vh + 57.816px);
+  }
+
+  @media (min-width: 1680px) {
+    margin: auto;
+  }
+
+
   .leftContainer {
-    //@media (min-width: 1032px) {
-    padding-right: 20px;
-    height: 100%;
-    width: 75%;
-    //}
+    @extend .border-5;
+
+    //height: max-conteant;
+    //height: 100%;
+    //height:100%;
+    width: 100%;
+
+    @media (min-width: 1032px) {
+      padding-right: 20px;
+      width: 75% !important;
+    }
 
     .video-detail-container {
       position: relative;
       min-height: 300px;
-      height: 100%;
+      //height: 30%;
+      //height: 300px;
       border-radius: 16px;
+
       overflow: hidden;
-      z-index: 100;
+      //z-index: 100;
+
+      .xgplayer:not(.xgplayer-mini) {
+        -webkit-touch-callout: none;
+        background: #000;
+        font-size: 14px;
+        overflow: hidden;
+        min-width: 440px;
+        height: 100% !important;
+        left: 0px !important;
+        position: absolute !important;
+        top: 0px !important;
+        width: 100% !important;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        //cursor: none;
+      }
     }
 
     .detail-video-info {
-      @extend .border-5;
 
       color: $color-text-t1;
 
       .detail-video-title {
-        @extend .border-4;
 
         --lineClamp: 2;
         line-height: 26px;
@@ -33,23 +80,19 @@
         text-align: justify;
         text-overflow: ellipsis;
         width: 100%;
-        overflow: hidden;
+        //overflow: hidden;
+        margin: 12px 0;
+
       }
 
       .detail-video-actions {
-        @extend .border-4;
         align-items: center;
         display: flex;
         justify-content: space-between;
         margin-bottom: 4px;
-        margin-top: 12px;
 
 
         .detail-video-actions-left {
-
-          display: flex;
-          margin-left: -5px;
-
           .arco-list {
             @extend .border-1;
             //border:none;
@@ -57,13 +100,44 @@
             padding: 0;
             color: $color-text-t1;
 
-            .arco-list-item {
-              margin: 0;
-              padding: 0;
+            .arco-list-content {
+              display: flex;
+              flex-direction: row;
+
+              justify-content: center;
+              margin-left: -5px;
+
+              .arco-list-item {
+                border: none;
+
+                width: max-content;
+                //width:100%;
+                height: 100%;
+                margin: 0 24px 0 0;
+                padding: 0;
+
+                .arco-list-item-content {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+
+                  svg {
+                    //align-self: center;
+                    //vertical-align: middle;
+                    //width: 100%;
+                    //height: 100%;
+                    //overflow:visible;
+                    padding: 4px;
+                    margin-right: 4px;
+                    font-size: 23px;
+                    transform: translate3d(0px, 0px, 0px);
+                    content-visibility: visible;
+                    //vertical-align: middle;
+                  }
+                }
+              }
             }
           }
-
-
         }
 
         .detail-video-actions-right {
@@ -76,9 +150,32 @@
           justify-content: flex-end;
           line-height: 18px;
 
+          .report {
+            align-items: center;
+            //color: rgba(22,24,35,.34);
+            color: $color-text-t4;
+            display: flex;
+
+            span {
+              font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+              font-size: 13px;
+              font-weight: 400;
+              line-height: 22px;
+              margin-left: 3px;
+              margin-right: 24px;
+            }
+          }
+
+          .publish-time {
+            font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 22px;
+          }
         }
       }
     }
   }
+
 }
 

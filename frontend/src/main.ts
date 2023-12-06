@@ -7,6 +7,14 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 
 // xg player
+// import { SimplePlayer } from 'xgplayer'
+// import Player from 'xgplayer'
+// import defaultPreset from 'xgplayer/es/presets/default'
+// import 'xgplayer/dist/index.min.css'
+//
+// SimplePlayer.defaultPreset = defaultPreset
+// Player.defaultPreset = defaultPreset
+
 import 'xgplayer/dist/index.min.css'
 // 启用中文
 import { I18N } from 'xgplayer'

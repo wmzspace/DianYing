@@ -1,57 +1,71 @@
 <script setup lang="ts">
 import VideoCard from '@/components/Cards/VideoCard.vue'
 import type { VideoMedia } from '@/types'
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { videos } from '@/mock'
+import { debounce } from 'lodash-es'
 
 // const actualColumnWidth = ref(300)
 
-let timer = setTimeout(() => {})
-const calculateVideoPositions = (minColumnWidth = 240, maxColumnWidth: number = 450) => {
-  // clearTimeout(timer) // FIXME: bug
-  timer = setTimeout(() => {
-    const MAX_COLUMNS = 8
-    const GUTTER = 16
+// let timer
+const calculateVideoPositions = () => {
+  const containerWidth = (document.getElementById('waterfall-scroll-container') as HTMLElement)
+    .clientWidth
+  const minColumnWidth = 240
+  const maxColumnWidth = 450
+  const MAX_COLUMNS = 8
+  const GUTTER = 16
 
-    const containerWidth = (document.getElementById('waterfall-scroll-container') as HTMLElement)
-      .clientWidth
-    const columns = Math.min(Math.floor(containerWidth / (minColumnWidth + GUTTER)), MAX_COLUMNS)
-    const columnWidth =
-      columns < MAX_COLUMNS
-        ? Math.min(
-            maxColumnWidth,
-            Math.max(
-              minColumnWidth,
-              Math.floor((containerWidth - (columns - 1) * GUTTER) / columns)
-            )
-          )
-        : Math.floor((containerWidth - (MAX_COLUMNS - 1) * GUTTER) / columns)
-    const columnHeights = Array(columns).fill(0)
+  const columns = Math.min(Math.floor(containerWidth / (minColumnWidth + GUTTER)), MAX_COLUMNS)
+  const columnWidth =
+    columns < MAX_COLUMNS
+      ? Math.min(
+          maxColumnWidth,
+          Math.max(minColumnWidth, Math.floor((containerWidth - (columns - 1) * GUTTER) / columns))
+        )
+      : Math.floor((containerWidth - (MAX_COLUMNS - 1) * GUTTER) / columns)
+  const columnHeights = Array(columns).fill(0)
 
-    videos.forEach((video, index) => {
-      const columnIndex = columnHeights.indexOf(Math.min(...columnHeights))
-      const left = columnIndex * (columnWidth + GUTTER)
-      const top = columnHeights[columnIndex]
-      video.left = left
-      video.top = top
-      video.actualWidth = columnWidth
-      if (video.height && video.width) {
-        video.actualHeight =
-          (video.height * columnWidth) / video.width +
-          document.getElementsByClassName('arco-card-body')[index].clientHeight
-      }
-      columnHeights[columnIndex] +=
-        document.getElementsByClassName('video-card')[index].clientHeight + GUTTER
-    })
-  }, 500)
+  videos.forEach((video, index) => {
+    const columnIndex = columnHeights.indexOf(Math.min(...columnHeights))
+    const left = columnIndex * (columnWidth + GUTTER)
+    const top = columnHeights[columnIndex]
+    video.left = left
+    video.top = top
+    video.actualWidth = columnWidth
+    if (video.height && video.width) {
+      video.actualHeight =
+        (video.height * columnWidth) / video.width +
+        document.getElementsByClassName('arco-card-body')[index].clientHeight
+    }
+    columnHeights[columnIndex] +=
+      document.getElementsByClassName('video-card')[index].clientHeight + GUTTER
+  })
+}
+
+// function resizeHandler(func: Function, delay: number) {
+//   let timerId: number
+//
+//   return function () {
+//     clearTimeout(timerId)
+//
+//     timerId = setTimeout(() => {
+//       func.apply(arguments)
+//       console.log(arguments)
+//     }, delay)
+//   }
+// }
+
+const resizeEventHandler = () => {
+  debounce(calculateVideoPositions, 1000)
 }
 
 onMounted(() => {
-  window.addEventListener('resize', () => calculateVideoPositions())
+  window.addEventListener('resize', resizeEventHandler)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', () => calculateVideoPositions())
+  window.removeEventListener('resize', resizeEventHandler)
 })
 </script>
 
@@ -70,7 +84,7 @@ onUnmounted(() => {
             // video.height = element.clientHeight
             // console.log(video.height, element.clientHeight)
             // console.log(video.width, element.clientWidth)
-            calculateVideoPositions()
+            debounce(calculateVideoPositions, 100)()
           }
         "
       />

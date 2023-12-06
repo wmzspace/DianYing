@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs'
 import type { NotificationData } from '@/types'
-import { range } from 'lodash-es'
+import { range, rest } from 'lodash-es'
 
 const THOUSAND = Math.pow(10, 3)
 const WAN = Math.pow(10, 4)
@@ -8,6 +8,18 @@ const MILLION = Math.pow(10, 6)
 const YI = Math.pow(10, 8)
 const BILLION = Math.pow(10, 9)
 
+// export const debounce = (func: Function, delay: number) => {
+//   let timerId: any
+//
+//   return function () {
+//     clearTimeout(timerId)
+//
+//     timerId = setTimeout(() => {
+//       func.apply(rest)
+//       console.log(rest)
+//     }, delay)
+//   }
+// }
 export const simplifyNumber = (value: number, unit = 'EN') => {
   let prefix = ''
   if (value < 0) {

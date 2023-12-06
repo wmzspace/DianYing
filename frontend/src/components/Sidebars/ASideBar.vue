@@ -18,7 +18,7 @@
       :theme="'dark'"
     >
       <a-menu-item key="1">
-        <a class="nav-a">
+        <a class="nav-a" @click="$router.push('/discover')">
           <div class="nav-icon"></div>
           <div class="nav-text"><span>首页</span></div>
         </a>
