@@ -11,7 +11,6 @@
   max-width: 134.2vh;
 
 
-
   @media (min-width: 1032px) {
     display: flex;
     max-width: calc(175.2vh + 57.816px);
@@ -172,6 +171,121 @@
             font-weight: 400;
             line-height: 22px;
           }
+        }
+      }
+    }
+
+    .detail-comment-divider {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+
+      .comment-title {
+        color: $color-text-3;
+        line-height: 24px;
+        position: relative;
+        background-color: $color-bg-b0;
+        display: inline-block;
+        font-size: 16px;
+        height: 100% !important;
+        padding: 0;
+        z-index: 2;
+        //vertical-align: center;
+        margin: auto 0;
+        width: 5rem;
+      }
+
+      .arco-divider-horizontal {
+        border: none;
+        //border:thin solid red;
+        background-color: $color-line-l3;
+        //background-color: red !important;
+        display: inline-block;
+        height: 1px;
+        min-height: 1px;
+        position: relative;
+        min-width: auto;
+        //width: 100%;
+        //margin: 20px 0;
+      }
+
+      background-color: transparent;
+    }
+
+
+    .comments-list {
+
+
+      .arco-comment {
+        //background-color: transparent;
+        .arco-comment-inner {
+          // 评论内容
+          .arco-comment-inner-content {
+            .arco-comment-title {
+              .arco-comment-author {
+                color: $color-text-2;
+              }
+
+              .arco-comment-datetime {
+                font-size: 14px;
+                font-weight: 400;
+                height: auto;
+                line-height: 20px;
+              }
+            }
+
+            .arco-comment-content {
+              color: $color-text-0;
+            }
+
+          }
+
+          // 嵌套评论
+          .arco-comment-inner-comment {
+            .arco-comment.reply-comment {
+              .arco-comment-inner {
+                .arco-comment-inner-content {
+                  .arco-comment-title {
+                    .arco-comment-author {
+
+                    }
+
+                    .arco-comment-datetime {
+
+                    }
+                  }
+
+                  .arco-comment-content {
+                    .arco-input-wrapper {
+                      align-items: center;
+                      display: flex;
+                      justify-content: center;
+                      min-height: 44px;
+                      position: relative;
+                      width: 100%;
+                      background: hsla(0, 0%, 100%, .06);
+                      border: 1px solid $color-bg-b3;
+                      border-radius: 12px;
+
+                      .arco-input {
+
+                      }
+
+                    }
+
+                  }
+
+                  .arco-comment-actions {
+
+                  }
+                }
+              }
+
+
+            }
+          }
+
         }
       }
     }

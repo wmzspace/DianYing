@@ -140,6 +140,36 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
+      <!--      Comment-->
+      <div class="detail-comment-divider">
+        <span class="comment-title">全部评论</span>
+        <a-divider />
+      </div>
+
+      <div class="new-comment"></div>
+
+      <div class="comments-list">
+        <a-comment
+          align="left"
+          author="19岁带饭冲锋🌈"
+          avatar="images/avatar.jpeg"
+          content="别太荒谬了哥们，别太荒谬了哥们"
+          datetime="1小时"
+        >
+          <template #actions>
+            <span class="action"> <IconMessage /> 回复 </span>
+          </template>
+          <a-comment align="right" avatar="images/avatar.jpeg" class="reply-comment">
+            <template #actions>
+              <a-button key="0" type="secondary"> Cancel </a-button>
+              <a-button key="1" type="primary"> Reply </a-button>
+            </template>
+            <template #content>
+              <a-input placeholder="回复@19岁带饭冲锋🌈" />
+            </template>
+          </a-comment>
+        </a-comment>
+      </div>
     </div>
   </div>
 </template>
