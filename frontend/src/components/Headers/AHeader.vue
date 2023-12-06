@@ -103,12 +103,7 @@ const setSearchBarPopWidth = () => {
           </a-trigger>
         </a-menu-item>
         <a-menu-item disabled>
-          <a-popover
-            position="br"
-            id="popover-a-avatar"
-            :trigger="['focus', 'hover']"
-            :popup-visible="true"
-          >
+          <a-popover position="br" id="popover-a-avatar" :trigger="['focus', 'hover']">
             <a-button class="button">
               <a-avatar>
                 <img alt="avatar" src="/images/avatar.jpeg" />
@@ -186,26 +181,30 @@ const setSearchBarPopWidth = () => {
               </a-list>
 
               <a-divider />
-              <a-menu class="profile-menu" :mode="'horizontal'">
-                <a-menu-item>
-                  <span>切换账号</span>
-                </a-menu-item>
-                <a-menu-item>
-                  <span>退出登录</span>
-                </a-menu-item>
-                <a-menu-item>
-                  <span>创作中心</span>
-                </a-menu-item>
-                <a-divider direction="vertical" />
-                <a-menu-item>
-                  <img src="images/theme.svg" align="center" />
-                  <span style="opacity: 0.34">换肤</span>
-                </a-menu-item>
-                <a-menu-item>
-                  <img src="images/settings.svg" align="center" />
-                  <span style="opacity: 0.34">设置</span>
-                </a-menu-item>
-              </a-menu>
+              <a-space class="profile-menu">
+                <a-menu class="profile-menu-left" :mode="'horizontal'">
+                  <a-menu-item>
+                    <span>切换账号</span>
+                  </a-menu-item>
+                  <a-menu-item>
+                    <span>退出登录</span>
+                  </a-menu-item>
+                  <a-menu-item>
+                    <span>创作中心</span>
+                  </a-menu-item>
+                </a-menu>
+                <a-divider direction="vertical" :mode="'horizontal'" />
+                <a-menu class="profile-menu-right">
+                  <a-menu-item>
+                    <img src="images/theme.svg" align="center" />
+                    <span style="opacity: 0.34">换肤</span>
+                  </a-menu-item>
+                  <a-menu-item>
+                    <img src="images/settings.svg" align="center" />
+                    <span style="opacity: 0.34">设置</span>
+                  </a-menu-item></a-menu
+                >
+              </a-space>
             </template>
           </a-popover>
         </a-menu-item>

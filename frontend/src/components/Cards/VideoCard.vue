@@ -1,5 +1,15 @@
 <template>
-  <a-card>
+  <a-card
+    v-show="isLoaded"
+    class="video-card"
+    :style="{
+      position: 'absolute',
+      top: `${props.src.top}px`,
+      left: `${props.src.left}px`,
+      width: `${props.src.actualWidth}px`,
+      height: `${props.src.actualHeight}px`
+    }"
+  >
     <template #cover>
       <a-image
         v-if="!isPlaying && props.src.cover !== undefined"
@@ -74,6 +84,15 @@
       <span class="icon-hover"> <IconMore /> </span>
     </template>
   </a-card>
+  <!--  <a-space></a-space>-->
+  <!--  <div>-->
+  <!--  <a-skeleton :loading="!isLoaded" animation>-->
+  <!--    <a-space direction="vertical" size="large">-->
+  <!--      <a-skeleton-line :rows="1" />-->
+  <!--      <a-skeleton-shape />-->
+  <!--    </a-space>-->
+  <!--  </a-skeleton>-->
+  <!--  </div>-->
 </template>
 
 <script setup lang="ts">
@@ -88,6 +107,7 @@ const props = defineProps<{
 }>()
 
 const isPlaying = ref(false)
+const isLoaded = ref(false)
 
 const onPlayVideo = (e: Event) => {
   console.log('play!')
@@ -129,7 +149,24 @@ const onLoadedData = (e: Event) => {
   video.currentTime = 0 // 设置视频播放位置为开头
   video.pause()
   video.controls = false // 隐藏视频控制条
+  isLoaded.value = true
+
+  // @loadeddata="
+  //   (element: HTMLElement) => {
+  //     // element: <video>
+  //     video.width = element.clientWidth
+  //     video.height = element.clientHeight
+  //     calculateVideoPositions()
+  //   }
+  //   "
   emit('loadeddata', (e.target as HTMLElement).parentElement)
+
+  // element: <video>
+  // const originVideo = props.src
+  // originVideo.width = (e.target as HTMLElement).parentElement?.clientWidth
+  // originVideo.height = (e.target as HTMLElement).parentElement?.clientHeight
+  // calculateVideoPositions()
+
   // let img = (e.target as HTMLVideoElement).parentElement?.parentElement?.querySelector(
   //   'img'
   // ) as HTMLElement

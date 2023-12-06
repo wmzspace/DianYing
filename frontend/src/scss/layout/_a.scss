@@ -706,31 +706,66 @@ $sidebar-width: 160px;
           margin: 20px 0;
         }
 
-        .profile-menu {
-          .arco-menu-inner, .arco-menu-overflow-wrap {
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: space-around;
-            padding: 0;
+        .profile-menu.arco-space {
+          justify-content: space-between;
+          width: 100%;
 
-            .arco-menu-item {
-              background-color: transparent;
-              padding: 0;
-            }
+          .arco-space-item {
+            width: 100%;
+            //margin:0 !important;
+            justify-content: center;
 
-            .arco-divider-vertical{
-              //border: none;
-              border-color: $color-line-l2;
-              //background-color: $color-line-l3;
-              //width: 10px!important;
+            &:has(.arco-divider-vertical) {
+              //display: none;
+              margin: 0 10px;
+              width: min-content;
             }
           }
 
-          background-color: transparent;
-          //width: 560px;
-          //padding: 24px;
-          //border: 30px solid rgb(var(--gray-2));
+
+          .profile-menu-left {
+            width: 250px;
+          }
+
+          .profile-menu-right {
+            width: 100%;
+          }
+
+          .arco-divider-vertical {
+            //border: none;
+            margin: 0;
+            border-color: $color-line-l2;
+            //background-color: $color-line-l3;
+            //width: 10px!important;
+          }
+
+          .profile-menu-left, .profile-menu-right {
+            .arco-menu-inner, .arco-menu-overflow-wrap {
+              display: flex;
+              flex-wrap: nowrap;
+              justify-content: space-around;
+              padding: 0;
+
+              .arco-menu-item, .arco-menu-pop {
+                background-color: transparent;
+                padding: 0;
+                margin: 0;
+                //min-width: 100px ;
+                //width:max-content;
+                overflow: visible;
+              }
+
+
+            }
+
+            background-color: transparent;
+            //width: 560px;
+            //padding: 24px;
+            //border: 30px solid rgb(var(--gray-2));
+          }
+
         }
+
       }
 
 

@@ -61,21 +61,15 @@ onUnmounted(() => {
     <div id="waterfall-scroll-container">
       <VideoCard
         v-for="(video, index) in videos"
-        :key="index"
-        class="video-card"
         :src="video"
-        :style="{
-          position: 'absolute',
-          top: `${video.top}px`,
-          left: `${video.left}px`,
-          width: `${video.actualWidth}px`,
-          height: `${video.actualHeight}px`
-        }"
+        :key="index"
         @loadeddata="
           (element: HTMLElement) => {
             // element: <video>
-            video.width = element.clientWidth
-            video.height = element.clientHeight
+            // video.width = element.clientWidth
+            // video.height = element.clientHeight
+            // console.log(video.height, element.clientHeight)
+            // console.log(video.width, element.clientWidth)
             calculateVideoPositions()
           }
         "
