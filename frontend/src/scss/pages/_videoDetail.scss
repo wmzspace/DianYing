@@ -214,6 +214,103 @@
     }
 
 
+    .comment-input {
+      &.arco-input-wrapper {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        min-height: 44px;
+        position: relative;
+        width: 100%;
+        background: hsla(0, 0%, 100%, .06);
+        border: 1px solid $color-bg-b3;
+        border-radius: 12px;
+
+        .arco-input {
+
+        }
+
+        .arco-input-suffix {
+          height: 100%;
+          //align-items: center;
+          //justify-content: center;
+          img.icon-at {
+            margin-right: 3px;
+            //fill-opacity: 0.5;
+            //font-size: 35px;
+            opacity: 0.20;
+            vertical-align: center;
+
+            &:hover, &:focus {
+              opacity: 0.44;
+            }
+          }
+
+          img.icon-send {
+            //fill: $color-primary !important;
+            //fill-opacity: 1;
+            //border:none;
+            //color: transparent;
+            //font-size: 35px;
+          }
+        }
+      }
+
+    }
+
+    .new-comment {
+      margin-top: 16px;
+      padding-bottom: 24.5px;
+
+      .arco-avatar {
+        cursor: pointer;
+        margin-right: 12px;
+        z-index: 1;
+      }
+    }
+
+    .usually-search {
+      margin-bottom: 7.5px;
+      padding-bottom: 2px;
+      -webkit-app-region: no-drag;
+      color: $color-text-t4;
+      display: flex;
+      flex: 1 1;
+      font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+      margin-right: 20px;
+      overflow: hidden;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      .usually-search-topic {
+        display: flex;
+        overflow: hidden;
+
+        .usually-search-topic-text {
+          flex: 1 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: $search-text-color;
+        }
+
+        .usually-search-icon {
+          fill: $search-text-color;
+          height: 9px;
+          margin: 0 2px;
+          position: relative;
+          top: 2px;
+          vertical-align: super;
+          width: 9px;
+          flex-shrink: 0;
+        }
+      }
+    }
+
     .comments-list {
 
 
@@ -221,6 +318,10 @@
         //background-color: transparent;
         .arco-comment-inner {
           // 评论内容
+          &.commenting {
+            background: $input-linear;
+          }
+
           .arco-comment-inner-content {
             .arco-comment-title {
               .arco-comment-author {
@@ -237,6 +338,11 @@
 
             .arco-comment-content {
               color: $color-text-0;
+            }
+
+            .arco-comment-actions {
+              margin: 3px 0;
+              color: $color-text-2;
             }
 
           }
@@ -258,26 +364,13 @@
 
                   .arco-comment-content {
                     .arco-input-wrapper {
-                      align-items: center;
-                      display: flex;
-                      justify-content: center;
-                      min-height: 44px;
-                      position: relative;
-                      width: 100%;
-                      background: hsla(0, 0%, 100%, .06);
-                      border: 1px solid $color-bg-b3;
-                      border-radius: 12px;
-
-                      .arco-input {
-
-                      }
-
+                      @extend .comment-input
                     }
-
                   }
 
                   .arco-comment-actions {
-
+                    margin: 3px 0;
+                    color: $color-text-2;
                   }
                 }
               }

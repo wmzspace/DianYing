@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getVideoById, videos } from '@/mock'
+import { comments, getVideoById, videos } from '@/mock'
 import { onMounted, onUnmounted } from 'vue'
 import PresetPlayer, { Events } from 'xgplayer'
 import Danmu from 'xgplayer/es/plugins/danmu'
@@ -7,6 +7,10 @@ import type { IDanmuConfig } from 'xgplayer/es/plugins/danmu'
 import Player from 'xgplayer'
 import { debounce } from 'lodash-es'
 import type { DanMuProps } from '@/types'
+import { useUserStore } from '@/store/user/'
+// import { useUserStore } from '@/store/user'
+
+const userStore = useUserStore()
 
 const props = defineProps<{
   videoId: string
@@ -80,7 +84,7 @@ onMounted(() => {
     height: '100%',
     width: '100%',
     autoplayMuted: true,
-    autoplay: false,
+    autoplay: true,
     // playsinline: true,
     download: true
   })
@@ -89,7 +93,7 @@ onMounted(() => {
   //   console.log('autoplay was prevented!!')
   // })
   //
-  player.on(Events.LOADED_DATA, resizeEventHandler)
+  player.on(Events.LOADED_DATA, calculateContainerPositions)
 
   player.on(Events.AUTOPLAY_STARTED, () => {
     console.log('autoplay success!!')
@@ -146,26 +150,53 @@ onUnmounted(() => {
         <a-divider />
       </div>
 
-      <div class="new-comment"></div>
+      <div class="new-comment">
+        <a-row :wrap="false">
+          <a-avatar>
+            <img alt="avatar" src="/images/avatar.jpeg" />
+          </a-avatar>
+
+          <a-input placeholder="回复@19岁带饭冲锋🌈" class="comment-input">
+            <template #suffix
+              ><img class="icon-at" src="/images/videoDetails/comment_at.svg" /><img
+                class="icon-send"
+                src="/images/videoDetails/send_comment.svg"
+            /></template>
+          </a-input>
+        </a-row>
+      </div>
+
+      <div class="usually-search">
+        大家都在搜：<a class="usually-search-topic"
+          ><span class="usually-search-topic-text">亿万富翁找回儿子</span>
+          <img class="usually-search-icon" src="images/videoDetails/usually_search.svg" />
+        </a>
+      </div>
 
       <div class="comments-list">
         <a-comment
+          v-for="(comment, index) in comments"
           align="left"
-          author="19岁带饭冲锋🌈"
-          avatar="images/avatar.jpeg"
-          content="别太荒谬了哥们，别太荒谬了哥们"
-          datetime="1小时"
+          :author="userStore.getUserById(comment.authorId).name"
+          :avatar="userStore.getUserById(comment.authorId).avatar"
+          :content="comment.content"
+          :datetime="comment.datetime"
+          :key="index"
         >
           <template #actions>
             <span class="action"> <IconMessage /> 回复 </span>
+            <span class="action"> <IconHeart /> <span>1</span> </span>
+            <!--            <span class="action"> <IconHeartFill /> <span>1</span> </span>-->
           </template>
           <a-comment align="right" avatar="images/avatar.jpeg" class="reply-comment">
-            <template #actions>
-              <a-button key="0" type="secondary"> Cancel </a-button>
-              <a-button key="1" type="primary"> Reply </a-button>
-            </template>
             <template #content>
-              <a-input placeholder="回复@19岁带饭冲锋🌈" />
+              <a-input :placeholder="`回复@19岁带饭冲锋🌈`" class="comment-input">
+                <template #suffix
+                  ><img class="icon-at" src="/images/videoDetails/comment_at.svg" /><img
+                    class="icon-send"
+                    src="/images/videoDetails/send_comment.svg"
+                /></template>
+              </a-input>
             </template>
           </a-comment>
         </a-comment>

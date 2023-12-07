@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import { RouterView, useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useUserStore } from '@/store/user/'
+// import { useUserStore } from '@/store'
+// import { useStore } from '@/store'
 
 const route = useRoute()
 // 配置布局
 const layout = computed(() => 'layout-' + ((route.meta.layout as string) || 'a').toLowerCase())
+
+onMounted(() => {
+  const store = useUserStore()
+  store.userLogin({
+    id: 1,
+    name: '19岁带饭冲锋🌈',
+    avatar: 'images/avatar.jpeg'
+  })
+})
 </script>
 
 <template>

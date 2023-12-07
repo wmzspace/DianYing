@@ -1,6 +1,7 @@
 import type { DanMuProps, VideoMedia } from '@/types'
 import { reactive } from 'vue'
 import { prefix_url } from '@/api'
+import type { User } from '@/store/user'
 
 export const getVideoById = (videoId: number | string) => {
   const id = typeof videoId === 'string' ? parseInt(videoId) : videoId
@@ -817,5 +818,45 @@ export const videos: VideoMedia[] = reactive([
     left: 0,
     width: 1024,
     height: 576
+  }
+])
+
+// export const users: User[] = reactive([
+//   {
+//     id: 1,
+//     name: '19岁带饭冲锋🌈',
+//     avatar: 'images/avatar.jpeg'
+//   }
+// ])
+
+interface Comment {
+  id: number
+  parentId: number
+  authorId: number
+  content: string
+  datetime: string
+}
+
+export const comments: Comment[] = reactive([
+  {
+    id: 1,
+    parentId: -1,
+    authorId: 1,
+    content: '别太荒谬了哥们，别太荒谬了哥们',
+    datetime: '1小时'
+  },
+  {
+    id: 2,
+    parentId: -1,
+    authorId: 2,
+    content: '跟我谈😍',
+    datetime: '21分钟'
+  },
+  {
+    id: 3,
+    parentId: -1,
+    authorId: 3,
+    content: '我好喜欢',
+    datetime: '1分钟'
   }
 ])
