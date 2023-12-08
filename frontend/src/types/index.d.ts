@@ -34,6 +34,7 @@ export interface DanMuProps {
 export interface VideoMedia {
   id: number
   title: string
+  authorId: number
   url: string
   cover?: string
   description?: string

@@ -8,10 +8,11 @@ import Player from 'xgplayer'
 import { debounce } from 'lodash-es'
 import type { DanMuProps } from '@/types'
 import { useUserStore } from '@/store/user/'
+import { isNavigationFailure, NavigationFailureType, useRouter } from 'vue-router'
 // import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
-
+const router = useRouter()
 const props = defineProps<{
   videoId: string
 }>()
@@ -42,10 +43,14 @@ onMounted(() => {
     id: 'video-player',
     lang: 'zh',
     // url: 'https://www.wmzspace.space/web2_cwk2/videos/3.mp4',
-    plugins: [Danmu],
+    // plugins: [Danmu],
     loop: true,
     dynamicBg: {
       disable: false
+    },
+    screenShot: true, //显示截图按钮
+    videoAttributes: {
+      crossOrigin: 'anonymous'
     },
     fitVideoSize: video.width > video.height ? 'fixed' : 'fixHeight',
     videoFillMode: video.width > video.height ? 'cover' : undefined,
@@ -200,6 +205,60 @@ onUnmounted(() => {
             </template>
           </a-comment>
         </a-comment>
+      </div>
+    </div>
+    <div class="rightContainer">
+      <div class="user-info">
+        <a-avatar
+          :size="60"
+          :image-url="'/images/avatar.jpeg'"
+          :style="{ marginRight: '8px' }"
+        ></a-avatar>
+        <div class="basic-info">
+          <span class="name"> 19岁带饭冲锋🌈 </span>
+          <icon-right />
+          <div class="statistic">
+            <span class="title"> 粉丝</span> <span class="number">8000</span>
+            <span class="title"> 获赞</span> <span class="number">2.6万</span>
+          </div>
+        </div>
+      </div>
+      <div class="related-video">
+        <div class="cover-age-title-container">
+          <h2>推荐视频</h2>
+        </div>
+        <a-list class="video-list">
+          <a-list-item
+            v-for="(relatedVideo, idx) in videos.splice(0, 10)"
+            :key="idx"
+            action-layout="vertical"
+            @click="
+              () => {
+                router.push({ name: 'videoDetail', params: { videoId: relatedVideo.id } })
+              }
+            "
+          >
+            <template #extra>
+              <a>
+                <div class="image-area">
+                  <a-image
+                    alt="related video"
+                    :src="relatedVideo.cover"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+              </a>
+            </template>
+            <a-list-item-meta :title="relatedVideo.title"> </a-list-item-meta>
+            <template #actions>
+              <span class="action"> <IconHeart /> <span>1</span> </span>
+              <span class="action-author">{{
+                userStore.getUserById(relatedVideo.authorId).name
+              }}</span>
+            </template>
+          </a-list-item>
+        </a-list>
       </div>
     </div>
   </div>

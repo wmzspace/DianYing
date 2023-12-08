@@ -47,14 +47,32 @@
       position: absolute;
       //transform: matrix(1, 0, 0, 1, 315 * ($i - 1), 0);
       //will-change: transform;
-
+      display: flex;
+      flex-direction: column;
       .arco-card-cover {
+        //height: max-content;
         //display: none;
+
+        .arco-image{
+          height:100%;
+          .arco-image-img{
+            //height:100%;
+          }
+        }
+
+        border:none;
+        flex:1;
         background-color: rgba(37, 38, 50, 1);
+        .arco-image-with-footer-inner{
+          .arco-image-footer-caption{
+            display: none;
+          }
+        }
       }
 
       .arco-card-body {
         //display: none;
+        border:none;
         background-color: rgba(37, 38, 50, 1);
 
         .video-title {

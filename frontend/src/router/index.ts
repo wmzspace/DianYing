@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
-const routes: Array<RouteRecordRaw> = [
+let routes: Array<RouteRecordRaw> = [
   {
     // will match everything
     path: '/:catchAll(.*)', // 不识别的path自动匹配404
@@ -9,12 +9,12 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     redirect: '/discover'
   },
   {
     path: '/discover',
-    name: '首页',
+    name: 'discover',
     meta: {
       layout: 'a'
     },
@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/video/:videoId',
-    name: '详情',
+    name: 'videoDetail',
     meta: {
       layout: 'a'
     },
@@ -83,7 +83,7 @@ function addLayoutToRoute(route: RouteRecordRaw, parentLayout = 'a') {
   return route
 }
 
-// routes = routes.map((route) => addLayoutToRoute(route))
+routes = routes.map((route) => addLayoutToRoute(route))
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,

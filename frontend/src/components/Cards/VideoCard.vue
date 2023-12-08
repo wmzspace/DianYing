@@ -17,6 +17,8 @@
         :title="props.src.title"
         @click="router.push(`/video/${props.src.id}`)"
         width="100%"
+        height="100%"
+        :fit="'cover'"
         style="z-index: 10"
         @mouseover="
           (e: Event) => {
@@ -102,6 +104,7 @@ import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/e
 import type { VideoMedia } from '@/types'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { videos } from '@/mock'
 
 const emit = defineEmits(['loadeddata'])
 

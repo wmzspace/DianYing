@@ -9,6 +9,8 @@ import { debounce } from 'lodash-es'
 
 // let timer
 const calculateVideoPositions = () => {
+  // FIXME
+  console.log('!')
   const containerWidth = (document.getElementById('waterfall-scroll-container') as HTMLElement)
     .clientWidth
   const minColumnWidth = 240
@@ -25,7 +27,6 @@ const calculateVideoPositions = () => {
         )
       : Math.floor((containerWidth - (MAX_COLUMNS - 1) * GUTTER) / columns)
   const columnHeights = Array(columns).fill(0)
-
   videos.forEach((video, index) => {
     const columnIndex = columnHeights.indexOf(Math.min(...columnHeights))
     const left = columnIndex * (columnWidth + GUTTER)
