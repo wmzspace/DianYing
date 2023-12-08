@@ -10,7 +10,7 @@ export const getVideoById = (videoId: number | string) => {
 import _ from 'lodash'
 
 export const pullVideo = (num: number): VideoMedia[] => {
-  return _.sampleSize(videos, num)
+  return _.cloneDeep(_.sampleSize(videos, num))
 }
 
 export const videos: VideoMedia[] = [

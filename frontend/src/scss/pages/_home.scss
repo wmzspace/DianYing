@@ -116,18 +116,23 @@
     .list-append-area {
       width: 100%;
       position: absolute;
-      height: 50px;
+      height: 80px;
 
-
-      .load-more-button {
+      .load-more {
         left: 45% !important;
-        color: $color-text-0;
-        border-color: white;
-        opacity: 0.4;
-        box-shadow: none;
+        //color: $color-text-0;
+        //background: transparent !important;
+        //border-color: white;
+        //border:none;
+        //opacity: 0.4;
+        //box-shadow: none;
+
+        &::before{
+          //display: none;
+        }
 
         &:hover {
-          opacity: 0.7;
+          //opacity: 0.7;
         }
       }
     }

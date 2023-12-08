@@ -165,20 +165,21 @@ const parentElement = ref<HTMLElement | null>(null)
 
 watch(isLoadedAll, (value, oldValue, onCleanup) => {
   if (value) {
+    // console.log('video loaded all')
     emit('loadeddata', parentElement.value)
   }
 })
 
 const onLoadedImageData = (e: Event) => {
   isLoadedImage.value = true
-  console.log('loaded image')
+  // console.log('loaded image')
   if (isLoadedVideo.value) {
     emit('loadeddata', (e.target as HTMLElement).parentElement)
   }
 }
 
 const onLoadedVideoData = (e: Event) => {
-  console.log('loaded video')
+  // console.log('loaded video')
 
   let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
   if (video === null) {

@@ -9,29 +9,46 @@ import { debounce } from 'lodash-es'
 const videoList = ref<VideoMedia[]>([])
 const currentShowNum = ref(0)
 
-videoList.value = pullVideo(5)
-const isLoadedAll = computed(() => {
-  for (let video of videoList.value) {
-    if (!video.loaded) {
-      return false
+videoList.value = pullVideo(20)
+const isLoadedAll = ref(
+  computed(() => {
+    for (let video of videoList.value) {
+      if (!video.loaded) {
+        return false
+      }
     }
-  }
-  return true
-})
+    return true
+  })
+)
 
 watch(isLoadedAll, (value, oldValue, onCleanup) => {
   if (value) {
+    // console.log('all videos are loaded')
     currentShowNum.value = videoList.value.length
     calculateVideoPositions()
     nextTick(() => {
       calculateVideoPositions()
     })
+    console.log(videoList.value.length)
+  } else {
+    // console.log('loading start')
   }
 })
 
+const home = ref()
+
+const onScroll = () => {
+  // console.clear()
+  // console.log(home.value.scrollTop + home.value.clientHeight)
+  // console.log(videoListHeight.value)
+  // if (home.value.scrollTop + home.value.clientHeight >= home.value.scrollHeight) {
+  if (home.value.scrollTop + home.value.clientHeight >= videoListHeight.value) {
+    onLoadMore()
+  }
+}
+
 const onLoadMore = () => {
-  console.log('load more')
-  pullVideo(5).forEach((e) => {
+  pullVideo(10).forEach((e) => {
     videoList.value.push(e)
   })
 }
@@ -49,9 +66,10 @@ const videoListHeight = ref(0)
 // let timer
 const calculateVideoPositions = () => {
   if (!isLoadedAll.value) {
+    // console.log('loading... exit')
     return
   }
-
+  // console.log('position...')
   const containerWidth = (document.getElementById('waterfall-scroll-container') as HTMLElement)
     .clientWidth
   const minColumnWidth = 240
@@ -69,12 +87,15 @@ const calculateVideoPositions = () => {
       : Math.floor((containerWidth - (MAX_COLUMNS - 1) * GUTTER) / columns)
   const columnHeights = Array(columns).fill(0)
   videoList.value.forEach((video, index) => {
-    console.log(index)
+    // console.log(index)
     const columnIndex = columnHeights.indexOf(Math.min(...columnHeights))
     const left = columnIndex * (columnWidth + GUTTER)
     const top = columnHeights[columnIndex]
     video.left = left
     video.top = top
+    // if (index > currentShowNum.value) {
+    // }
+
     video.actualWidth = columnWidth
     if (video.height && video.width) {
       video.actualHeight =
@@ -115,7 +136,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="home">
+  <div id="home" ref="home" @scroll="onScroll">
     <!--    <div style="flex-grow: 1; position: relative; width: 100%">-->
 
     <div id="waterfall-scroll-container">
@@ -127,6 +148,7 @@ onUnmounted(() => {
         :key="index"
         @loadeddata="
           (element: HTMLElement) => {
+            // console.log('emit', element)
             video.loaded = true
             // loadedNum++
             // if (loadedNum > 20) {
@@ -140,15 +162,18 @@ onUnmounted(() => {
           }
         "
       />
-      <a-spin dot v-if="!isLoadedAll" />
-      <div class="list-append-area" :style="{ top: `${videoListHeight + 50}px` }">
-        <a-button
-          class="load-more-button"
-          :type="'outline'"
-          @click="onLoadMore"
-          :loading="!isLoadedAll"
-          >加载更多</a-button
-        >
+
+      <div class="list-append-area" :style="{ top: `${videoListHeight + 60}px` }">
+        <a-spin class="load-more" dot v-if="!isLoadedAll" :loading="!isLoadedAll" />
+
+        <!--        <a-button-->
+        <!--          class="load-more-button"-->
+        <!--          :class="{ loading: !isLoadedAll }"-->
+        <!--          :type="'primary'"-->
+        <!--          @click="onLoadMore"-->
+        <!--          :loading="!isLoadedAll"-->
+        <!--          >加载更多</a-button-->
+        <!--        >-->
       </div>
     </div>
     <!--    </div>-->
