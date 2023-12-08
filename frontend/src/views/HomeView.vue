@@ -1,16 +1,57 @@
 <script setup lang="ts">
 import VideoCard from '@/components/Cards/VideoCard.vue'
 import type { VideoMedia } from '@/types'
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { videos } from '@/mock'
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { pullVideo, videos } from '@/mock'
 import { debounce } from 'lodash-es'
 
 // const actualColumnWidth = ref(300)
+const videoList = ref<VideoMedia[]>([])
+const currentShowNum = ref(0)
+
+videoList.value = pullVideo(5)
+const isLoadedAll = computed(() => {
+  for (let video of videoList.value) {
+    if (!video.loaded) {
+      return false
+    }
+  }
+  return true
+})
+
+watch(isLoadedAll, (value, oldValue, onCleanup) => {
+  if (value) {
+    currentShowNum.value = videoList.value.length
+    calculateVideoPositions()
+    nextTick(() => {
+      calculateVideoPositions()
+    })
+  }
+})
+
+const onLoadMore = () => {
+  console.log('load more')
+  pullVideo(5).forEach((e) => {
+    videoList.value.push(e)
+  })
+}
+
+// watch(videoList, () => {
+//   if (videoList.value.length < 20) {
+//     debounce(calculateVideoPositions, 1000)()
+//   } else {
+//     calculateVideoPositions()
+//   }
+// })
+
+const videoListHeight = ref(0)
 
 // let timer
 const calculateVideoPositions = () => {
-  // FIXME
-  console.log('!')
+  if (!isLoadedAll.value) {
+    return
+  }
+
   const containerWidth = (document.getElementById('waterfall-scroll-container') as HTMLElement)
     .clientWidth
   const minColumnWidth = 240
@@ -27,7 +68,8 @@ const calculateVideoPositions = () => {
         )
       : Math.floor((containerWidth - (MAX_COLUMNS - 1) * GUTTER) / columns)
   const columnHeights = Array(columns).fill(0)
-  videos.forEach((video, index) => {
+  videoList.value.forEach((video, index) => {
+    console.log(index)
     const columnIndex = columnHeights.indexOf(Math.min(...columnHeights))
     const left = columnIndex * (columnWidth + GUTTER)
     const top = columnHeights[columnIndex]
@@ -42,6 +84,8 @@ const calculateVideoPositions = () => {
     columnHeights[columnIndex] +=
       document.getElementsByClassName('video-card')[index].clientHeight + GUTTER
   })
+
+  videoListHeight.value = Math.max(...columnHeights)
 }
 
 // function resizeHandler(func: Function, delay: number) {
@@ -58,7 +102,7 @@ const calculateVideoPositions = () => {
 // }
 
 const resizeEventHandler = () => {
-  debounce(calculateVideoPositions, 1000)
+  debounce(calculateVideoPositions, 250)()
 }
 
 onMounted(() => {
@@ -73,22 +117,39 @@ onUnmounted(() => {
 <template>
   <div id="home">
     <!--    <div style="flex-grow: 1; position: relative; width: 100%">-->
+
     <div id="waterfall-scroll-container">
+      <!--        v-show="isLoadedAll"-->
       <VideoCard
-        v-for="(video, index) in videos"
+        v-for="(video, index) in videoList"
+        v-show="index + 1 <= currentShowNum"
         :src="video"
         :key="index"
         @loadeddata="
           (element: HTMLElement) => {
+            video.loaded = true
+            // loadedNum++
+            // if (loadedNum > 20) {
+            //   debounce(calculateVideoPositions, 0)()
+            // }
             // element: <video>
             // video.width = element.clientWidth
             // video.height = element.clientHeight
             // console.log(video.height, element.clientHeight)
             // console.log(video.width, element.clientWidth)
-            debounce(calculateVideoPositions, 100)()
           }
         "
       />
+      <a-spin dot v-if="!isLoadedAll" />
+      <div class="list-append-area" :style="{ top: `${videoListHeight + 50}px` }">
+        <a-button
+          class="load-more-button"
+          :type="'outline'"
+          @click="onLoadMore"
+          :loading="!isLoadedAll"
+          >加载更多</a-button
+        >
+      </div>
     </div>
     <!--    </div>-->
   </div>

@@ -45,6 +45,7 @@ export interface VideoMedia {
   actualWidth?: number
   top: number
   left: number
+  loaded: boolean
 }
 
 export interface NotificationData {

@@ -7,8 +7,13 @@ export const getVideoById = (videoId: number | string) => {
   const id = typeof videoId === 'string' ? parseInt(videoId) : videoId
   return videos.filter((v) => v.id === id)[0]
 }
+import _ from 'lodash'
 
-export const videos: VideoMedia[] = reactive([
+export const pullVideo = (num: number): VideoMedia[] => {
+  return _.sampleSize(videos, num)
+}
+
+export const videos: VideoMedia[] = [
   {
     id: 1,
     title:
@@ -19,63 +24,32 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   },
   {
     id: 1,
@@ -87,29 +61,32 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   },
   {
     id: 1,
@@ -121,29 +98,32 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   },
   {
     id: 1,
@@ -155,29 +135,32 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   },
   {
     id: 1,
@@ -189,29 +172,32 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   },
   {
     id: 1,
@@ -223,29 +209,32 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   },
   {
     id: 1,
@@ -257,29 +246,32 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   },
   {
     id: 1,
@@ -291,29 +283,32 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   },
   {
     id: 1,
@@ -325,541 +320,38 @@ export const videos: VideoMedia[] = reactive([
     top: 0,
     left: 0,
     width: 1280,
-    height: 720
+    height: 720,
+    loaded: false
   },
   {
     id: 2,
     title: '亿万富翁找回儿子',
     authorId: 1,
     url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
+    // cover: prefix_url + '/videos/1.png',
     top: 0,
     left: 0,
     width: 1080,
-    height: 1920
+    height: 1920,
+    loaded: false
   },
   {
     id: 3,
     title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
     authorId: 1,
     url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
+    cover: prefix_url + '/videos/2.jpeg',
     top: 0,
     left: 0,
     width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
-  },
-  {
-    id: 1,
-    title:
-      '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
-    authorId: 1,
-    url: prefix_url + '/videos/3.mp4',
-    cover: prefix_url + '/videos/3.jpeg',
-    top: 0,
-    left: 0,
-    width: 1280,
-    height: 720
-  },
-  {
-    id: 2,
-    title: '亿万富翁找回儿子',
-    authorId: 1,
-    url: prefix_url + '/videos/1.mp4',
-    cover: prefix_url + '/videos/1.png',
-    top: 0,
-    left: 0,
-    width: 1080,
-    height: 1920
-  },
-  {
-    id: 3,
-    title: '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-    authorId: 1,
-    url: prefix_url + '/videos/2.mp4',
-    cover: prefix_url + '/videos/2.png',
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 576
+    height: 576,
+    loaded: false
   }
-])
+]
+// export const videos: VideoMedia[] = reactive(
+//   videosList.flatMap((element) => Array(3).fill(element))
+// )
+// const videos: VideoMedia[] = reactive(_.repeat(videosList, 3))
 
 // export const users: User[] = reactive([
 //   {

@@ -26,13 +26,15 @@
     // Video Cards Display
     //@for $i from 1 through 10 {
     //.video-card:nth-child(#{$i}) {
-    .video-card {
-      &:hover {
-        //animation: zoomInOut 0.5s;
-        transition: transform 0.3s ease-in-out;
-        transform: scale(1.05);
-      }
 
+
+    .video-card {
+      //&:hover {
+      //  //animation: zoomInOut 0.5s;
+      //  transition: transform 0.3s ease-in-out;
+      //  transform: scale(0.99);
+      //}
+      background-color: rgba(37, 38, 50, 1);
       //@extend .border-6;
       border: none;
       cursor: pointer;
@@ -49,22 +51,44 @@
       //will-change: transform;
       display: flex;
       flex-direction: column;
+
       .arco-card-cover {
         //height: max-content;
         //display: none;
 
-        .arco-image{
-          height:100%;
-          .arco-image-img{
-            //height:100%;
-          }
+        video {
+          filter: blur(0px); /* 初始状态 */
         }
 
-        border:none;
-        flex:1;
+        .arco-image {
+          height: 100%;
+
+
+          &.animated {
+            //height:100%;
+            .arco-image-img {
+
+              animation: blur 0.2s running alternate; /* 添加动画 */
+              @keyframes blur {
+                0% {
+                  filter: blur(10px); /* 初始状态 */
+                }
+                100% {
+                  filter: blur(0px); /* 最终状态 */
+                }
+              }
+            }
+          }
+
+
+        }
+
+        border: none;
+        flex: 1;
         background-color: rgba(37, 38, 50, 1);
-        .arco-image-with-footer-inner{
-          .arco-image-footer-caption{
+
+        .arco-image-with-footer-inner {
+          .arco-image-footer-caption {
             display: none;
           }
         }
@@ -72,7 +96,7 @@
 
       .arco-card-body {
         //display: none;
-        border:none;
+        border: none;
         background-color: rgba(37, 38, 50, 1);
 
         .video-title {
@@ -85,6 +109,25 @@
         .video-meta {
           color: #fff;
           opacity: 0.5;
+        }
+      }
+    }
+
+    .list-append-area {
+      width: 100%;
+      position: absolute;
+      height: 50px;
+
+
+      .load-more-button {
+        left: 45% !important;
+        color: $color-text-0;
+        border-color: white;
+        opacity: 0.4;
+        box-shadow: none;
+
+        &:hover {
+          opacity: 0.7;
         }
       }
     }

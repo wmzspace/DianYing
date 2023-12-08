@@ -1,93 +1,97 @@
 <template>
-  <a-card
-    v-show="isLoaded"
-    class="video-card"
-    :style="{
-      position: 'absolute',
-      top: `${props.src.top}px`,
-      left: `${props.src.left}px`,
-      width: `${props.src.actualWidth}px`,
-      height: `${props.src.actualHeight}px`
-    }"
-  >
-    <template #cover>
-      <a-image
-        v-if="!isPlaying && props.src.cover !== undefined"
-        :src="props.src.cover"
-        :title="props.src.title"
-        @click="router.push(`/video/${props.src.id}`)"
-        width="100%"
-        height="100%"
-        :fit="'cover'"
-        style="z-index: 10"
-        @mouseover="
-          (e: Event) => {
-            let video = (e.target as HTMLVideoElement).parentElement?.parentElement?.querySelector(
-              'video'
-            ) as HTMLVideoElement | null
-            playVideo(video)
-          }
-        "
-        @mouseout="
-          (e: Event) => {
-            let video = (e.target as HTMLVideoElement).parentElement?.parentElement?.querySelector(
-              'video'
-            ) as HTMLVideoElement | null
-            stopVideo(video)
-          }
-        "
-      >
-      </a-image>
-      <video
-        v-show="isPlaying || props.src.cover == undefined"
-        @click="router.push(`/video/${props.src.id}`)"
-        :src="props.src.url"
-        :title="props.src.title"
-        style="width: 100%; height: 100%; z-index: 9"
-        controls
-        muted
-        @mouseover="
-          (e) => {
-            playVideo(e.target as HTMLVideoElement | null)
-          }
-        "
-        @mouseout="
-          (e) => {
-            stopVideo(e.target as HTMLVideoElement | null)
-          }
-        "
-        @loadeddata="onLoadedData"
-        @play="onPlayVideo"
-      ></video>
-    </template>
-    <a-card-meta>
-      <template #title
-        ><p class="video-title">{{ props.src.title }}</p></template
-      >
-      <!--      <template #description> </template>-->
-      <template #avatar>
-        <div :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }">
-          <a-avatar
-            :size="24"
-            :image-url="'/images/avatar.jpeg'"
-            :style="{ marginRight: '8px' }"
-          ></a-avatar>
-          <a-typography-text>
-            <div class="video-meta">
-              <span>19岁带饭冲锋</span>
-              <span>·</span>
-              <span>1天前</span>
-            </div>
-          </a-typography-text>
-        </div>
+  <Transition name="animation-video-card">
+    <a-card
+      v-show="props.src.loaded"
+      class="video-card"
+      :style="{
+        position: 'absolute',
+        top: `${props.src.top}px`,
+        left: `${props.src.left}px`,
+        width: `${props.src.actualWidth}px`,
+        height: `${props.src.actualHeight}px`
+      }"
+    >
+      <template #cover>
+        <a-image
+          v-if="!isPlaying && props.src.cover !== undefined"
+          :src="props.src.cover"
+          :class="{ animated: isAnimated }"
+          :title="props.src.title"
+          @click="router.push(`/video/${props.src.id}`)"
+          width="100%"
+          height="100%"
+          :fit="'cover'"
+          style="z-index: 10"
+          @load="onLoadedImageData"
+          @mouseover="
+            (e: Event) => {
+              let video = (
+                e.target as HTMLVideoElement
+              ).parentElement?.parentElement?.querySelector('video') as HTMLVideoElement | null
+              playVideo(video)
+            }
+          "
+          @mouseout="
+            (e: Event) => {
+              let video = (
+                e.target as HTMLVideoElement
+              ).parentElement?.parentElement?.querySelector('video') as HTMLVideoElement | null
+              stopVideo(video)
+            }
+          "
+        >
+        </a-image>
+        <video
+          v-show="isPlaying || props.src.cover == undefined"
+          @click="router.push(`/video/${props.src.id}`)"
+          :src="props.src.url"
+          :title="props.src.title"
+          style="width: 100%; height: 100%; z-index: 9"
+          controls
+          muted
+          @mouseover="
+            (e) => {
+              playVideo(e.target as HTMLVideoElement | null)
+            }
+          "
+          @mouseout="
+            (e) => {
+              stopVideo(e.target as HTMLVideoElement | null)
+            }
+          "
+          @loadeddata="onLoadedVideoData"
+          @play="onPlayVideo"
+        ></video>
       </template>
-    </a-card-meta>
-    <template #actions>
-      <!--      <span class="icon-hover"> <IconThumbUp /> </span>-->
-      <!--      <span class="icon-hover"> <IconShareInternal /> </span>-->
-      <span class="icon-hover"> <IconMore /> </span>
-    </template>
-  </a-card>
+      <a-card-meta>
+        <template #title
+          ><p class="video-title">{{ props.src.title }}</p></template
+        >
+        <!--      <template #description> </template>-->
+        <template #avatar>
+          <div :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }">
+            <a-avatar
+              :size="24"
+              :image-url="'/images/avatar.jpeg'"
+              :style="{ marginRight: '8px' }"
+            ></a-avatar>
+            <a-typography-text>
+              <div class="video-meta">
+                <span>19岁带饭冲锋</span>
+                <span>·</span>
+                <span>1天前</span>
+              </div>
+            </a-typography-text>
+          </div>
+        </template>
+      </a-card-meta>
+      <template #actions>
+        <!--      <span class="icon-hover"> <IconThumbUp /> </span>-->
+        <!--      <span class="icon-hover"> <IconShareInternal /> </span>-->
+        <span class="icon-hover"> <IconMore /> </span>
+      </template>
+    </a-card>
+  </Transition>
   <!--  <a-space></a-space>-->
   <!--  <div>-->
   <!--  <a-skeleton :loading="!isLoaded" animation>-->
@@ -102,7 +106,7 @@
 <script setup lang="ts">
 import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/es/icon'
 import type { VideoMedia } from '@/types'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { videos } from '@/mock'
 
@@ -116,7 +120,8 @@ const props = defineProps<{
 const router = useRouter()
 
 const isPlaying = ref(false)
-const isLoaded = ref(false)
+const isAnimated = ref(false)
+// const isLoaded = ref(false)
 
 const onPlayVideo = (e: Event) => {
   console.log('play!')
@@ -146,11 +151,35 @@ const playVideo = (e: HTMLVideoElement | null) => {
     video.play()
     video.controls = true
   }
-
+  isAnimated.value = true
   isPlaying.value = true
 }
 
-const onLoadedData = (e: Event) => {
+const isLoadedImage = ref(false)
+const isLoadedVideo = ref(false)
+const isLoadedAll = computed(
+  () => isLoadedVideo.value && (isLoadedImage.value || props.src.cover === undefined)
+)
+
+const parentElement = ref<HTMLElement | null>(null)
+
+watch(isLoadedAll, (value, oldValue, onCleanup) => {
+  if (value) {
+    emit('loadeddata', parentElement.value)
+  }
+})
+
+const onLoadedImageData = (e: Event) => {
+  isLoadedImage.value = true
+  console.log('loaded image')
+  if (isLoadedVideo.value) {
+    emit('loadeddata', (e.target as HTMLElement).parentElement)
+  }
+}
+
+const onLoadedVideoData = (e: Event) => {
+  console.log('loaded video')
+
   let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
   if (video === null) {
     return
@@ -158,8 +187,11 @@ const onLoadedData = (e: Event) => {
   video.currentTime = 0 // 设置视频播放位置为开头
   video.pause()
   video.controls = false // 隐藏视频控制条
-  isLoaded.value = true
-
+  isLoadedVideo.value = true
+  parentElement.value = (e.target as HTMLElement).parentElement
+  // if (isLoadedImage.value) {
+  // emit('loadeddata', (e.target as HTMLElement).parentElement)
+  // }
   // @loadeddata="
   //   (element: HTMLElement) => {
   //     // element: <video>
@@ -168,7 +200,6 @@ const onLoadedData = (e: Event) => {
   //     calculateVideoPositions()
   //   }
   //   "
-  emit('loadeddata', (e.target as HTMLElement).parentElement)
 
   // element: <video>
   // const originVideo = props.src
