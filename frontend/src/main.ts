@@ -3,7 +3,7 @@ import '@/scss/app.scss'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
+import { Message } from '@arco-design/web-vue'
 import App from './App.vue'
 
 // xg player
@@ -38,3 +38,4 @@ app
   .use(ArcoVueIcon)
   .component('layout-a', LayoutA)
   .mount('#app')
+Message._context = app._context
