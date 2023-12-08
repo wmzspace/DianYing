@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import VideoDetailView from '@/views/VideoDetailView.vue'
 
 let routes: Array<RouteRecordRaw> = [
   {
@@ -10,7 +11,10 @@ let routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
-    redirect: '/discover'
+    redirect: '/discover',
+    meta: {
+      layout: 'a'
+    }
   },
   {
     path: '/discover',
@@ -21,14 +25,21 @@ let routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/HomeView.vue')
   },
   {
-    path: '/video/:videoId',
+    path: '/video/:video_id',
     name: 'videoDetail',
     meta: {
       layout: 'a'
     },
-    component: () => import('@/views/VideoDetailView.vue'),
+    component: VideoDetailView,
     props: true
   }
+  // children: [
+  //   // 当 /user/:id 匹配成功
+  //   // UserHome 将被渲染到 User 的 <router-view> 内部
+  //   { path: '', component: VideoDetailView }
+  //
+  //   // ...其他子路由
+  // ],
   // {
   //   path: '/tables',
   //   name: '明细',

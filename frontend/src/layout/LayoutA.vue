@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, RouterView } from 'vue-router'
 import ASideBar from '@/components/Sidebars/ASideBar.vue'
 import AHeader from '@/components/Headers/AHeader.vue'
 
@@ -39,7 +39,7 @@ const layoutClass = computed(() => route.meta.layoutClass)
           <AHeader />
         </a-layout-header>
         <a-layout-content>
-          <router-view />
+          <RouterView />
         </a-layout-content>
       </a-layout>
       <!-- / Page Content -->

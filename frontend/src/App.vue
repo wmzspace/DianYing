@@ -24,7 +24,7 @@ onMounted(() => {
   <a-config-provider>
     <!--    Layout & Router View-->
     <component :is="layout">
-      <router-view />
+      <!--      <router-view />-->
     </component>
     <!--    Layout & Router View-->
   </a-config-provider>

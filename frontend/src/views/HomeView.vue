@@ -168,14 +168,17 @@ function resizeEventHandler() {
   calculateVideoPositions()
 }
 
+function caller() {
+  return debounce(resizeEventHandler, 200)()
+}
 // window.addEventListener('resize', debounce(handle, 1000))
 
 onMounted(() => {
-  window.addEventListener('resize', debounce(resizeEventHandler, 200))
+  window.addEventListener('resize', caller)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', resizeEventHandler)
+  window.removeEventListener('resize', caller)
 })
 </script>
 

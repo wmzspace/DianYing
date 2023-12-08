@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { comments, getVideoById, videos } from '@/mock'
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import PresetPlayer, { Events } from 'xgplayer'
 import Danmu from 'xgplayer/es/plugins/danmu'
 import type { IDanmuConfig } from 'xgplayer/es/plugins/danmu'
@@ -8,16 +8,26 @@ import Player from 'xgplayer'
 import { debounce } from 'lodash-es'
 import type { DanMuProps } from '@/types'
 import { useUserStore } from '@/store/user/'
-import { isNavigationFailure, NavigationFailureType, useRouter } from 'vue-router'
+import {
+  isNavigationFailure,
+  NavigationFailureType,
+  onBeforeRouteUpdate,
+  useRoute,
+  useRouter
+} from 'vue-router'
 // import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
+const route = useRoute()
 const router = useRouter()
 const props = defineProps<{
-  videoId: string
+  video_id: string
 }>()
-const video = getVideoById(props.videoId)
+// const props = defineProps(['video_id'])
 
+//TODO
+let video = getVideoById(props.video_id)
+let player
 const calculateContainerPositions = () => {
   let playerContainer = document.getElementById('video-player')?.parentElement as HTMLElement
   let width = 0
@@ -36,9 +46,11 @@ const calculateContainerPositions = () => {
 const resizeEventHandler = () => {
   debounce(calculateContainerPositions, 250)()
 }
-
-onMounted(() => {
-  let player = new Player({
+onBeforeRouteUpdate((to, from, next) => {
+  console.log(to, from)
+  //TODO
+  video = getVideoById(to.params.video_id)
+  player = new Player({
     // id: `video-2`,
     id: 'video-player',
     lang: 'zh',
@@ -94,20 +106,84 @@ onMounted(() => {
     download: true
   })
 
+  next((vm) => {
+    console.log(vm)
+    // vm.$
+  })
+})
+onMounted(() => {
+  player = new Player({
+    // id: `video-2`,
+    id: 'video-player',
+    lang: 'zh',
+    // url: 'https://www.wmzspace.space/web2_cwk2/videos/3.mp4',
+    // plugins: [Danmu],
+    loop: true,
+    dynamicBg: {
+      disable: false
+    },
+    screenShot: true, //显示截图按钮
+    videoAttributes: {
+      crossOrigin: 'anonymous'
+    },
+    fitVideoSize: video.width > video.height ? 'fixed' : 'fixHeight',
+    videoFillMode: video.width > video.height ? 'cover' : undefined,
+    danmu: {
+      comments: [
+        //弹幕数组
+        {
+          duration: 15000, //弹幕持续显示时间,毫秒(最低为5000毫秒)
+          id: '1', //弹幕id，需唯一
+          start: 3000, //弹幕出现时间，毫秒
+          prior: true, //该条弹幕优先显示，默认false
+          color: true, //该条弹幕为彩色弹幕，默认false
+          txt: '长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕', //弹幕文字内容
+          style: {
+            //弹幕自定义样式
+            color: '#ff9500',
+            fontSize: '20px',
+            border: 'solid 1px #ff9500',
+            borderRadius: '50px',
+            padding: '5px 11px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)'
+          },
+          mode: 'top' //显示模式，top顶部居中，bottom底部居中，scroll滚动，默认为scroll
+          // el: DOM //直接传入一个自定义的DOM元素作为弹幕，使用该项的话会忽略所提供的txt
+          // eventListeners: [{ //支持自定义DOM设置DOM监听事件
+          //   event: 'click',
+          //   listener: function (e) {
+          //     console.log('click')
+          //   },
+          //   useCapture: false,
+          // }]
+        }
+      ]
+    },
+    url: video.url,
+    height: '100%',
+    width: '100%',
+    autoplayMuted: true,
+    autoplay: true,
+    // playsinline: true,
+    download: true
+  })
   // player.on(Events.AUTOPLAY_PREVENTED, () => {
   //   console.log('autoplay was prevented!!')
   // })
   //
+
   player.on(Events.LOADED_DATA, calculateContainerPositions)
 
   player.on(Events.AUTOPLAY_STARTED, () => {
     console.log('autoplay success!!')
   })
   window.addEventListener('resize', resizeEventHandler)
+  console.log(route.params.video_id)
 })
 
 onUnmounted(() => {
   console.log('leave detail view')
+
   window.removeEventListener('resize', resizeEventHandler)
 })
 </script>
@@ -215,12 +291,17 @@ onUnmounted(() => {
           :style="{ marginRight: '8px' }"
         ></a-avatar>
         <div class="basic-info">
-          <span class="name"> 19岁带饭冲锋🌈 </span>
-          <icon-right />
-          <div class="statistic">
-            <span class="title"> 粉丝</span> <span class="number">8000</span>
-            <span class="title"> 获赞</span> <span class="number">2.6万</span>
+          <div class="text-info">
+            <a-link class="name">
+              <span> 19岁带饭冲锋🌈 </span>
+            </a-link>
+            <!--          <icon-right />-->
+            <div class="statistic">
+              <span class="title"> 粉丝</span> <span class="number">8000</span>
+              <span class="title"> 获赞</span> <span class="number">2.6万</span>
+            </div>
           </div>
+          <a-button class="follow-button">关注</a-button>
         </div>
       </div>
       <div class="related-video">
@@ -234,7 +315,7 @@ onUnmounted(() => {
             action-layout="vertical"
             @click="
               () => {
-                router.push({ name: 'videoDetail', params: { videoId: relatedVideo.id } })
+                router.push({ name: 'videoDetail', params: { video_id: relatedVideo.id } })
               }
             "
           >
@@ -251,12 +332,12 @@ onUnmounted(() => {
               </a>
             </template>
             <a-list-item-meta :title="relatedVideo.title"> </a-list-item-meta>
-            <template #actions>
-              <span class="action"> <IconHeart /> <span>1</span> </span>
-              <span class="action-author">{{
-                userStore.getUserById(relatedVideo.authorId).name
-              }}</span>
-            </template>
+            <!--            <template #actions>-->
+            <span class="action"> <IconHeart /> <span>1</span> </span>
+            <!--              <span class="action-author">{{-->
+            <!--                userStore.getUserById(relatedVideo.authorId).name-->
+            <!--              }}</span>-->
+            <!--            </template>-->
           </a-list-item>
         </a-list>
       </div>

@@ -217,19 +217,19 @@ const setSearchBarPopWidth = () => {
   </div>
 </template>
 
-<style scoped>
-.action {
-  display: inline-block;
-  padding: 0 4px;
-  color: var(--color-text-1);
-  line-height: 24px;
-  background: transparent;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.1s ease;
-}
-
-.action:hover {
-  background: var(--color-fill-3);
-}
+<style scoped lang="scss">
+//.action {
+//  display: inline-block;
+//  padding: 0 4px;
+//  color: var(--color-text-1);
+//  line-height: 24px;
+//  background: transparent;
+//  border-radius: 2px;
+//  cursor: pointer;
+//  transition: all 0.1s ease;
+//}
+//
+//.action:hover {
+//  background: var(--color-fill-3);
+//}
 </style>

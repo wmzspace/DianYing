@@ -410,45 +410,69 @@
         flex: 1 1 0%;
         margin: 0px 8px;
         overflow: hidden;
+        display: flex;
+        align-items: center;
 
-        .name {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          //font-size: 14px;
-          white-space: nowrap;
-          color: $color-text-t1;
+        .text-info {
+          flex: 1;
+
+          .name {
+            background: transparent !important;
+            padding: 0;
+            margin: 5px 0;
+
+            span {
+              text-overflow: ellipsis;
+              overflow: hidden;
+              //font-size: 14px;
+              white-space: nowrap;
+              color: $color-text-t1;
+            }
+          }
+
+          .statistic {
+            color: $color-text-t4;
+            font-size: 12px;
+            line-height: 20px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+
+            .title {
+              font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
+              font-size: 12px;
+              font-weight: 400;
+              line-height: 20px;
+              margin-right: 2px;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
+            }
+
+            .number {
+              color: $color-text-t1;
+              font-family: "PingFang SC", DFPKingGothicGB-Medium, sans-serif;
+              font-size: 12px;
+              font-weight: 600;
+              line-height: 20px;
+              margin-right: 8px;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
+            }
+          }
+
         }
 
-        .statistic {
-          color: $color-text-t4;
-          font-size: 12px;
-          line-height: 20px;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-
-          .title {
-            font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
-            font-size: 12px;
-            font-weight: 400;
-            line-height: 20px;
-            margin-right: 2px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-          }
-
-          .number {
-            color: $color-text-t1;
-            font-family: "PingFang SC", DFPKingGothicGB-Medium, sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            line-height: 20px;
-            margin-right: 8px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-          }
+        .follow-button {
+          color: $color-const-text-white;
+          background: $color-primary;
+          align-self: center;
+          padding-inline-end: 16px;
+          padding-inline-start: 16px;
+          padding-left: 16px;
+          padding-right: 16px;
+          border-radius: 8px;
         }
       }
     }
@@ -519,17 +543,24 @@
                   }
                 }
 
-                .arco-list-item-action {
+                .action {
+                  width: 100%;
                   color: $color-text-t3;
-
-                  li:first-child {
-                    flex: 1;
-                  }
-
-                  .action-author {
-
-                  }
                 }
+
+                //.arco-list-item-action {
+                //  color: $color-text-t3;
+                //
+                //  li:first-child {
+                //    flex: 1;
+                //    width: 100%;
+                //
+                //  }
+                //
+                //  .action-author {
+                //
+                //  }
+                //}
               }
 
               .arco-list-item-extra {
@@ -559,10 +590,12 @@
                       height: 100%;
                       -o-object-fit: cover;
                       object-fit: cover;
-                      &:hover,&:focus{
+
+                      &:hover, &:focus {
                         transform: scale(1.1);
 
                       }
+
                       transition: all .3s ease-in;
                       color: #161722;
                       max-height: 100%;

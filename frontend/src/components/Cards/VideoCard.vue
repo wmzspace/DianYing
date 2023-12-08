@@ -118,7 +118,7 @@ const onMouseOver = (e: Event) => {
 }
 
 const onMouseOutVideo = (e: Event) => {
-  console.log('mouseout video')
+  // console.log('mouseout video')
   clearTimeout(timeout)
   let video = (e.target as HTMLVideoElement).parentElement?.parentElement?.querySelector(
     'video'
@@ -128,7 +128,7 @@ const onMouseOutVideo = (e: Event) => {
 }
 
 const onMouseOutImage = (e: Event) => {
-  console.log('mouseout image')
+  // console.log('mouseout image')
 
   clearTimeout(timeout)
   let video = (e.target as HTMLVideoElement).parentElement?.parentElement?.querySelector(
