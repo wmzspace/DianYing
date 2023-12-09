@@ -100,6 +100,7 @@ const calculateVideoPositions = () => {
   const container = document.getElementById('waterfall-scroll-container') as HTMLElement
   const containerWidth = container.clientWidth
 
+  // const minColumnWidth = 240
   const minColumnWidth = 240
   const maxColumnWidth = 450
   const MAX_COLUMNS = 8
@@ -135,6 +136,14 @@ const calculateVideoPositions = () => {
   })
 
   videoListHeight.value = Math.max(...columnHeights)
+  // console.clear()
+  // console.log('video list', videoListHeight.value)
+  // console.log('body client', document.body.clientHeight)
+  // console.log('body scroll', document.body.scrollHeight)
+  // console.log('body offset', document.body.offsetHeight)
+  // console.log('window inner', window.innerHeight)
+  // console.log('window outer', window.outerHeight)
+  document.documentElement.style.height = `${window.innerHeight}px`
 }
 
 // function resizeHandler(func: Function, delay: number) {
@@ -165,6 +174,9 @@ const calculateVideoPositions = () => {
 // }
 
 function resizeEventHandler() {
+  if (home.value.scrollTop + home.value.clientHeight >= videoListHeight.value) {
+    onLoadMore()
+  }
   calculateVideoPositions()
 }
 

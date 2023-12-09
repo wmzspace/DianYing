@@ -2914,7 +2914,7 @@ export const videos: VideoMedia[] = [
 //   }
 // ])
 
-interface Comment {
+export interface Comment {
   id: number
   parentId: number
   authorId: number

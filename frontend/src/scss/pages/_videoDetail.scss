@@ -1,617 +1,751 @@
 #video-detail {
-  height: 100%;
+  //height: 100%;
   //height: max-content;
   width: 100%;
-  min-width: 852px;
+  //min-width: 852px;
   display: flex;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 64px;
-  padding: 0 40px;
-  max-width: 134.2vh;
+  flex-direction: column;
+  //margin-left: auto;
+  //margin-right: auto;
+  //margin-right: 20px;
+  //margin-bottom: 64px;
+  padding: 0 20px 0 0;
+  //padding: 0 20px;
+  //max-width: 134.2vh;
 
 
-  @media (min-width: 1032px) {
-    display: flex;
-    max-width: calc(175.2vh + 57.816px);
-  }
+  //@media (min-width: 1032px) {
+  //  display: flex;
+  //  max-width: calc(175.2vh + 57.816px);
+  //}
+  //
+  //@media (min-width: 1680px) {
+  //  margin: auto;
+  //}
 
-  @media (min-width: 1680px) {
-    margin: auto;
-  }
-
-
-  .leftContainer {
-    @extend .border-5;
-
-    //height: max-conteant;
-    //height: 100%;
-    //height:100%;
+  .mainContainer {
+    $leftContainerWidth:73%;
+    $rightContainerWidth:27%;
     width: 100%;
-
+    height: 100%;
+    margin-bottom: 64px;
+    //display: flex;
+    @media (min-width: 0) {
+      //display: none;
+      //flex-direction: column;
+      //width: 100%;
+    }
     @media (min-width: 1032px) {
-      padding-right: 20px;
-      width: 75% !important;
+      //flex-direction: row;
     }
 
-    .video-detail-container {
-      position: relative;
-      min-height: 300px;
-      //height: 30%;
-      //height: 300px;
-      border-radius: 16px;
 
-      overflow: hidden;
-      //z-index: 100;
+    //.leftContainer {
+    //  @extend .border-5;
+    //
+    //  //height: max-conteant;
+    //  //height: 100%;
+    //  //height:100%;
+    //  width: 100%;
+    //  @media (min-width: 1032px) {
+    //    padding-right: 20px;
+    //    width: 75% !important;
+    //  }
 
-      .xgplayer:not(.xgplayer-mini) {
-        -webkit-touch-callout: none;
-        background: #000;
-        font-size: 14px;
-        overflow: hidden;
-        min-width: 440px;
-        height: 100% !important;
-        left: 0px !important;
-        position: absolute !important;
-        top: 0px !important;
-        width: 100% !important;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        //cursor: none;
+    .videoContainer {
+      order: 1;
+      @media (min-width: 0) {
+
       }
-    }
+      @media (min-width: 1032px) {
+        display: inline-block;
+        height: min-content;
+        width: $leftContainerWidth;
+      }
 
-    .detail-video-info {
+      .video-detail-container {
+        @media (min-width: 1032px) {
+          //height: min-content;
+          &.vh-70 {
+            height: 70vh;
+            //height: 70vh;
+          }
+        }
 
-      color: $color-text-t1;
-
-      .detail-video-title {
-
-        --lineClamp: 2;
-        line-height: 26px;
-        max-height: 52px;
-        -webkit-line-clamp: var(--lineClamp);
-        -webkit-box-orient: vertical;
-        display: -webkit-box;
         position: relative;
-        text-align: justify;
-        text-overflow: ellipsis;
-        width: 100%;
-        //overflow: hidden;
-        margin: 12px 0;
+        min-height: 300px;
+        //height: 30%;
+        //height: 300px;
+        border-radius: 16px;
 
+        overflow: hidden;
+        //z-index: 100;
+
+        .xgplayer:not(.xgplayer-mini) {
+          -webkit-touch-callout: none;
+          background: #000;
+          font-size: 14px;
+          overflow: hidden;
+          //min-width: 440px;
+          //min-width: auto;
+          height: 100% !important;
+          left: 0px !important;
+          position: absolute !important;
+          top: 0px !important;
+          width: 100% !important;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          //cursor: none;
+        }
       }
 
-      .detail-video-actions {
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 4px;
+      .detail-video-info {
+
+        color: $color-text-t1;
+
+        .detail-video-title {
+
+          --lineClamp: 2;
+          line-height: 26px;
+          max-height: 52px;
+          -webkit-line-clamp: var(--lineClamp);
+          -webkit-box-orient: vertical;
+          display: -webkit-box;
+          position: relative;
+          text-align: justify;
+          text-overflow: ellipsis;
+          width: 100%;
+          //overflow: hidden;
+          margin: 12px 0;
+
+        }
+
+        .detail-video-actions {
+          align-items: center;
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 4px;
 
 
-        .detail-video-actions-left {
-          .arco-list {
-            @extend .border-1;
-            //border:none;
-            margin: 0;
-            padding: 0;
-            color: $color-text-t1;
+          .detail-video-actions-left {
+            .arco-list {
+              @extend .border-1;
+              //border:none;
+              margin: 0;
+              padding: 0;
+              color: $color-text-t1;
 
-            .arco-list-content {
-              display: flex;
-              flex-direction: row;
+              .arco-list-content {
+                display: flex;
+                flex-direction: row;
 
-              justify-content: center;
-              margin-left: -5px;
+                justify-content: center;
+                margin-left: -5px;
 
-              .arco-list-item {
-                border: none;
+                .arco-list-item {
+                  border: none;
 
-                width: max-content;
-                //width:100%;
-                height: 100%;
-                margin: 0 24px 0 0;
-                padding: 0;
+                  width: max-content;
+                  //width:100%;
+                  height: 100%;
+                  margin: 0 24px 0 0;
+                  padding: 0;
 
-                .arco-list-item-content {
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
+                  .arco-list-item-content {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
 
-                  svg {
-                    //align-self: center;
-                    //vertical-align: middle;
-                    //width: 100%;
-                    //height: 100%;
-                    //overflow:visible;
-                    padding: 4px;
-                    margin-right: 4px;
-                    font-size: 23px;
-                    transform: translate3d(0px, 0px, 0px);
-                    content-visibility: visible;
-                    //vertical-align: middle;
+                    svg {
+                      //align-self: center;
+                      //vertical-align: middle;
+                      //width: 100%;
+                      //height: 100%;
+                      //overflow:visible;
+                      padding: 4px;
+                      margin-right: 4px;
+                      font-size: 23px;
+                      transform: translate3d(0px, 0px, 0px);
+                      content-visibility: visible;
+                      //vertical-align: middle;
+                    }
                   }
                 }
               }
             }
           }
-        }
 
-        .detail-video-actions-right {
-          align-items: center;
-          color: $color-text-t4;
-          display: flex;
-          font-family: "PingFang SC", DFPKingGothicGB-Medium, sans-serif;
-          font-size: 15px;
-          font-weight: 400;
-          justify-content: flex-end;
-          line-height: 18px;
-
-          .report {
+          .detail-video-actions-right {
             align-items: center;
-            //color: rgba(22,24,35,.34);
             color: $color-text-t4;
             display: flex;
+            font-family: "PingFang SC", DFPKingGothicGB-Medium, sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            justify-content: flex-end;
+            line-height: 18px;
 
-            span {
+            .report {
+              align-items: center;
+              //color: rgba(22,24,35,.34);
+              color: $color-text-t4;
+              display: flex;
+
+              span {
+                font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 22px;
+                margin-left: 3px;
+                margin-right: 24px;
+              }
+            }
+
+            .publish-time {
               font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
-              font-size: 13px;
+              font-size: 14px;
               font-weight: 400;
               line-height: 22px;
-              margin-left: 3px;
-              margin-right: 24px;
             }
-          }
-
-          .publish-time {
-            font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 22px;
           }
         }
       }
     }
 
-    .detail-comment-divider {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
-
-      .comment-title {
-        color: $color-text-3;
-        line-height: 24px;
-        position: relative;
-        background-color: $color-bg-b0;
-        display: inline-block;
-        font-size: 16px;
-        height: 100% !important;
-        padding: 0;
-        z-index: 2;
-        //vertical-align: center;
-        margin: auto 0;
-        width: 5rem;
-      }
-
-      .arco-divider-horizontal {
-        border: none;
-        //border:thin solid red;
-        background-color: $color-line-l3;
-        //background-color: red !important;
-        display: inline-block;
-        height: 1px;
-        min-height: 1px;
-        position: relative;
-        min-width: auto;
+    .commentContainer {
+      @media (min-width: 0) {
+        //display: none;
+        order: 3;
         //width: 100%;
-        //margin: 20px 0;
+      }
+      @media (min-width: 1032px) {
+        //display: block;
+        //width: 25%;
+        order: 2;
+        //display: inline-block;
+        width: $leftContainerWidth;
+
+        height: min-content;
+
       }
 
-      background-color: transparent;
-    }
-
-
-    .comment-input {
-      &.arco-input-wrapper {
-        align-items: center;
-        display: flex;
-        justify-content: center;
-        min-height: 44px;
-        position: relative;
+      .detail-comment-divider {
         width: 100%;
-        background: hsla(0, 0%, 100%, .06);
-        border: 1px solid $color-bg-b3;
-        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
 
-        .arco-input {
-
+        .comment-title {
+          color: $color-text-3;
+          line-height: 24px;
+          position: relative;
+          background-color: $color-bg-b0;
+          display: inline-block;
+          font-size: 16px;
+          height: 100% !important;
+          padding: 0;
+          z-index: 2;
+          //vertical-align: center;
+          margin: auto 0;
+          width: 5rem;
         }
 
-        .arco-input-suffix {
-          height: 100%;
-          //align-items: center;
-          //justify-content: center;
-          img.icon-at {
-            margin-right: 3px;
-            //fill-opacity: 0.5;
-            //font-size: 35px;
-            opacity: 0.20;
-            vertical-align: center;
+        .arco-divider-horizontal {
+          border: none;
+          //border:thin solid red;
+          background-color: $color-line-l3;
+          //background-color: red !important;
+          display: inline-block;
+          height: 1px;
+          min-height: 1px;
+          position: relative;
+          min-width: auto;
+          //width: 100%;
+          //margin: 20px 0;
+        }
 
-            &:hover, &:focus {
-              opacity: 0.44;
+        background-color: transparent;
+      }
+
+      .comment-input {
+        &.arco-input-wrapper {
+          align-items: center;
+          display: flex;
+          justify-content: center;
+          min-height: 44px;
+          position: relative;
+          width: 100%;
+          background: hsla(0, 0%, 100%, .06);
+          border: 1px solid $color-bg-b3;
+          border-radius: 12px;
+
+          .arco-input {
+            caret-color: white;
+            color: $color-text-0
+          }
+
+          .arco-input-suffix {
+            height: 100%;
+            //align-items: center;
+            //justify-content: center;
+            img.icon-at {
+              margin-right: 3px;
+              //fill-opacity: 0.5;
+              //font-size: 35px;
+              opacity: 0.20;
+              vertical-align: center;
+
+              &:hover, &:focus {
+                opacity: 0.44;
+              }
+            }
+
+            img.icon-send {
+              //fill: $color-primary !important;
+              //fill-opacity: 1;
+              //border:none;
+              //color: transparent;
+              //font-size: 35px;
             }
           }
+        }
 
-          img.icon-send {
-            //fill: $color-primary !important;
-            //fill-opacity: 1;
-            //border:none;
-            //color: transparent;
-            //font-size: 35px;
-          }
+      }
+
+      .new-comment {
+        margin-top: 16px;
+        padding-bottom: 24.5px;
+
+        .arco-avatar {
+          cursor: pointer;
+          margin-right: 12px;
+          z-index: 1;
         }
       }
 
-    }
-
-    .new-comment {
-      margin-top: 16px;
-      padding-bottom: 24.5px;
-
-      .arco-avatar {
-        cursor: pointer;
-        margin-right: 12px;
-        z-index: 1;
-      }
-    }
-
-    .usually-search {
-      margin-bottom: 7.5px;
-      padding-bottom: 2px;
-      -webkit-app-region: no-drag;
-      color: $color-text-t4;
-      display: flex;
-      flex: 1 1;
-      font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 22px;
-      margin-right: 20px;
-      overflow: hidden;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-
-      .usually-search-topic {
+      .usually-search {
+        margin-bottom: 7.5px;
+        padding-bottom: 2px;
+        -webkit-app-region: no-drag;
+        color: $color-text-t4;
         display: flex;
+        flex: 1 1;
+        font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 22px;
+        margin-right: 20px;
         overflow: hidden;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
 
-        .usually-search-topic-text {
-          flex: 1 1;
+        .usually-search-topic {
+          display: flex;
           overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          color: $search-text-color;
-        }
 
-        .usually-search-icon {
-          fill: $search-text-color;
-          height: 9px;
-          margin: 0 2px;
-          position: relative;
-          top: 2px;
-          vertical-align: super;
-          width: 9px;
-          flex-shrink: 0;
-        }
-      }
-    }
-
-    .comments-list {
-
-
-      .arco-comment {
-        //background-color: transparent;
-        .arco-comment-inner {
-          // 评论内容
-          &.commenting {
-            background: $input-linear;
+          .usually-search-topic-text {
+            flex: 1 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: $search-text-color;
           }
 
-          .arco-comment-inner-content {
-            .arco-comment-title {
-              .arco-comment-author {
+          .usually-search-icon {
+            fill: $search-text-color;
+            height: 9px;
+            margin: 0 2px;
+            position: relative;
+            top: 2px;
+            vertical-align: super;
+            width: 9px;
+            flex-shrink: 0;
+          }
+        }
+      }
+
+      .comments-list {
+        .arco-comment {
+          //background-color: transparent;
+          .arco-comment-inner {
+            // 评论内容
+            &:has(>.arco-comment-inner-comment>.reply-comment) {
+              background: $input-linear;
+            }
+
+            .arco-comment-inner-content {
+              .arco-comment-title {
+                .arco-comment-author {
+                  color: $color-text-2;
+                }
+
+                .arco-comment-datetime {
+                  font-size: 14px;
+                  font-weight: 400;
+                  height: auto;
+                  line-height: 20px;
+                }
+              }
+
+              .arco-comment-content {
+                color: $color-text-0;
+              }
+
+              .arco-comment-actions {
+                .action{
+                  cursor: pointer;
+                }
+                margin: 3px 0;
                 color: $color-text-2;
               }
 
-              .arco-comment-datetime {
-                font-size: 14px;
-                font-weight: 400;
-                height: auto;
-                line-height: 20px;
+            }
+
+            // 嵌套评论
+            .arco-comment-inner-comment {
+              &:not(:has(.reply-comment)) {
+                margin: 0;
               }
-            }
 
-            .arco-comment-content {
-              color: $color-text-0;
-            }
+              .arco-comment.reply-comment {
+                //&:not(.on-reply) {
+                //  display: none !important;
+                //}
 
-            .arco-comment-actions {
-              margin: 3px 0;
-              color: $color-text-2;
-            }
+                .arco-comment-inner {
+                  .arco-comment-inner-content {
+                    .arco-comment-title {
+                      .arco-comment-author {
 
-          }
+                      }
 
-          // 嵌套评论
-          .arco-comment-inner-comment {
-            .arco-comment.reply-comment {
-              .arco-comment-inner {
-                .arco-comment-inner-content {
-                  .arco-comment-title {
-                    .arco-comment-author {
+                      .arco-comment-datetime {
 
+                      }
                     }
 
-                    .arco-comment-datetime {
-
+                    .arco-comment-content {
+                      .arco-input-wrapper {
+                        @extend .comment-input
+                      }
                     }
-                  }
 
-                  .arco-comment-content {
-                    .arco-input-wrapper {
-                      @extend .comment-input
+                    .arco-comment-actions {
+                      margin: 3px 0;
+                      color: $color-text-2;
                     }
-                  }
-
-                  .arco-comment-actions {
-                    margin: 3px 0;
-                    color: $color-text-2;
                   }
                 }
+
+
               }
-
-
             }
-          }
 
+          }
+        }
+
+        .comments-list-append {
+          color: $color-text-t4;
+          font-size: 12px;
+          line-height: 20px;
+          margin: 40px 0;
+          text-align: center;
+          //margin-bottom: 24px;
+          //margin-top: 24px;
         }
       }
     }
-  }
 
-  .rightContainer {
-    margin-bottom: 40px;
-    @media (min-width: 0) {
-      display: none;
-    }
-    @media (min-width: 1032px) {
-      display: block;
-      width: 25%;
-    }
+    //}
 
-    .user-info {
-      margin: 1px 0px 3px;
-      align-items: center;
-      display: flex;
-      height: 90px;
-      justify-content: center;
+    .relatedInfoContainer {
+      margin-bottom: 40px;
 
-      .arco-avatar {
-        transform: scale(1);
-        transition: all 0.3s ease-in 0s;
+      float: right;
+      @media (min-width: 0) {
+        //display: none;
+        order: 2;
+        width: 100%;
+      }
+      @media (min-width: 1032px) {
+        display: block;
+        height: min-content;
+        padding-left: 20px;
+        width: $rightContainerWidth;
+        order: 3;
       }
 
-      .basic-info {
-        flex: 1 1 0%;
-        margin: 0px 8px;
-        overflow: hidden;
-        display: flex;
+      .user-info {
+        margin: 1px 0px 3px;
         align-items: center;
+        display: flex;
+        height: 90px;
+        justify-content: center;
 
-        .text-info {
-          flex: 1;
+        .arco-avatar {
+          transform: scale(1);
+          transition: all 0.3s ease-in 0s;
+        }
 
-          .name {
-            background: transparent !important;
-            padding: 0;
-            margin: 5px 0;
+        .basic-info {
+          flex: 1 1 0%;
+          margin: 0px 8px;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
 
-            span {
+          .text-info {
+            flex: 1;
+
+            .name {
+              background: transparent !important;
+              padding: 0;
+              margin: 5px 0;
+
+              span {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                //font-size: 14px;
+                white-space: nowrap;
+                color: $color-text-t1;
+              }
+            }
+
+            .statistic {
+              color: $color-text-t4;
+              font-size: 12px;
+              line-height: 20px;
               text-overflow: ellipsis;
               overflow: hidden;
-              //font-size: 14px;
               white-space: nowrap;
-              color: $color-text-t1;
+
+              .title {
+                font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
+                font-size: 12px;
+                font-weight: 400;
+                line-height: 20px;
+                margin-right: 2px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+              }
+
+              .number {
+                color: $color-text-t1;
+                font-family: "PingFang SC", DFPKingGothicGB-Medium, sans-serif;
+                font-size: 12px;
+                font-weight: 600;
+                line-height: 20px;
+                margin-right: 8px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+              }
             }
+
           }
 
-          .statistic {
-            color: $color-text-t4;
-            font-size: 12px;
-            line-height: 20px;
+          .follow-button {
+            color: $color-const-text-white;
+            background: $color-primary;
+            align-self: center;
+            padding-inline-end: 16px;
+            padding-inline-start: 16px;
+            padding-left: 16px;
+            padding-right: 16px;
+            border-radius: 8px;
+          }
+        }
+      }
+
+      .related-video {
+        .cover-age-title-container {
+          h2 {
+            color: $color-text-t1;
+            font-family: "PingFang SC", DFPKingGothicGB-Medium, sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 26px;
             text-overflow: ellipsis;
+            flex: 1 1 0%;
             overflow: hidden;
             white-space: nowrap;
-
-            .title {
-              font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
-              font-size: 12px;
-              font-weight: 400;
-              line-height: 20px;
-              margin-right: 2px;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
-            }
-
-            .number {
-              color: $color-text-t1;
-              font-family: "PingFang SC", DFPKingGothicGB-Medium, sans-serif;
-              font-size: 12px;
-              font-weight: 600;
-              line-height: 20px;
-              margin-right: 8px;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
-            }
           }
-
         }
 
-        .follow-button {
-          color: $color-const-text-white;
-          background: $color-primary;
-          align-self: center;
-          padding-inline-end: 16px;
-          padding-inline-start: 16px;
-          padding-left: 16px;
-          padding-right: 16px;
-          border-radius: 8px;
-        }
-      }
-    }
+        .video-list {
+          margin: 0;
+          padding: 0;
 
-
-    .related-video {
-      .cover-age-title-container {
-        h2 {
-          color: $color-text-t1;
-          font-family: "PingFang SC", DFPKingGothicGB-Medium, sans-serif;
-          font-size: 18px;
-          font-weight: 500;
-          line-height: 26px;
-          text-overflow: ellipsis;
-          flex: 1 1 0%;
-          overflow: hidden;
-          white-space: nowrap;
-        }
-      }
-
-      .video-list {
-        margin: 0;
-        padding: 0;
-
-        .arco-list {
-          border: none;
-
-          .arco-list-content {
-            margin: 0;
-            padding: 0;
+          .arco-list {
             border: none;
 
-            .arco-list-item {
-              //z-index:100;
-              //display: inline-block;
+            .arco-list-content {
+              margin: 0;
               padding: 0;
               border: none;
-              margin: 24px 0 0 0;
 
-              .arco-list-item-main {
-                //order:2;
-                flex: 1 1;
-                overflow: hidden;
-                text-align: left;
+              .arco-list-item {
+                //z-index:100;
+                //display: inline-block;
+                padding: 0;
+                border: none;
+                margin: 24px 0 0 0;
 
-                .arco-list-item-content {
-                  .arco-list-item-meta {
-                    display: flex;
-                    align-items: normal;
-                    //height: 90px;
-                    width: 100%;
-
-                    .arco-list-item-meta-content {
-                      .arco-list-item-meta-title {
-                        color: $color-text-t1 !important;
-                        font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
-                        font-size: 14px;
-                        font-weight: 400;
-                        height: 66px;
-                        line-height: 22px;
-                        overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
-                        text-overflow: ellipsis; /*可以用来多行文本的情况下，用省略号“…”隐藏超出范围的文本 。*/
-                        display: -webkit-box; /*必须结合的属性 ，将对象作为弹性伸缩盒子模型显示 。*/
-                        -webkit-line-clamp: 3; /*用来限制在一个块元素显示的文本的行数。*/
-                        -webkit-box-orient: vertical;
-                      }
-                    }
+                &:hover {
+                  .arco-list-item-meta-title a {
+                    color: $color-text-t0 !important;
+                    //display: none !important;
                   }
-                }
 
-                .action {
-                  width: 100%;
-                  color: $color-text-t3;
-                }
-
-                //.arco-list-item-action {
-                //  color: $color-text-t3;
-                //
-                //  li:first-child {
-                //    flex: 1;
-                //    width: 100%;
-                //
-                //  }
-                //
-                //  .action-author {
-                //
-                //  }
-                //}
-              }
-
-              .arco-list-item-extra {
-                order: -1;
-                align-self: center;
-                //justify-self: center;
-                border-radius: 12px;
-                flex-shrink: 0;
-                height: 90px;
-                margin-right: 8px;
-                overflow: hidden;
-                position: relative;
-                width: 120px;
-
-                a {
-                  position: static;
-
-                  .image-area {
-                    align-items: center;
-                    display: flex;
-                    height: 100%;
-                    justify-content: center;
-                    position: relative;
-                    width: 100%;
-
+                  .arco-list-item-extra {
                     img {
-                      height: 100%;
-                      -o-object-fit: cover;
-                      object-fit: cover;
+                      transform: scale(1.1);
+                      transition: all .2s ease-out;
+                    }
+                  }
 
-                      &:hover, &:focus {
-                        transform: scale(1.1);
+                }
 
+                .arco-list-item-main {
+                  //order:2;
+                  flex: 1 1;
+                  overflow: hidden;
+                  text-align: left;
+
+                  .arco-list-item-content {
+                    .arco-list-item-meta {
+                      display: flex;
+                      align-items: normal;
+                      //height: 90px;
+                      width: 100%;
+
+                      .arco-list-item-meta-content {
+                        .arco-list-item-meta-title {
+                          height: 66px;
+
+                          a {
+                            text-decoration: none;
+                            color: $color-text-t1;
+                            //text-decoration: none !important;
+                            font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+                            font-size: 14px;
+                            font-weight: 400;
+                            line-height: 22px;
+                            overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
+                            text-overflow: ellipsis; /*可以用来多行文本的情况下，用省略号“…”隐藏超出范围的文本 。*/
+                            display: -webkit-box; /*必须结合的属性 ，将对象作为弹性伸缩盒子模型显示 。*/
+                            -webkit-line-clamp: 3; /*用来限制在一个块元素显示的文本的行数。*/
+                            -webkit-box-orient: vertical;
+                          }
+
+                        }
                       }
+                    }
+                  }
 
-                      transition: all .3s ease-in;
-                      color: #161722;
-                      max-height: 100%;
-                      max-width: 100%;
+                  .action {
+                    width: 100%;
+                    color: $color-text-t3;
+
+                  }
+
+                  .action-author {
+                    float: right;
+                    color: $color-text-t3;
+
+                    &:hover {
+                      color: $color-text-t0;
+                    }
+                  }
+
+                  //.arco-list-item-action {
+                  //  color: $color-text-t3;
+                  //
+                  //  li:first-child {
+                  //    flex: 1;
+                  //    width: 100%;
+                  //
+                  //  }
+                  //
+                  //  .action-author {
+                  //
+                  //  }
+                  //}
+                }
+
+                .arco-list-item-extra {
+                  order: -1;
+                  align-self: center;
+                  //justify-self: center;
+                  border-radius: 12px;
+                  flex-shrink: 0;
+                  height: 90px;
+                  margin-right: 8px;
+                  overflow: hidden;
+                  position: relative;
+                  width: 120px;
+
+                  a {
+                    position: static;
+
+                    .image-area {
+                      align-items: center;
+                      display: flex;
+                      height: 100%;
+                      justify-content: center;
                       position: relative;
-                      //transition: all .3s linear;
+                      width: 100%;
+
+                      img {
+                        height: 100%;
+                        -o-object-fit: cover;
+                        object-fit: cover;
+                        cursor: pointer;
+
+
+                        color: #161722;
+                        max-height: 100%;
+                        max-width: 100%;
+                        position: relative;
+                        //transition: all .3s linear;
+                      }
                     }
                   }
                 }
-              }
 
+              }
             }
           }
         }
       }
     }
+
   }
+
+  .footerContainer {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    bottom: 0;
+    position: relative;
+    background-color: $color-bg-b1;
+    color: $color-text-t3;
+    flex-direction: column;
+    text-align: center;
+    border-top: 1px solid $color-secondary-default;
+    padding: 53px 0px 64px;
+
+    .content {
+      color: $color-text-t3;
+      margin-top: 20px;
+      width: calc(100% - 80px);
+    }
+  }
+
+
 }
 
