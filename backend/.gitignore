@@ -1,0 +1,15 @@
+# 忽略 Python 的字节码文件
+*.pyc
+
+# 忽略日志文件
+*.log
+
+# 忽略 SQLite 数据库文件
+*.db
+
+# 忽略 IDE 自动生成的文件和文件夹
+.vscode/
+.idea/
+
+# 忽略 Web 服务器生成的文件夹
+__pycache__/

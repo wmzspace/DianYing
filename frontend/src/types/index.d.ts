@@ -37,10 +37,10 @@ export interface VideoMedia {
   authorId: number
   url: string
   cover: string
-  description?: string
-  danmu?: DanMuProps[]
   height: number
   width: number
+  description?: string
+  danmu?: DanMuProps[]
   actualHeight?: number
   actualWidth?: number
   top: number

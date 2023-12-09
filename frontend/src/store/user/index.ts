@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { prefix_url } from '@/api'
 
 export interface User {
   id: number
@@ -20,10 +21,16 @@ export const useUserStore = defineStore('user', {
   getters: {
     getCurrentUser: (state) => state.userData,
     getUserById: (state) => {
-      return (userId) => {
-        return state.userData
-        // return state.users.find((user) => user.id === userId)
-      }
+      return (userId: number) =>
+        new Promise<User | undefined>((resolve, reject) => {
+          fetch(prefix_url + `/user/get?id=${userId}`).then((res) => {
+            if (res.ok) {
+              res.json().then((data: User | undefined) => {
+                resolve(data)
+              })
+            }
+          })
+        })
     }
   },
   actions: {

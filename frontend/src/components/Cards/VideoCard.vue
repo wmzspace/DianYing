@@ -22,6 +22,7 @@
           :width="'100%'"
           :fit="'cover'"
           style="z-index: 8"
+          @loadstart="onstartLoadedImageData"
           @load="onLoadedImageData"
           @mouseover="onMouseOver"
           @mouseout="onMouseOutImage"
@@ -92,7 +93,6 @@ import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/e
 import type { VideoMedia } from '@/types'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { videos } from '@/mock'
 
 const emit = defineEmits(['loadeddata'])
 const showVideo = ref(false)
@@ -191,15 +191,20 @@ const isLoadedImage = ref(false)
 // })
 const videoElement = ref<HTMLVideoElement | null>(null)
 
+const onstartLoadedImageData = () => {
+  console.log('loading image')
+}
+
 const onLoadedImageData = () => {
   isLoadedImage.value = true
-  // console.log('loaded image')
+  console.log('loaded image')
   // if (isLoadedVideo.value) {
   emit('loadeddata')
   // emit('loadeddata', (e.target as HTMLElement).parentElement)
   // }
 }
 const onStartLoadVideoData = (e: Event) => {
+  console.log('start loading')
   let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
   if (video === null) {
     return
@@ -215,7 +220,7 @@ const onPlay = () => {
 }
 
 const onLoadedVideoData = (e: Event) => {
-  // console.log('loaded video')
+  console.log('loaded video')
   // let video: HTMLVideoElement | null = e.target as HTMLVideoElement | null
   // if (video === null) {
   //   return

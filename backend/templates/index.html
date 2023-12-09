@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* Add your custom styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .method {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .url {
+            color: #007BFF;
+        }
+    </style>
+</head>
+
+<body>
+<h1>API Documentation </h1>
+<address>Developer: Mianzi Wu</address>
+<h2>Retrieve Data</h2>
+
+<p><span class="method">GET</span> <i>Get Data from a Model</i>
+    <br>
+    <span class="url">URL:</span> <code>/get/&lt;model_name&gt;</code>
+</p>
+
+
+<h2>Create and Update Data</h2>
+
+<p><span class="method">POST</span> <i>Add an Invoice</i>
+    <br>
+    <span class="url">URL:</span> <code>/add/invoice</code>
+</p>
+
+<p><span class="method">POST</span> <i>Add Transaction Type</i>
+    <br>
+    <span class="url">URL:</span> <code>/add/type</code>
+</p>
+
+<p><span class="method">POST</span> <i>Update Data from Invoice Group</i>
+    <br>
+    <span class="url">URL:</span> <code>/update/&lt;invoice_group&gt;/&lt;invoice_id&gt;</code>
+</p>
+
+<p><span class="method">POST</span> <i>Update a Goal</i>
+    <br>
+    <span class="url">URL:</span> <code>/update/goal</code>
+</p>
+
+
+<h2>Delete Data</h2>
+
+<p><span class="method">POST</span> <i>Delete Invoices</i>
+    <br>
+    <span class="url">URL:</span> <code>/delete/invoices</code>
+</p>
+{#    <ul>#}
+{#        {% for income in incomes %}#}
+{#        <li>{{income.id}} - {{income.name}}:{{income.amount}}</li>#}
+{#        {% endfor %}#}
+{#    </ul>#}
+{#    <ul>#}
+{#        {% for expenditure in expenditures %}#}
+{#        <li>{{expenditure.id}} - {{expenditure.name}}:{{expenditure.amount}}</li>#}
+{#        {% endfor %}#}
+{#    </ul>#}
+
+</body>
+
+</html>

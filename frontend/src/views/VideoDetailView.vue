@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { comments, getVideoById, videos } from '@/mock'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { Comment, getCommentsByVideoId, getVideoById, pullVideo } from '@/mock'
+import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import PresetPlayer, { Events } from 'xgplayer'
 import Danmu from 'xgplayer/es/plugins/danmu'
 import type { IDanmuConfig } from 'xgplayer/es/plugins/danmu'
@@ -28,6 +28,9 @@ const props = defineProps<{
 // const props = defineProps(['video_id'])
 
 let video = getVideoById(props.video_id)
+
+// const video = ref<VideoMedia | undefined>(undefined)
+
 let player: Player
 const calculateContainerPositions = () => {
   let playerContainer = document.getElementById('video-player')?.parentElement as HTMLElement
@@ -138,6 +141,20 @@ onUnmounted(() => {
   window.removeEventListener('resize', resizeEventHandler)
 })
 
+const relatedList: VideoMedia[] = reactive([])
+pullVideo(10).then((res) => {
+  res.forEach((e) => {
+    relatedList.push(e)
+  })
+})
+
+const comments: Comment[] = reactive([])
+getCommentsByVideoId(video.id).then((res) => {
+  res.forEach((e) => {
+    comments.push(e)
+  })
+})
+
 const currentReplyKey = ref(-1)
 const newCommentContent = ref<string>('')
 </script>
@@ -215,7 +232,7 @@ const newCommentContent = ref<string>('')
           </div>
           <a-list class="video-list">
             <a-list-item
-              v-for="(relatedVideo, idx) in videos.splice(0, 10)"
+              v-for="(relatedVideo, idx) in relatedList"
               :key="idx"
               action-layout="vertical"
             >
@@ -241,7 +258,16 @@ const newCommentContent = ref<string>('')
               </a-list-item-meta>
               <!--            <template #actions>-->
               <span class="action"> <IconHeart /> <span>1</span> </span>
-              <a class="action-author">{{ userStore.getUserById(relatedVideo.authorId).name }}</a>
+              <!--              TODO-->
+              <!--              <a class="action-author">{{-->
+              <!--                () => {-->
+              <!--                  let name2-->
+              <!--                  userStore.getUserById(relatedVideo.authorId).then((user) => {-->
+              <!--                    name2 = user?.name-->
+              <!--                  })-->
+              <!--                  return name2-->
+              <!--                }-->
+              <!--              }}</a>-->
               <!--                        </template>-->
             </a-list-item>
           </a-list>
@@ -293,7 +319,7 @@ const newCommentContent = ref<string>('')
           <!--              }-->
           <!--            "-->
           <CommentCard
-            v-for="(comment, index) in comments.filter((e) => e.parentId === -1)"
+            v-for="(comment, index) in comments.filter((e) => e.parentId !== undefined)"
             :comment="comment"
             :key="index"
             :index="index"

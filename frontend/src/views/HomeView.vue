@@ -2,16 +2,16 @@
 import VideoCard from '@/components/Cards/VideoCard.vue'
 import type { VideoMedia } from '@/types'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { pullVideo, videos } from '@/mock'
+import { pullVideo } from '@/mock'
 import { debounce } from 'lodash-es'
 import { Message } from '@arco-design/web-vue'
 
 // const actualColumnWidth = ref(300)
 const videoList = ref<VideoMedia[]>([])
 const currentShowNum = ref(0) // not include new loaded
-
-videoList.value = pullVideo(20)
-
+pullVideo(20).then((res: VideoMedia[]) => {
+  videoList.value = res
+})
 // const isLoadedAll = ref(
 //   computed(() => {
 //     // FIXME currentShowNum.value
@@ -61,19 +61,28 @@ const onScroll = () => {
 const onLoadMore = () => {
   if (isLoadedAll.value) {
     isLoadedAll.value = false
-    pullVideo(20).forEach((e) => {
-      videoList.value.push(e)
+    console.log('loading more...')
+    pullVideo(20).then((res: VideoMedia[]) => {
+      res.forEach((e) => {
+        videoList.value.push(e)
+      })
+      // videoList.value.concat(res)
     })
   }
 }
 
 const onLoadedAll = () => {
+  console.log('loaded all')
   isLoadedAll.value = true
   currentShowNum.value = loadedNum.value
   nextTick(() => {
     calculateVideoPositions()
     if (videoListHeight.value < window.innerHeight * 1.5) {
-      videoList.value.push(...pullVideo(20))
+      console.log('加载完毕，但数量不够')
+      // videoList.value.push(...pullVideo(20))
+      pullVideo(20).then((res: VideoMedia[]) => {
+        videoList.value.concat(res)
+      })
     }
     // Message.clear()
     // Message.info({ content: `更新了20条视频`, position: 'bottom' })
@@ -209,6 +218,7 @@ onUnmounted(() => {
           (element: HTMLElement) => {
             video.loaded = true
             // console.log('loaded:', videoList.filter((e) => e.loaded).length)
+            console.log(loadedNum, videoList.length)
             if (++loadedNum === videoList.length) {
               onLoadedAll()
             }
