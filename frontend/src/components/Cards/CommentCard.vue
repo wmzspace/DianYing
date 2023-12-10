@@ -3,7 +3,11 @@ import type { Comment } from '@/mock'
 import { useUserStore } from '@/store/user'
 import type { User } from '@/store/user'
 import { nextTick, onMounted, reactive, ref, watch } from 'vue'
-import { getCommentLikeUsersByCommentId, likeCommentOrNot } from '@/mock'
+import {
+  getCommentLikeUsersByCommentId,
+  getCommentsByVideoIdOrParent,
+  likeCommentOrNot
+} from '@/mock'
 import { Message } from '@arco-design/web-vue'
 const emit = defineEmits(['reply'])
 
@@ -67,8 +71,16 @@ const handleClickLike = () => {
 
 const replyCommentContent = ref('')
 
+const childrenComments = reactive<Comment[]>([])
+
 onMounted(() => {
   refreshCommentLike()
+  getCommentsByVideoIdOrParent(undefined, props.comment.id).then((res) => {
+    childrenComments.splice(0)
+    res.forEach((e) => {
+      childrenComments.push(e)
+    })
+  })
 })
 </script>
 
@@ -88,14 +100,18 @@ onMounted(() => {
         <span class="like-icon"><IconHeartFill v-if="isLiked" /><IconHeart v-else /></span>
         <span>{{ commentLikeShowNum }}</span>
       </span>
-      <!--            <span class="action"> <IconHeartFill /> <span>1</span> </span>-->
     </template>
 
-    <!--    :class="{ 'on-reply': showReply }"-->
-    <a-comment align="right" avatar="images/avatar.jpeg" class="reply-comment" v-if="isReplying">
+    <!--    New comment input-->
+    <a-comment
+      align="right"
+      :avatar="userStore.getCurrentUser.avatar"
+      class="reply-comment"
+      v-if="isReplying"
+    >
       <template #content>
         <a-input
-          :placeholder="`回复@19岁带饭冲锋🌈`"
+          :placeholder="`回复 @${author?.nickname}`"
           class="comment-input"
           id="reply-comment-input"
           v-model:model-value="replyCommentContent"
@@ -111,6 +127,16 @@ onMounted(() => {
         </a-input>
       </template>
     </a-comment>
+    <!--    New comment input-->
+
+    <!--    Children Comment-->
+    <CommentCard
+      v-for="(comment, index) in childrenComments"
+      :index="index"
+      :comment="comment"
+      :key="index"
+    />
+    <!--    Children Comment-->
   </a-comment>
 </template>
 

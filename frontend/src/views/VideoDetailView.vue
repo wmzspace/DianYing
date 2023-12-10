@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCommentsByVideoId, getVideoById, pullVideo } from '@/mock'
+import { getCommentsByVideoIdOrParent, getVideoById, pullVideo } from '@/mock'
 import type { Comment } from '@/mock'
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import PresetPlayer, { Events } from 'xgplayer'
@@ -8,7 +8,8 @@ import type { IDanmuConfig } from 'xgplayer/es/plugins/danmu'
 import Player from 'xgplayer'
 import { debounce } from 'lodash-es'
 import type { DanMuProps, VideoMedia } from '@/types'
-import { User, useUserStore } from '@/store/user/'
+import { useUserStore } from '@/store/user/'
+import type { User } from '@/store/user/'
 import {
   isNavigationFailure,
   NavigationFailureType,
@@ -44,7 +45,7 @@ watch(video, (value, oldValue, onCleanup) => {
     userStore.getUserById(value.authorId).then((user) => {
       author.value = user
     })
-    getCommentsByVideoId(parseInt(props.video_id)).then((res) => {
+    getCommentsByVideoIdOrParent(parseInt(props.video_id), undefined).then((res) => {
       comments.splice(0)
       res.forEach((e) => {
         comments.push(e)
@@ -173,7 +174,6 @@ onUnmounted(() => {
   window.removeEventListener('resize', resizeEventHandler)
 })
 
-const currentReplyKey = ref(-1)
 const newCommentContent = ref<string>('')
 </script>
 
@@ -297,30 +297,24 @@ const newCommentContent = ref<string>('')
         </div>
 
         <div class="comments-list">
-          <!--            :showReply="currentReplyKey === index"-->
-          <!--            @reply="-->
-          <!--              (index_) => {-->
-          <!--                // currentReplyKey = index_-->
-          <!--              }-->
-          <!--            "-->
           <CommentCard
             v-for="(comment, index) in comments.filter((e) => e.parentId === undefined)"
             :comment="comment"
             :key="index"
             :index="index"
-          />
+          >
+          </CommentCard>
           <p class="comments-list-append">暂时没有更多评论</p>
         </div>
       </div>
       <!--      commentContainer-->
-      <!--      </div>-->
       <!--      leftContainer-->
     </div>
     <!--    mainContainer-->
     <!--    footerContainer-->
-    <footer class="footerContainer">
-      <div class="content">wmzspace</div>
-    </footer>
+    <!--    <footer class="footerContainer">-->
+    <!--      <div class="content">wmzspace</div>-->
+    <!--    </footer>-->
     <!--    footerContainer-->
   </div>
 </template>

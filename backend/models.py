@@ -13,7 +13,7 @@ from exts import db
 PREFIX_URL = "http://127.0.0.1:5000/"
 
 
-def model2dict(models: list[Any]) -> list[Any]:
+def model2dict(models: list[Any] | None) -> list[Any]:
     """
         This is model to dict function
 
@@ -25,6 +25,8 @@ def model2dict(models: list[Any]) -> list[Any]:
         Returns:
             A list of converted dict
     """
+    if models is None:
+        return []
     result = []
     for model in list[any](models):
         tmp = model.__dict__
@@ -206,7 +208,7 @@ class Comment(db.Model):
     # users_liked = db.relationship("User", backref="liked_comments")
     comment_liked = db.relationship("CommentLike", back_populates="comment")
     # 定义与子评论的关联关系
-    replies = db.relationship("Comment", backref="parent", remote_side=[id])
+    parent = db.relationship("Comment", backref="replies", remote_side=[id])
 
     def __init__(self, args):
         """
@@ -349,7 +351,7 @@ def load_init_data():
     db.session.add_all(
         [
             Comment({'video_id': 1, 'author_id': 1, 'content': '别太荒谬了哥们，别太荒谬了哥们', 'likes': 665}),
-            Comment({'video_id': 1, 'author_id': 2, 'content': '跟我谈😍', 'likes': 70}),
+            Comment({'video_id': 1, 'author_id': 2, 'content': '跟我谈😍', 'likes': 70, 'parent_id': 1}),
             Comment({'video_id': 1, 'author_id': 3, 'content': '我好喜欢', 'likes': 6}),
         ]
     )

@@ -92,10 +92,12 @@ def db_init():
     """数据库建表/格式化"""
     # db.drop_all()
     # click.echo("已清空数据库")
-    test = Video.query.filter_by(id=1).first()
-    print(test.author.videos)
-    test = Video.query.filter_by(author_id=1).count()
-    print(test)
+    comment = Comment.query.get(2)
+    print(comment.replies)
+    print(comment.parent)
+    # print(test.author.videos)
+    # test = Video.query.filter_by(author_id=1).count()
+    # print(test)
 
 
 if __name__ == '__main__':

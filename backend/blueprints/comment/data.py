@@ -12,11 +12,24 @@ def get_all_comments():
     return model2dict(Comment.query.all())
 
 
-@comment_bp.route('/get', methods=['GET'])
-def get_comments_by_video_id():
+@comment_bp.route('/get', methods=['GET', 'POST'])
+def get_comments_by_video_id_or_comment_id():
     video_id = request.args.get("video_id")
-    target = Comment.query.filter_by(video_id=video_id).all()
-    return model2dict(target)
+    parent_id = request.args.get("parent_id")
+    # print(f"video_id:{video_id}")
+    # print(f"parent_id:{parent_id}")
+
+    if parent_id is not None:
+        target = Comment.query.get(parent_id).replies
+    else:
+        if video_id is None:
+            return AjaxResponse.error("缺失参数: video_id")
+        video = Video.query.get(video_id)
+        if video is None:
+            return AjaxResponse.error("视频不存在")
+        target = video.comments
+        # target = Comment.query.filter_by(video_id=video_id).all()
+    return AjaxResponse.success(model2dict(target))
 
 
 @comment_bp.route('/get_likes', methods=['GET'])
@@ -69,7 +82,7 @@ def like_or_dislike_comment():
             return AjaxResponse.error("点击太频繁")
 
 
-@comment_bp.route('/like', methods=['POST'])
+@comment_bp.route('/post', methods=['POST'])
 # 定义评论函数
 def post_comment():
     # 检查用户和评论是否存在

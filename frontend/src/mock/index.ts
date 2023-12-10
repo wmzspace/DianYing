@@ -53,28 +53,37 @@ export const pullVideo = (num: number) =>
       })
   })
 
-export const getCommentsByVideoId = (videoId: number) =>
+export const getCommentsByVideoIdOrParent = (
+  videoId: number | undefined,
+  parentId: number | undefined
+) =>
   new Promise<Comment[]>((resolve, reject) => {
     const result: Comment[] = []
-    fetch(prefix_url.concat(`comment/get?video_id=${videoId}`), {
+    const videoString = videoId === undefined ? '' : `&video_id=${videoId}`
+    const parentString = parentId === undefined ? '' : `&parent_id=${parentId}`
+    fetch(prefix_url.concat(`comment/get?`).concat(videoString).concat(parentString), {
       method: 'GET'
     })
       .then((res) => {
         if (res.ok) {
-          res.json().then((data: RawComment[]) => {
-            data.forEach((e) => {
-              const comment: Comment = {
-                authorId: e.author_id,
-                content: e.content,
-                publishTime: e.publish_time,
-                id: e.id,
-                parentId: e.parent_id === null ? undefined : e.parent_id,
-                videoId: e.video_id
-              }
-              result.push(comment)
-            })
-            resolve(_.cloneDeep(result))
-            // return _.cloneDeep(_.sampleSize(videos, num))
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              const data = ajaxData.ajax_data as RawComment[]
+              data.forEach((e) => {
+                const comment: Comment = {
+                  authorId: e.author_id,
+                  content: e.content,
+                  publishTime: e.publish_time,
+                  id: e.id,
+                  parentId: e.parent_id === null ? undefined : e.parent_id,
+                  videoId: e.video_id
+                }
+                result.push(comment)
+              })
+              resolve(_.cloneDeep(result))
+            } else {
+              Message.info(ajaxData.ajax_msg)
+            }
           })
         }
       })
