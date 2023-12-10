@@ -49,6 +49,26 @@ $sidebar-width: 160px;
           //margin: 0;
           width: 100%;
 
+          @media (min-width: 930px) {
+            justify-content: flex-end;
+            display: flex;
+            margin-right: 0px;
+            padding-right: 0px;
+          }
+
+          @media (min-width: 1032px) {
+            //padding-right: 40px;
+            padding-right: 30px;
+
+          }
+
+          @media (min-width: 2472px) {
+            margin: 0 auto;
+            padding-right: 30px;
+          }
+
+
+
           .nav-menu {
             background-color: transparent;
             height: 100%;
@@ -123,18 +143,6 @@ $sidebar-width: 160px;
             }
           }
 
-          @media (min-width: 930px) {
-            justify-content: flex-end;
-            display: flex;
-          }
-
-          @media (min-width: 2472px) {
-            margin: 0 auto;
-          }
-
-          @media (min-width: 1032px) {
-            //padding-right: 40px;
-          }
 
           .search-bar {
             $border-radius: 12px;

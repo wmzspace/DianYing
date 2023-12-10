@@ -41,8 +41,7 @@
       //width: 300px !important;
       //max-width: 350px;
       //min-width: 300px;
-      border-top-left-radius: 12px !important;
-      border-top-right-radius: 12px;
+
       //margin: 0px;
       //outline: rgb(0, 0, 0) none 0px;
       //padding: 0px;
@@ -51,10 +50,13 @@
       //will-change: transform;
       display: flex;
       flex-direction: column;
+      border-radius: 12px !important;
 
       .arco-card-cover {
         //height: max-content;
         //display: none;
+        border-top-left-radius: 12px !important;
+        border-top-right-radius: 12px !important;
 
         video {
           filter: blur(0px); /* 初始状态 */
@@ -96,20 +98,89 @@
 
       .arco-card-body {
         //display: none;
+        border-bottom-left-radius: 12px !important;
+        border-bottom-right-radius: 12px !important;
         border: none;
         background-color: rgba(37, 38, 50, 1);
 
         .video-title {
-          word-wrap: break-word;
-          overflow-wrap: break-word;
-          width: 100%;
-          color: #fff;
+          //word-wrap: break-word;
+          //overflow-wrap: break-word;
+          //width: 100%;
+          color: $color-text-0;
+          //white-space: break-spaces;
+          //cursor: pointer;
+          //overflow: hidden;
+          //text-overflow: ellipsis;
+          //word-break: break-all;
+          //height: auto;
+          //font-size: 15px;
+          //line-height: 23px;
+          //
+          //flex-wrap: nowrap;
+          //-webkit-line-clamp: 3; /*用来限制在一个块元素显示的文本的行数。*/
+          //overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
+          ////white-space:nowrap;
+          height: 46px;
+
+          a {
+            text-decoration: none;
+            color: $color-text-t1;
+            //text-decoration: none !important;
+            font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 23px;
+            overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
+            text-overflow: ellipsis; /*可以用来多行文本的情况下，用省略号“…”隐藏超出范围的文本 。*/
+            display: -webkit-box; /*必须结合的属性 ，将对象作为弹性伸缩盒子模型显示 。*/
+            -webkit-line-clamp: 2; /*用来限制在一个块元素显示的文本的行数。*/
+            -webkit-box-orient: vertical;
+            white-space: pre-line;
+          }
         }
 
-        .video-meta {
-          color: #fff;
-          opacity: 0.5;
+        .arco-card-meta-footer {
+          .video-meta {
+            color: #fff;
+            display: flex;
+            //opacity: 0.5;
+
+
+            .name {
+              //text-wrap: none;
+              white-space: nowrap;
+              //width: 30px;
+              //width: min-content;
+              max-width: 100px;
+              text-overflow: ellipsis;
+              color: $color-text-2;
+              overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
+              display: -webkit-box; /*必须结合的属性 ，将对象作为弹性伸缩盒子模型显示 。*/
+              -webkit-box-orient: vertical;
+              //width: auto;
+              //word-break: break-all;
+              cursor: pointer;
+              display: inline;
+              font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
+              font-size: 14px;
+              height: auto;
+              line-height: 22px;
+            }
+
+            .time-diff {
+              line-height: 23px;
+              margin-left: 5px;
+              font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+              display: inline;
+              font-size: 12px;
+              font-weight: 400;
+              //margin-right: 40px;
+              color: $color-text-t3;
+            }
+          }
         }
+
       }
     }
 
@@ -127,7 +198,7 @@
         //opacity: 0.4;
         //box-shadow: none;
 
-        &::before{
+        &::before {
           //display: none;
         }
 

@@ -1,4 +1,4 @@
-import type { DanMuProps, VideoMedia } from '@/types'
+import type { DanMuProps, RawVideo, VideoMedia } from '@/types'
 import { reactive } from 'vue'
 import { prefix_url } from '@/api'
 import type { User } from '@/store/user'
@@ -14,8 +14,8 @@ export const getVideoById = (videoId: number | string) => {
   return new Promise<VideoMedia | undefined>((resolve, reject) => {
     fetch(prefix_url + `/video/query?id=${videoId}`).then((res) => {
       if (res.ok) {
-        res.json().then((data: VideoMedia[] | undefined) => {
-          resolve(data?.[0])
+        res.json().then((data: RawVideo[]) => {
+          resolve(parseVideoMedia(data[0]))
         })
       }
     })
@@ -24,7 +24,7 @@ export const getVideoById = (videoId: number | string) => {
 }
 import _ from 'lodash'
 import { Message } from '@arco-design/web-vue'
-import { method, reject } from 'lodash-es'
+import { parseVideoMedia } from '@/utils/video'
 // export const pullVideo = (num: number): VideoMedia[] => {
 //   return _.cloneDeep(_.sampleSize(videos, num))
 // }
@@ -37,15 +37,12 @@ export const pullVideo = (num: number) =>
     })
       .then((res) => {
         if (res.ok) {
-          res.json().then((data) => {
-            const rawVideos: [] = data
-            rawVideos.forEach((e: VideoMedia) => {
-              e.top = 0
-              e.left = 0
-              e.loaded = false
-              result.push(e)
+          res.json().then((data: RawVideo[]) => {
+            const results: VideoMedia[] = []
+            data.forEach((e) => {
+              results.push(parseVideoMedia(e))
             })
-            resolve(_.cloneDeep(result))
+            resolve(_.cloneDeep(results))
             // return _.cloneDeep(_.sampleSize(videos, num))
           })
         }

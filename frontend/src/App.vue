@@ -10,10 +10,17 @@ const route = useRoute()
 const layout = computed(() => 'layout-' + ((route.meta.layout as string) || 'a').toLowerCase())
 
 onMounted(() => {
+  document.documentElement.style.height = `${window.innerHeight}px`
+  window.addEventListener('resize', () => {
+    document.documentElement.style.height = `${window.innerHeight}px`
+  })
   const store = useUserStore()
   store.userLogin({
+    register_time: '',
+    sex: '',
+    username: '',
     id: 1,
-    name: '19岁带饭冲锋🌈',
+    nickname: '19岁带饭冲锋🌈',
     avatar: 'images/avatar.jpeg'
   })
 })

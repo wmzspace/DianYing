@@ -3,9 +3,12 @@ import { ref } from 'vue'
 import { prefix_url } from '@/api'
 
 export interface User {
-  id: number
-  name: string
   avatar: string
+  id: number
+  nickname: string
+  register_time: string
+  sex: string
+  username: string
 }
 // TODO
 // impo mandert { mande } from 'mande'
@@ -22,11 +25,11 @@ export const useUserStore = defineStore('user', {
     getCurrentUser: (state) => state.userData,
     getUserById: (state) => {
       return (userId: number) =>
-        new Promise<User[]>((resolve, reject) => {
+        new Promise<User>((resolve, reject) => {
           fetch(prefix_url + `/user/get?id=${userId}`).then((res) => {
             if (res.ok) {
               res.json().then((data: User[]) => {
-                resolve(data)
+                resolve(data[0])
               })
             }
           })

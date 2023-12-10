@@ -80,9 +80,7 @@ const onLoadedAll = () => {
     if (videoListHeight.value < window.innerHeight * 1.5) {
       console.log('加载完毕，但数量不够')
       // videoList.value.push(...pullVideo(20))
-      pullVideo(20).then((res: VideoMedia[]) => {
-        videoList.value.concat(res)
-      })
+      onLoadMore()
     }
     // Message.clear()
     // Message.info({ content: `更新了20条视频`, position: 'bottom' })
@@ -152,7 +150,6 @@ const calculateVideoPositions = () => {
   // console.log('body offset', document.body.offsetHeight)
   // console.log('window inner', window.innerHeight)
   // console.log('window outer', window.outerHeight)
-  document.documentElement.style.height = `${window.innerHeight}px`
 }
 
 // function resizeHandler(func: Function, delay: number) {
@@ -218,7 +215,7 @@ onUnmounted(() => {
           (element: HTMLElement) => {
             video.loaded = true
             // console.log('loaded:', videoList.filter((e) => e.loaded).length)
-            console.log(loadedNum, videoList.length)
+            // console.log(loadedNum, videoList.length)
             if (++loadedNum === videoList.length) {
               onLoadedAll()
             }

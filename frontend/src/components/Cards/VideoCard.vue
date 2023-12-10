@@ -50,22 +50,23 @@
       </div>
     </template>
     <a-card-meta>
-      <template #title
-        ><p class="video-title">{{ props.src.title }}</p></template
+      <template #title>
+        <div class="video-title">
+          <a>{{ props.src.title }}</a>
+        </div></template
       >
       <!--      <template #description> </template>-->
       <template #avatar>
         <div :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }">
           <a-avatar
             :size="24"
-            :image-url="'/images/avatar.jpeg'"
+            :image-url="author?.avatar"
             :style="{ marginRight: '8px' }"
           ></a-avatar>
           <a-typography-text>
             <div class="video-meta">
-              <span>19岁带饭冲锋</span>
-              <span>·</span>
-              <span>1天前</span>
+              <div class="name">{{ author ? author.nickname : '...' }}</div>
+              <div class="time-diff">·{{ getTimeDiffUntilNow(props.src.publishTime) }}</div>
             </div>
           </a-typography-text>
         </div>
@@ -93,6 +94,8 @@ import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/e
 import type { VideoMedia } from '@/types'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { User, useUserStore } from '@/store/user'
+import { getTimeDiffUntilNow } from '@/utils/tools'
 
 const emit = defineEmits(['loadeddata'])
 const showVideo = ref(false)
@@ -101,6 +104,11 @@ const props = defineProps<{
   // likes?: number
 }>()
 
+const userStore = useUserStore()
+const author = ref<User | undefined>(undefined)
+userStore.getUserById(props.src.authorId).then((user) => {
+  author.value = user
+})
 const router = useRouter()
 
 const isPlaying = ref(false)
@@ -273,18 +281,18 @@ const onLoadedVideoData = (e: Event) => {
 //   components: { IconThumbUp, IconShareInternal, IconMore }
 // }
 </script>
-<style scoped>
-.icon-hover {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  transition: all 0.1s;
-}
-
-.icon-hover:hover {
-  background-color: rgb(var(--gray-2));
-}
+<style scoped lang="scss">
+//.icon-hover {
+//  display: flex;
+//  align-items: center;
+//  justify-content: center;
+//  width: 24px;
+//  height: 24px;
+//  border-radius: 50%;
+//  transition: all 0.1s;
+//}
+//
+//.icon-hover:hover {
+//  background-color: rgb(var(--gray-2));
+//}
 </style>

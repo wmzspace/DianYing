@@ -33,7 +33,7 @@ def get_comment_liked_users():
     return AjaxResponse.success(model2dict(target))
 
 
-@comment_bp.route('/like', methods=['POST', 'GET'])  # FIXME
+@comment_bp.route('/like', methods=['POST'])
 def like_or_dislike_comment():
     # 检查用户和评论是否存在
     user_id = request.args.get("user_id")
@@ -67,3 +67,36 @@ def like_or_dislike_comment():
             return AjaxResponse.success(None, "点赞成功")
         else:
             return AjaxResponse.error("点击太频繁")
+
+
+@comment_bp.route('/like', methods=['POST'])
+# 定义评论函数
+def post_comment():
+    # 检查用户和评论是否存在
+    author_id = request.args.get("author_id")
+    video_id = request.args.get("video_id")
+    parent_id = request.args.get("parent_id")
+    content = request.args.get("content")
+
+    author = User.query.get(author_id)
+    parent = Comment.query.get(parent_id)
+    video = request.args.get(video_id)
+
+    if not author or not parent or not video:
+        return AjaxResponse.error("资源不存在")
+
+    # 创建评论对象
+    comment = Comment({
+        'content': content,
+        'parent_id': parent_id,
+        'video_id': video_id,
+        "author_id": author_id
+    })
+
+    # 将评论对象添加到会话中
+    db.session.add(comment)
+
+    # 提交更改到数据库
+    db.session.commit()
+
+    return "评论已发布！"

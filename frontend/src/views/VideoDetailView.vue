@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Comment, getCommentsByVideoId, getVideoById, pullVideo } from '@/mock'
+import { getCommentsByVideoId, getVideoById, pullVideo } from '@/mock'
+import type { Comment } from '@/mock'
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import PresetPlayer, { Events } from 'xgplayer'
 import Danmu from 'xgplayer/es/plugins/danmu'
@@ -7,7 +8,7 @@ import type { IDanmuConfig } from 'xgplayer/es/plugins/danmu'
 import Player from 'xgplayer'
 import { debounce } from 'lodash-es'
 import type { DanMuProps, VideoMedia } from '@/types'
-import { useUserStore } from '@/store/user/'
+import { User, useUserStore } from '@/store/user/'
 import {
   isNavigationFailure,
   NavigationFailureType,
@@ -18,6 +19,7 @@ import {
 import type { IUrl } from 'xgplayer/es/player'
 import CommentCard from '@/components/Cards/CommentCard.vue'
 import _ from 'lodash'
+import VideoCardSmall from '@/components/Cards/VideoCardSmall.vue'
 // import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
@@ -32,12 +34,16 @@ const comments: Comment[] = reactive([])
 let relatedList: VideoMedia[] = reactive([])
 
 const video = ref<VideoMedia | undefined>(undefined)
+const author = ref<User | undefined>(undefined)
 const player = ref<Player | undefined>(undefined)
 getVideoById(props.video_id).then((res: VideoMedia | undefined) => {
   video.value = _.cloneDeep(res)
 })
 watch(video, (value, oldValue, onCleanup) => {
   if (value !== undefined) {
+    userStore.getUserById(value.authorId).then((user) => {
+      author.value = user
+    })
     getCommentsByVideoId(parseInt(props.video_id)).then((res) => {
       comments.splice(0)
       res.forEach((e) => {
@@ -227,7 +233,7 @@ const newCommentContent = ref<string>('')
           <div class="basic-info">
             <div class="text-info">
               <a-link class="name">
-                <span> 19岁带饭冲锋🌈 </span>
+                <span> {{ video ? author?.nickname : '...' }} </span>
               </a-link>
               <!--          <icon-right />-->
               <div class="statistic">
@@ -243,45 +249,12 @@ const newCommentContent = ref<string>('')
             <h2>推荐视频</h2>
           </div>
           <a-list class="video-list">
-            <a-list-item
+            <VideoCardSmall
               v-for="(relatedVideo, idx) in relatedList"
               :key="idx"
-              action-layout="vertical"
+              :video="relatedVideo"
             >
-              <template #extra>
-                <router-link :to="`/video/${relatedVideo.id}`">
-                  <div class="image-area">
-                    <a-image
-                      alt="related video"
-                      :src="relatedVideo.cover"
-                      width="100%"
-                      height="100%"
-                      :preview="false"
-                    />
-                  </div>
-                </router-link>
-              </template>
-              <a-list-item-meta>
-                <template #title>
-                  <router-link :to="`/video/${relatedVideo.id}`"
-                    >{{ relatedVideo.title }}
-                  </router-link>
-                </template>
-              </a-list-item-meta>
-              <!--            <template #actions>-->
-              <span class="action"> <IconHeart /> <span>1</span> </span>
-              <!--              TODO-->
-              <!--              <a class="action-author">{{-->
-              <!--                () => {-->
-              <!--                  let name2-->
-              <!--                  userStore.getUserById(relatedVideo.authorId).then((user) => {-->
-              <!--                    name2 = user?.name-->
-              <!--                  })-->
-              <!--                  return name2-->
-              <!--                }-->
-              <!--              }}</a>-->
-              <!--                        </template>-->
-            </a-list-item>
+            </VideoCardSmall>
           </a-list>
         </div>
       </div>

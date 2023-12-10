@@ -58,12 +58,17 @@
 
       }
       @media (min-width: 1032px) {
+        margin:0;
         display: inline-block;
         height: min-content;
         width: $leftContainerWidth;
       }
 
       .video-detail-container {
+
+        @media (max-width: 1031px) {
+          //height: 50vh !important;
+        }
         @media (min-width: 1032px) {
           //height: min-content;
           &.vh-70 {
@@ -653,13 +658,16 @@
                   .action {
                     width: 100%;
                     color: $color-text-t3;
-
                   }
 
                   .action-author {
                     float: right;
                     color: $color-text-t3;
-
+                    text-wrap: none;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    max-width: calc(100% - 60px);
                     &:hover {
                       color: $color-text-t0;
                     }

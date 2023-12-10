@@ -7,6 +7,9 @@ import numpy
 
 from exts import db
 
+# PREFIX_URL = 'http://192.168.1.104:5000/'
+
+
 PREFIX_URL = "http://127.0.0.1:5000/"
 
 
@@ -223,8 +226,6 @@ class Comment(db.Model):
             self.video_id = args['video_id']
         if 'author_id' in args:
             self.author_id = args['author_id']
-        if 'likes' in args:
-            self.likes = args['likes']
 
 
 # 定义视频点赞模型

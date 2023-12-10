@@ -29,7 +29,7 @@ const isReplying = ref(false)
 const author = ref<User | undefined>(undefined)
 
 userStore.getUserById(props.comment.authorId).then((user) => {
-  author.value = user[0]
+  author.value = user
 })
 
 const isLiked = ref(false)
@@ -75,7 +75,7 @@ onMounted(() => {
 <template>
   <a-comment
     align="left"
-    :author="author?.name"
+    :author="author?.nickname"
     :avatar="author?.avatar"
     :content="props.comment.content"
     :datetime="props.comment.publishTime"

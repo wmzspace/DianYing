@@ -30,26 +30,26 @@ export const simplifyNumber = (value: number, unit = 'EN') => {
     if (value >= YI * WAN) {
       return {
         value: prefix.concat('9999+'),
-        unit: '亿元',
-        string: prefix.concat('9999+亿元')
+        unit: '亿',
+        string: prefix.concat('9999+亿')
       }
     } else if (value >= YI) {
       return {
         value: prefix.concat((value / YI).toFixed(1)),
-        unit: '亿元',
-        string: prefix.concat((value / YI).toFixed(1) + '亿元')
+        unit: '亿',
+        string: prefix.concat((value / YI).toFixed(1) + '亿')
       }
     } else if (value >= WAN) {
       return {
         value: prefix.concat((value / WAN).toFixed(1)),
-        unit: '万元',
-        string: prefix.concat((value / WAN).toFixed(1) + '万元')
+        unit: '万',
+        string: prefix.concat((value / WAN).toFixed(1) + '万')
       }
     } else {
       return {
         value: prefix.concat(value.toFixed(1)),
-        unit: '元',
-        string: prefix.concat(value.toFixed(1) + '元')
+        unit: '',
+        string: prefix.concat(value.toFixed(1) + '')
       }
     }
   } else {
@@ -80,10 +80,44 @@ export const simplifyNumber = (value: number, unit = 'EN') => {
     } else {
       return {
         value: prefix.concat(value.toFixed(1)),
-        unit: '元',
-        string: prefix.concat(value.toFixed(1) + '元')
+        unit: '',
+        string: prefix.concat(value.toFixed(1) + '')
       }
     }
+  }
+}
+
+export const getTimeDiffUntilNow = (datetimeString: string) => {
+  // 将日期时间字符串转换为日期对象
+  const datetime = new Date(datetimeString)
+
+  // 获取当前时间
+  const now = new Date()
+
+  // 计算时间差（以毫秒为单位）
+  const timeDiff = now.getTime() - datetime.getTime()
+
+  // 计算时间差对应的年、月、天、小时、分钟和秒数
+  const seconds = Math.floor(timeDiff / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
+  const months = Math.floor(days / 30)
+  const years = Math.floor(days / 365)
+
+  // 根据时间差返回相应的描述
+  if (years > 0) {
+    return `${years}年前`
+  } else if (months > 0) {
+    return `${months}个月前`
+  } else if (days > 0) {
+    return `${days}天前`
+  } else if (hours > 0) {
+    return `${hours}小时前`
+  } else if (minutes > 0) {
+    return `${minutes}分钟前`
+  } else {
+    return `${seconds}秒前`
   }
 }
 

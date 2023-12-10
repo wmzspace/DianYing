@@ -31,6 +31,20 @@ export interface DanMuProps {
   }
 }
 
+export interface RawVideo {
+  author_id: number
+  cover: string
+  height: number
+  id: number
+  left: number
+  loaded: boolean
+  publish_time: string
+  title: string
+  top: number
+  url: string
+  width: number
+}
+
 export interface VideoMedia {
   id: number
   title: string
@@ -46,6 +60,7 @@ export interface VideoMedia {
   top: number
   left: number
   loaded: boolean
+  publishTime: string
 }
 
 export interface NotificationData {
