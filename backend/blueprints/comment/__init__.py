@@ -9,4 +9,4 @@ comment_bp = Blueprint("comment", __name__, url_prefix="/comment/")
 
 
 # 导入需要使用蓝图的视图文件，在下面导入解决循环导入报错
-from blueprints.user import register,data
+from blueprints.comment import data

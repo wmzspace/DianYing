@@ -80,12 +80,22 @@ def db_load():
     click.echo("成功载入初始数据")
 
 
-@app.cli.command('test')
-def db_load():
-    """数据库建表/格式化，并载入初始数据"""
-    users = User.query.all()
-    for user in users:
-        print(user.videos)
+@app.cli.command('db-drop')
+def db_init():
+    """数据库建表/格式化"""
+    db.drop_all()
+    click.echo("已清空数据库")
+
+
+@app.cli.command('db-test')
+def db_init():
+    """数据库建表/格式化"""
+    # db.drop_all()
+    # click.echo("已清空数据库")
+    test = Video.query.filter_by(id=1).first()
+    print(test.author.videos)
+    test = Video.query.filter_by(author_id=1).count()
+    print(test)
 
 
 if __name__ == '__main__':

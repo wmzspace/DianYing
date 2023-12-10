@@ -13,4 +13,6 @@ def get_all_users():
 def query_user():
     user_id = request.args.get("id")
     target = User.query.filter_by(id=user_id).first()
-    return model2dict(target)
+    if target is None:
+        return model2dict([])
+    return model2dict([target])

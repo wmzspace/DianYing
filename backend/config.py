@@ -17,7 +17,8 @@ class Config:
     SECRET_KEY = "web2_cwk2"
     username = "web2_cwk2"
     password = SECRET_KEY
-    ipaddress = "wmzspace.space"
+    ipaddress = "114.132.204.214"
+    # ipaddress = "www.wmzspace.space"
     port = "3306"
     database = "web2_cwk2"
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{username}:{password}@{ipaddress}:{port}/{database}"

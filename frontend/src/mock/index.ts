@@ -3,13 +3,18 @@ import { reactive } from 'vue'
 import { prefix_url } from '@/api'
 import type { User } from '@/store/user'
 
+export interface AjaxResponse {
+  ajax_data: object
+  ajax_msg: string
+  ajax_ok: boolean
+}
+
 export const getVideoById = (videoId: number | string) => {
   const id = typeof videoId === 'string' ? parseInt(videoId) : videoId
   return new Promise<VideoMedia | undefined>((resolve, reject) => {
     fetch(prefix_url + `/video/query?id=${videoId}`).then((res) => {
       if (res.ok) {
         res.json().then((data: VideoMedia[] | undefined) => {
-          console.log('video', data?.[0])
           resolve(data?.[0])
         })
       }
@@ -19,6 +24,7 @@ export const getVideoById = (videoId: number | string) => {
 }
 import _ from 'lodash'
 import { Message } from '@arco-design/web-vue'
+import { method, reject } from 'lodash-es'
 // export const pullVideo = (num: number): VideoMedia[] => {
 //   return _.cloneDeep(_.sampleSize(videos, num))
 // }
@@ -32,7 +38,6 @@ export const pullVideo = (num: number) =>
       .then((res) => {
         if (res.ok) {
           res.json().then((data) => {
-            console.log(data)
             const rawVideos: [] = data
             rawVideos.forEach((e: VideoMedia) => {
               e.top = 0
@@ -59,11 +64,17 @@ export const getCommentsByVideoId = (videoId: number) =>
     })
       .then((res) => {
         if (res.ok) {
-          res.json().then((data) => {
-            console.log('comments:', data)
-            const rawVideos: [] = data
-            rawVideos.forEach((e: Comment) => {
-              result.push(e)
+          res.json().then((data: RawComment[]) => {
+            data.forEach((e) => {
+              const comment: Comment = {
+                authorId: e.author_id,
+                content: e.content,
+                publishTime: e.publish_time,
+                id: e.id,
+                parentId: e.parent_id === null ? undefined : e.parent_id,
+                videoId: e.video_id
+              }
+              result.push(comment)
             })
             resolve(_.cloneDeep(result))
             // return _.cloneDeep(_.sampleSize(videos, num))
@@ -73,6 +84,49 @@ export const getCommentsByVideoId = (videoId: number) =>
       .catch((e) => {
         Message.error(e)
         reject(e)
+      })
+  })
+export const getCommentLikeUsersByCommentId = (commentId: number) =>
+  new Promise<User[]>((resolve, reject) => {
+    fetch(prefix_url.concat(`comment/get_likes?comment_id=${commentId}`))
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              resolve(ajaxData.ajax_data as User[])
+            }
+          })
+        }
+      })
+      .catch((e) => {
+        Message.error(e.message)
+        // resolve([])
+        reject(e)
+      })
+  })
+
+export const likeCommentOrNot = (commentId: number, userId: number, toLike: boolean) =>
+  new Promise<void>((resolve, reject) => {
+    fetch(
+      prefix_url.concat(`comment/like?comment_id=${commentId}&user_id=${userId}&to_like=${toLike}`),
+      {
+        method: 'POST'
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              Message.success(ajaxData.ajax_msg)
+            } else {
+              Message.info(ajaxData.ajax_msg)
+            }
+            resolve()
+          })
+        }
+      })
+      .catch((e) => {
+        Message.error(e.message)
       })
   })
 
@@ -86,10 +140,20 @@ export const getCommentsByVideoId = (videoId: number) =>
 
 export interface Comment {
   id: number
+  videoId: number
   parentId?: number
   authorId: number
   content: string
-  datetime: string
+  publishTime: string
+}
+
+export interface RawComment {
+  id: number
+  author_id: number
+  video_id: number
+  content: string
+  parent_id: number | null
+  publish_time: string
 }
 
 // export const comments = reactive([])

@@ -22,10 +22,10 @@ export const useUserStore = defineStore('user', {
     getCurrentUser: (state) => state.userData,
     getUserById: (state) => {
       return (userId: number) =>
-        new Promise<User | undefined>((resolve, reject) => {
+        new Promise<User[]>((resolve, reject) => {
           fetch(prefix_url + `/user/get?id=${userId}`).then((res) => {
             if (res.ok) {
-              res.json().then((data: User | undefined) => {
+              res.json().then((data: User[]) => {
                 resolve(data)
               })
             }

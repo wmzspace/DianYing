@@ -7,11 +7,7 @@ import { debounce } from 'lodash-es'
 import { Message } from '@arco-design/web-vue'
 
 // const actualColumnWidth = ref(300)
-const videoList = ref<VideoMedia[]>([])
-const currentShowNum = ref(0) // not include new loaded
-pullVideo(20).then((res: VideoMedia[]) => {
-  videoList.value = res
-})
+
 // const isLoadedAll = ref(
 //   computed(() => {
 //     // FIXME currentShowNum.value
@@ -42,7 +38,11 @@ pullVideo(20).then((res: VideoMedia[]) => {
 //     // console.log('loading start')
 //   }
 // })
-
+const videoList = ref<VideoMedia[]>([])
+const currentShowNum = ref(0) // not include new loaded
+pullVideo(20).then((res: VideoMedia[]) => {
+  videoList.value = res
+})
 const isLoadedAll = ref(false)
 const loadedNum = ref(0)
 

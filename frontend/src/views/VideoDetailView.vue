@@ -17,6 +17,7 @@ import {
 } from 'vue-router'
 import type { IUrl } from 'xgplayer/es/player'
 import CommentCard from '@/components/Cards/CommentCard.vue'
+import _ from 'lodash'
 // import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
@@ -26,25 +27,55 @@ const props = defineProps<{
   video_id: string
 }>()
 // const props = defineProps(['video_id'])
+const comments: Comment[] = reactive([])
 
-let video = getVideoById(props.video_id)
+let relatedList: VideoMedia[] = reactive([])
 
-// const video = ref<VideoMedia | undefined>(undefined)
-
-let player: Player
+const video = ref<VideoMedia | undefined>(undefined)
+const player = ref<Player | undefined>(undefined)
+getVideoById(props.video_id).then((res: VideoMedia | undefined) => {
+  video.value = _.cloneDeep(res)
+})
+watch(video, (value, oldValue, onCleanup) => {
+  if (value !== undefined) {
+    getCommentsByVideoId(parseInt(props.video_id)).then((res) => {
+      comments.splice(0)
+      res.forEach((e) => {
+        comments.push(e)
+      })
+    })
+    pullVideo(10).then((res) => {
+      relatedList.splice(0)
+      res.forEach((e) => {
+        relatedList.push(e)
+      })
+    })
+    player.value?.destroy()
+    player.value = createPlayer(value)
+    player.value.on(Events.LOADED_DATA, calculateContainerPositions)
+    player.value.on(Events.AUTOPLAY_STARTED, () => {
+      console.log('autoplay success!!')
+    })
+  }
+})
 const calculateContainerPositions = () => {
+  if (video.value === undefined) {
+    return
+  }
   let playerContainer = document.getElementById('video-player')?.parentElement as HTMLElement
   let width = 0
   width = playerContainer.clientWidth
   if (width > 0) {
-    console.log(`放大倍数:${width / video.width}`)
-    if (video.height >= video.width) {
+    // console.log(`放大倍数:${width / video.value.width}`)
+    if (video.value.height >= video.value.width) {
       // ;(playerContainer as HTMLElement).style.height = `70vh`
       ;(playerContainer as HTMLElement).classList.add('vh-70')
       // ;(playerContainer as HTMLElement).style.height = `${width / 1.5}px`
     } else {
       ;(playerContainer as HTMLElement).classList.remove('vh-70')
-      ;(playerContainer as HTMLElement).style.height = `${(width / video.width) * video.height}px`
+      ;(playerContainer as HTMLElement).style.height = `${
+        (width / video.value.width) * video.value.height
+      }px`
     }
   }
 }
@@ -113,25 +144,20 @@ const createPlayer = (video: VideoMedia) => {
 
 onBeforeRouteUpdate((to, from, next) => {
   // console.log(to, from)
-  video = getVideoById(to.params['video_id'][0])
-  player.destroy()
-  player = createPlayer(video)
+  getVideoById(to.params['video_id'][0]).then((res: VideoMedia | undefined) => {
+    video.value = _.cloneDeep(res)
+  })
   next((vm) => {
     console.log(vm)
     // vm.$
   })
 })
 onMounted(() => {
-  player = createPlayer(video)
   // player.on(Events.AUTOPLAY_PREVENTED, () => {
   //   console.log('autoplay was prevented!!')
   // })
   //
-  player.on(Events.LOADED_DATA, calculateContainerPositions)
 
-  player.on(Events.AUTOPLAY_STARTED, () => {
-    console.log('autoplay success!!')
-  })
   window.addEventListener('resize', resizeEventHandler)
 })
 
@@ -139,20 +165,6 @@ onUnmounted(() => {
   console.log('leave detail view')
 
   window.removeEventListener('resize', resizeEventHandler)
-})
-
-const relatedList: VideoMedia[] = reactive([])
-pullVideo(10).then((res) => {
-  res.forEach((e) => {
-    relatedList.push(e)
-  })
-})
-
-const comments: Comment[] = reactive([])
-getCommentsByVideoId(video.id).then((res) => {
-  res.forEach((e) => {
-    comments.push(e)
-  })
 })
 
 const currentReplyKey = ref(-1)
@@ -172,7 +184,7 @@ const newCommentContent = ref<string>('')
         </div>
         <div class="detail-video-info">
           <div class="detail-video-title">
-            {{ video.title }}
+            {{ video?.title }}
           </div>
           <div class="detail-video-actions">
             <a-list class="detail-video-actions-left" :bordered="false">
@@ -319,7 +331,7 @@ const newCommentContent = ref<string>('')
           <!--              }-->
           <!--            "-->
           <CommentCard
-            v-for="(comment, index) in comments.filter((e) => e.parentId !== undefined)"
+            v-for="(comment, index) in comments.filter((e) => e.parentId === undefined)"
             :comment="comment"
             :key="index"
             :index="index"

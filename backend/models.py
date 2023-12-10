@@ -43,11 +43,17 @@ class User(db.Model):
         nullable=False,
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
+    # videos = db.relationship("Video", backref="author")
+    videos = db.relationship("Video", back_populates="author")
     # 定义与评论的关联关系
-    comments = db.relationship("Comment", backref="user", cascade="all, delete-orphan")
+    comments = db.relationship("Comment", back_populates="author")
+    # comments = db.relationship("Comment", backref="user", cascade="all, delete-orphan")
 
     # 定义与视频的关联关系
-    videos = db.relationship("Video", backref="user", cascade="all, delete-orphan")
+    # videos = db.relationship("Video", backref="user", cascade="all, delete-orphan")
+
+    video_likes = db.relationship("VideoLike", back_populates="user")
+    comment_likes = db.relationship("CommentLike", back_populates="user")
 
     def __init__(self, args):
         if 'username' in args:
@@ -118,16 +124,18 @@ class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # backref: author = User
     url = db.Column(db.String(100), nullable=False)
     cover = db.Column(db.String(100), nullable=False)
     width = db.Column(db.Integer, nullable=False)
     height = db.Column(db.Integer, nullable=False)
+    tags = db.relationship("VTag", secondary="video_tag_relation")
     publish_time = db.Column(
         db.String(50),
         nullable=False,
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    tags = db.relationship("VTag", secondary="video_tag_relation")
-    # 定义与评论的关联关系
+    author = db.relationship("User", back_populates="videos")
+    video_likes = db.relationship("VideoLike", back_populates="video")
     comments = db.relationship("Comment", backref="video", cascade="all, delete-orphan")
 
     def __init__(self, args):
@@ -143,6 +151,8 @@ class Video(db.Model):
             self.width = args['width']
         if 'height' in args:
             self.height = args['height']
+        if 'likes' in args:
+            self.likes = args['likes']
         if 'publish_time' in args:
             self.publish_time = args['publish_time']
 
@@ -187,7 +197,11 @@ class Comment(db.Model):
         db.String(50),
         nullable=False,
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-
+    author = db.relationship("User", back_populates="comments")
+    # comment_likes = db.relationship("CommentLike", back_populates="comment")  # TODO: delete?
+    # users_liked = db.relationship("User", secondary="comment_likes", backref="liked_comments")
+    # users_liked = db.relationship("User", backref="liked_comments")
+    comment_liked = db.relationship("CommentLike", back_populates="comment")
     # 定义与子评论的关联关系
     replies = db.relationship("Comment", backref="parent", remote_side=[id])
 
@@ -209,6 +223,31 @@ class Comment(db.Model):
             self.video_id = args['video_id']
         if 'author_id' in args:
             self.author_id = args['author_id']
+        if 'likes' in args:
+            self.likes = args['likes']
+
+
+# 定义视频点赞模型
+class VideoLike(db.Model):
+    __tablename__ = 'video_likes'
+    id = db.Column(db.Integer, primary_key=True)
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", back_populates="video_likes")
+    video = db.relationship("Video", back_populates="video_likes")
+
+
+# 定义评论点赞模型
+class CommentLike(db.Model):
+    __tablename__ = 'comment_likes'
+    id = db.Column(db.Integer, primary_key=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", back_populates="comment_likes")
+    comment = db.relationship("Comment", back_populates="comment_liked")
+    __table_args__ = (
+        db.CheckConstraint('(comment_id, user_id) <> (\'value1\', \'value2\')', name='check_column1_column2'),
+    )
 
 
 def load_init_data():
@@ -257,6 +296,7 @@ def load_init_data():
         'cover': PREFIX_URL + 'static/videos/covers/3.jpeg',
         'width': 1280,
         'height': 720,
+        'likes': 985,
     }
     video2 = {
         'title': '亿万富翁找回儿子',
@@ -265,6 +305,8 @@ def load_init_data():
         'cover': PREFIX_URL + 'static/videos/covers/1.png',
         'width': 1080,
         'height': 1920,
+        'likes': 324401,
+
     }
     video3 = {
         'title': '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
@@ -273,13 +315,24 @@ def load_init_data():
         'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
         'width': 1024,
         'height': 576,
+        'likes': 14904,
+    }
+    video4 = {
+        'title': '19岁带饭冲锋🌈的作品',
+        'author_id': 1,
+        'url': PREFIX_URL + 'static/videos/2.mp4',
+        'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
+        'width': 1024,
+        'height': 576,
+        'likes': 14904,
     }
 
     videos = []
-    for i in range(200):
+    for i in range(1):
         videos.append(copy.deepcopy(Video(video1)))
         videos.append(copy.deepcopy(Video(video2)))
         videos.append(copy.deepcopy(Video(video3)))
+        videos.append(copy.deepcopy(Video(video4)))
     db.session.add_all(videos)
 
     db.session.add_all(
@@ -294,9 +347,9 @@ def load_init_data():
 
     db.session.add_all(
         [
-            Comment({'video_id': 1, 'author_id': 1, 'content': '别太荒谬了哥们，别太荒谬了哥们'}),
-            Comment({'video_id': 1, 'author_id': 2, 'content': '跟我谈😍'}),
-            Comment({'video_id': 1, 'author_id': 3, 'content': '我好喜欢'}),
+            Comment({'video_id': 1, 'author_id': 1, 'content': '别太荒谬了哥们，别太荒谬了哥们', 'likes': 665}),
+            Comment({'video_id': 1, 'author_id': 2, 'content': '跟我谈😍', 'likes': 70}),
+            Comment({'video_id': 1, 'author_id': 3, 'content': '我好喜欢', 'likes': 6}),
         ]
     )
 
