@@ -136,6 +136,34 @@ export const postComment = (
   })
 }
 
+export const deleteComment = (commentId: number) => {
+  return new Promise<boolean>((resolve, reject) => {
+    fetch(prefix_url.concat(`comment/delete?`).concat(`&comment_id=${commentId}`), {
+      method: 'POST'
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              Message.success(ajaxData.ajax_msg)
+              resolve(true)
+            } else {
+              Message.info(ajaxData.ajax_msg)
+              resolve(false)
+            }
+          })
+        } else {
+          Message.error(res.statusText)
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        Message.error(e.message)
+        reject(e.meta)
+      })
+  })
+}
+
 export interface Comment {
   id: number
   videoId: number

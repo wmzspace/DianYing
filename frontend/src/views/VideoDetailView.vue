@@ -195,19 +195,16 @@ const onPostNewComment = () => {
       newCommentContent.value,
       video.value.id,
       undefined
-    ).then((success) => {
-      if (success) {
-        refreshRootCommentList()
-        newCommentContent.value = ''
-      } else {
-        refreshRootCommentList()
-      }
+    ).then((commentId) => {
+      refreshRootCommentList()
+      newCommentContent.value = ''
     })
   }
 }
 
 const onRepliedComment = () => {
   refreshRootCommentList()
+  // refreshUserInfo()
 }
 </script>
 
@@ -340,7 +337,7 @@ const onRepliedComment = () => {
             :key="index"
             :index="index"
             :video="video"
-            @reply="onRepliedComment"
+            @refresh="onRepliedComment"
           >
           </CommentCard>
           <p class="comments-list-append">暂时没有更多评论</p>

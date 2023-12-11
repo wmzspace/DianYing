@@ -4,6 +4,7 @@ import { useUserStore } from '@/store/user'
 import type { User } from '@/store/user'
 import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import {
+  deleteComment,
   getCommentLikeUsersByCommentId,
   getCommentsByVideoIdOrParent,
   likeCommentOrNot,
@@ -11,7 +12,8 @@ import {
 } from '@/utils/comment'
 import { getTimeDiffUntilNow } from '@/utils/tools'
 import type { VideoMedia } from '@/types'
-const emit = defineEmits(['reply'])
+import { Message } from '@arco-design/web-vue'
+const emit = defineEmits(['refresh'])
 
 const userStore = useUserStore()
 const props = defineProps<{
@@ -106,13 +108,28 @@ const onPostReplyComment = () => {
         refreshUserInfo()
         refreshChildrenComments()
       }
-      emit('reply')
+      emit('refresh')
     })
   }
 }
 
+const processDeleteComment = ref(false)
 const onDeleteComment = () => {
-  // TODO: delete comment
+  if (processDeleteComment.value) {
+    Message.clear()
+    Message.info('点击频率太快')
+    return
+  }
+  processDeleteComment.value = true
+  deleteComment(props.comment.id).then((success) => {
+    // if (success) {
+    //   refreshChildrenComments()
+    // }
+    processDeleteComment.value = false
+    refreshUserInfo()
+    // refreshChildrenComments()
+    emit('refresh')
+  })
 }
 
 const childrenComments = reactive<Comment[]>([])
@@ -206,7 +223,7 @@ onMounted(() => {
       :comment="comment"
       :key="index"
       :video="props.video"
-      @reply="emit('reply')"
+      @reply="emit('refresh')"
     />
     <!--    Children Comment-->
   </a-comment>
