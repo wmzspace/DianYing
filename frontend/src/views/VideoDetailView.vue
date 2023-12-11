@@ -35,6 +35,7 @@ getVideoById(props.video_id).then((res: VideoMedia | undefined) => {
 })
 
 const refreshRootCommentList = () => {
+  comments.splice(0)
   getCommentsByVideoIdOrParent(parseInt(props.video_id), undefined).then((res) => {
     comments.splice(0)
     setTimeout(() => {
@@ -193,7 +194,7 @@ const onPostNewComment = () => {
   }
 }
 
-const onRepliedComment = () => {
+const onRefreshComment = () => {
   refreshRootCommentList()
 }
 
@@ -358,7 +359,7 @@ const handleClickLike = () => {
             :key="index"
             :index="index"
             :video="video"
-            @refresh="onRepliedComment"
+            @refresh="onRefreshComment"
           >
           </CommentCard>
           <p class="comments-list-append">暂时没有更多评论</p>

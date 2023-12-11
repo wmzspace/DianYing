@@ -149,20 +149,23 @@ def api_delete_comment():
 
 # 用于递归删除
 def delete_comment(comment_id):
-    print("开始删除")
     if comment_id is None:
         return AjaxResponse.error("参数缺失")
     comment = Comment.query.get(comment_id)
     if not comment:
         return AjaxResponse.error("资源不存在: comment")
-
-    children_comment = comment.replies
-    if not children_comment:
-        # 可以直接删除
-        db.session.delete(comment)
-    else:
-        # 需要先删除子评论
-        for child_comment in children_comment:
-            delete_comment(child_comment.id)
+    print(comment_id)
+    # children_comment = comment.replies
+    # if not children_comment:
+    #     # 可以直接删除
+    #     pass
+    # else:
+    #     # 需要先删除子评论
+    #     for child_comment in children_comment:
+    #         delete_comment(child_comment.id)
+    # db.session.commit()
+    db.session.commit()
+    # print(comment.content)
+    db.session.delete(comment)
     db.session.commit()
     return AjaxResponse.success(None,"删除成功")

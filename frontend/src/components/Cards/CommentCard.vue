@@ -214,7 +214,7 @@ onMounted(() => {
       :comment="comment"
       :key="index"
       :video="props.video"
-      @reply="emit('refresh')"
+      @refresh="emit('refresh')"
     />
     <!--    Children Comment-->
   </a-comment>
