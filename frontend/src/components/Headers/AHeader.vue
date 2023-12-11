@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@arco-design/web-vue'
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { nextTick, ref } from 'vue'
 
 const searchButtonProps: ButtonProps = {
   // type: 'dashed',

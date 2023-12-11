@@ -18,21 +18,14 @@ const emit = defineEmits(['refresh'])
 const userStore = useUserStore()
 const props = defineProps<{
   comment: Comment
-  // showReply: boolean
   index: number
   video: VideoMedia | undefined
 }>()
 const openReply = () => {
-  // isReplying.value = true
-  // nextTick(() => {
-  //   document.getElementById('reply-comment-input')?.getElementsByTagName('input')[0]?.focus()
-  // })
-  // setTimeout(() => {
   isReplying.value = true
   nextTick(() => {
     document.getElementById('reply-comment-input')?.getElementsByTagName('input')[0]?.focus()
   })
-  // }, 1000)
 }
 const isReplying = ref(false)
 const author = ref<User | undefined>(undefined)
@@ -67,7 +60,6 @@ const handleClickLike = () => {
   if (isProcessLike.value) {
     // Message.info('点击太频繁')
   } else {
-    // commentLikeShowNum.value += isLiked.value ? -1 : 1
     likeCommentOrNot(props.comment.id, userStore.getCurrentUser.id, !isLiked.value).then(() => {
       refreshCommentLike()
     })
@@ -135,7 +127,6 @@ const onDeleteComment = () => {
 const childrenComments = reactive<Comment[]>([])
 const refreshChildrenComments = () => {
   getCommentsByVideoIdOrParent(undefined, props.comment.id).then((res) => {
-    // console.log(props.comment.id)
     childrenComments.splice(0)
     res.reverse().forEach((e) => {
       childrenComments.push(e)

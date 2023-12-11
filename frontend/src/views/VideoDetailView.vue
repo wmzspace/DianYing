@@ -3,35 +3,21 @@ import { getVideoById, pullVideo } from '@/utils/video'
 import type { Comment } from '@/utils/comment'
 import { getCommentsByVideoIdOrParent, postComment } from '@/utils/comment'
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import PresetPlayer, { Events } from 'xgplayer'
-import Danmu from 'xgplayer/es/plugins/danmu'
-import type { IDanmuConfig } from 'xgplayer/es/plugins/danmu'
+import { Events } from 'xgplayer'
 import Player from 'xgplayer'
 import { debounce } from 'lodash-es'
-import type { DanMuProps, VideoMedia } from '@/types'
+import type { VideoMedia } from '@/types'
 import { useUserStore } from '@/store/user/'
 import type { User } from '@/store/user/'
-import {
-  isNavigationFailure,
-  NavigationFailureType,
-  onBeforeRouteUpdate,
-  useRoute,
-  useRouter
-} from 'vue-router'
-import type { IUrl } from 'xgplayer/es/player'
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import CommentCard from '@/components/Cards/CommentCard.vue'
 import _ from 'lodash'
 import VideoCardSmall from '@/components/Cards/VideoCardSmall.vue'
-import { Message } from '@arco-design/web-vue'
-// import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
-const route = useRoute()
-const router = useRouter()
 const props = defineProps<{
   video_id: string
 }>()
-// const props = defineProps(['video_id'])
 const comments: Comment[] = reactive([])
 
 let relatedList: VideoMedia[] = reactive([])
@@ -54,7 +40,7 @@ const refreshRootCommentList = () => {
   })
 }
 
-watch(video, (value, oldValue, onCleanup) => {
+watch(video, (value) => {
   if (value !== undefined) {
     userStore.getUserById(value.authorId).then((user) => {
       author.value = user
@@ -82,11 +68,8 @@ const calculateContainerPositions = () => {
   let width = 0
   width = playerContainer.clientWidth
   if (width > 0) {
-    // console.log(`放大倍数:${width / video.value.width}`)
     if (video.value.height >= video.value.width) {
-      // ;(playerContainer as HTMLElement).style.height = `70vh`
       ;(playerContainer as HTMLElement).classList.add('vh-70')
-      // ;(playerContainer as HTMLElement).style.height = `${width / 1.5}px`
     } else {
       ;(playerContainer as HTMLElement).classList.remove('vh-70')
       ;(playerContainer as HTMLElement).style.height = `${
@@ -204,7 +187,6 @@ const onPostNewComment = () => {
 
 const onRepliedComment = () => {
   refreshRootCommentList()
-  // refreshUserInfo()
 }
 </script>
 
@@ -212,8 +194,6 @@ const onRepliedComment = () => {
   <div id="video-detail">
     <!--    mainContainer-->
     <div class="mainContainer">
-      <!--      leftContainer-->
-      <!--      <div class="leftContainer">-->
       <!--        videoContainer-->
       <div class="videoContainer">
         <div class="video-detail-container">
@@ -266,7 +246,6 @@ const onRepliedComment = () => {
               <a-link class="name">
                 <span> {{ video ? author?.nickname : '...' }} </span>
               </a-link>
-              <!--          <icon-right />-->
               <div class="statistic">
                 <span class="title"> 粉丝</span> <span class="number">8000</span>
                 <span class="title"> 获赞</span> <span class="number">2.6万</span>
@@ -344,7 +323,6 @@ const onRepliedComment = () => {
         </div>
       </div>
       <!--      commentContainer-->
-      <!--      leftContainer-->
     </div>
     <!--    mainContainer-->
     <!--    footerContainer-->

@@ -10,7 +10,6 @@ export interface User {
   sex: string
   username: string
 }
-// TODO
 // impo mandert { mande } from 'mande'
 // const api = mande('/api/users')
 
