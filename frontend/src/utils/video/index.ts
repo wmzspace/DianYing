@@ -1,7 +1,9 @@
 import type { RawVideo, VideoMedia } from '@/types'
 import { prefix_url } from '@/api'
+import type { AjaxResponse } from '@/api'
 import _ from 'lodash'
 import { Message } from '@arco-design/web-vue'
+import type { User } from '@/store/user'
 
 export const getVideoById = (videoId: number | string) => {
   const id = typeof videoId === 'string' ? parseInt(videoId) : videoId
@@ -54,5 +56,83 @@ export const pullVideo = (num: number) =>
       .catch((e) => {
         Message.error(e)
         reject(e)
+      })
+  })
+
+// export const getVideoByVideoId = (videoId: number | undefined, parentId: number | undefined) => {
+//   const result: VideoMedia[] = []
+//   const videoString = videoId === undefined ? '' : `&video_id=${videoId}`
+//   const parentString = parentId === undefined ? '' : `&parent_id=${parentId}`
+//   return new Promise<VideoMedia[]>((resolve, reject) => {
+//     fetch(prefix_url.concat(`video/get?`).concat(videoString).concat(parentString), {
+//       method: 'POST'
+//     })
+//       .then((res) => {
+//         if (res.ok) {
+//           res.json().then((ajaxData: AjaxResponse) => {
+//             if (ajaxData.ajax_ok) {
+//               const data = ajaxData.ajax_data as RawVideo[]
+//               data.forEach((e) => {
+//                 const video: VideoMedia = {
+//                   authorId: e.author_id,
+//                   content: e.content,
+//                   publishTime: e.publish_time,
+//                   id: e.id,
+//                   parentId: e.parent_id === null ? undefined : e.parent_id,
+//                   videoId: e.video_id
+//                 }
+//                 result.push(video)
+//               })
+//               resolve(_.cloneDeep(result))
+//             } else {
+//               Message.info(ajaxData.ajax_msg)
+//             }
+//           })
+//         }
+//       })
+//       .catch((e) => {
+//         Message.error(e)
+//         reject(e)
+//       })
+//   })
+// }
+export const getVideoLikeUsersByVideoId = (videoId: number) =>
+  new Promise<User[]>((resolve, reject) => {
+    fetch(prefix_url.concat(`video/get_likes?video_id=${videoId}`))
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              resolve(ajaxData.ajax_data as User[])
+            }
+          })
+        }
+      })
+      .catch((e) => {
+        Message.error(e.message)
+        // resolve([])
+        reject(e)
+      })
+  })
+
+export const likeVideoOrNot = (videoId: number, userId: number, toLike: boolean) =>
+  new Promise<void>((resolve, reject) => {
+    fetch(prefix_url.concat(`video/like?video_id=${videoId}&user_id=${userId}&to_like=${toLike}`), {
+      method: 'POST'
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              Message.success(ajaxData.ajax_msg)
+            } else {
+              Message.info(ajaxData.ajax_msg)
+            }
+            resolve()
+          })
+        }
+      })
+      .catch((e) => {
+        Message.error(e.message)
       })
   })

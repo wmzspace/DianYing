@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { getVideoById, pullVideo } from '@/utils/video'
+import { getVideoById, getVideoLikeUsersByVideoId, likeVideoOrNot, pullVideo } from '@/utils/video'
 import type { Comment } from '@/utils/comment'
-import { getCommentsByVideoIdOrParent, postComment } from '@/utils/comment'
+import {
+  getCommentLikeUsersByCommentId,
+  getCommentsByVideoIdOrParent,
+  likeCommentOrNot,
+  postComment
+} from '@/utils/comment'
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { Events } from 'xgplayer'
 import Player from 'xgplayer'
@@ -45,6 +50,9 @@ watch(video, (value) => {
     userStore.getUserById(value.authorId).then((user) => {
       author.value = user
     })
+    videoLikeShowNum.value = 0
+    isLiked.value = false
+    refreshVideoLike()
     refreshRootCommentList()
     pullVideo(10).then((res) => {
       relatedList.splice(0)
@@ -188,6 +196,40 @@ const onPostNewComment = () => {
 const onRepliedComment = () => {
   refreshRootCommentList()
 }
+
+const isLiked = ref(false)
+const isProcessLike = ref(true)
+const videoLikeUsers = reactive<User[]>([])
+const videoLikeShowNum = ref(0)
+
+const refreshVideoLike = () => {
+  getVideoLikeUsersByVideoId(parseInt(props.video_id)).then((users) => {
+    videoLikeUsers.splice(0)
+    videoLikeShowNum.value = 0
+    isLiked.value = false
+    users.forEach((user) => {
+      if (user.id === userStore.getCurrentUser.id) {
+        isLiked.value = true
+      }
+      videoLikeShowNum.value++
+      videoLikeUsers.push(user)
+    })
+    isProcessLike.value = false
+  })
+}
+
+const handleClickLike = () => {
+  if (isProcessLike.value) {
+    // Message.info('点击太频繁')
+  } else {
+    likeVideoOrNot(parseInt(props.video_id), userStore.getCurrentUser.id, !isLiked.value).then(
+      () => {
+        refreshVideoLike()
+      }
+    )
+    isLiked.value = !isLiked.value
+  }
+}
 </script>
 
 <template>
@@ -205,15 +247,15 @@ const onRepliedComment = () => {
           </div>
           <div class="detail-video-actions">
             <a-list class="detail-video-actions-left" :bordered="false">
-              <a-list-item>
-                <icon-heart-fill />
-                <span>1.0万</span>
+              <a-list-item @click="handleClickLike" class="like-action">
+                <span class="like-icon"><IconHeartFill v-if="isLiked" /><IconHeart v-else /></span>
+                <span>{{ videoLikeShowNum }}</span>
               </a-list-item>
               <a-list-item>
                 <icon-message />
                 <span>323</span>
               </a-list-item>
-              <a-list-item>
+              <a-list-item class="star-action">
                 <icon-star-fill />
                 <span>683</span>
               </a-list-item>

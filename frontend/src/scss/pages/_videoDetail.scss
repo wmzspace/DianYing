@@ -158,6 +158,10 @@
                   margin: 0 24px 0 0;
                   padding: 0;
 
+                  &.like-action,&.star-action{
+                    cursor: pointer;
+                  }
+
                   .arco-list-item-content {
                     display: flex;
                     justify-content: center;
