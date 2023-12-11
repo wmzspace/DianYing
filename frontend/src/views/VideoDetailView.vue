@@ -28,7 +28,7 @@ const userStore = useUserStore()
 const props = defineProps<{
   video_id: string
 }>()
-const comments: Comment[] = reactive([])
+const comments: (Comment | undefined)[] = reactive([])
 
 let relatedList: VideoMedia[] = reactive([])
 
@@ -97,26 +97,27 @@ const refreshRootCommentList = (focusIndex?: CommentFinder) => {
     })
     if (focusIndex !== undefined) {
       // console.log(commentElements[0])
-      setTimeout(() => {
-        let targetParent = focusComment(focusIndex, undefined)
-        if (targetParent !== undefined) {
-          let childNodes = targetParent.querySelectorAll('.comment-item')
-          // console.log('parent', targetParent)
-          // console.log('children', childNodes)
-          // let commentElements = childNodes.querySelector()
-          let target = childNodes[0]
-          // console.log(target)
-          target.scrollIntoView({ behavior: 'smooth' })
-          target.classList.add('animated')
-          setTimeout(() => {
-            if (target !== undefined) {
-              target.classList.remove('animated')
-            }
-          }, 1000)
-        }
-
-        // target.scrollIntoView({ behavior: 'smooth' })
-      }, 5000)
+      return
+      // setTimeout(() => {
+      //   let targetParent = focusComment(focusIndex, undefined)
+      //   if (targetParent !== undefined) {
+      //     let childNodes = targetParent.querySelectorAll('.comment-item')
+      //     // console.log('parent', targetParent)
+      //     // console.log('children', childNodes)
+      //     // let commentElements = childNodes.querySelector()
+      //     let target = childNodes[0]
+      //     // console.log(target)
+      //     target.scrollIntoView({ behavior: 'smooth' })
+      //     target.classList.add('animated')
+      //     setTimeout(() => {
+      //       if (target !== undefined) {
+      //         target.classList.remove('animated')
+      //       }
+      //     }, 1000)
+      //   }
+      //
+      //   // target.scrollIntoView({ behavior: 'smooth' })
+      // }, 5000)
     }
   })
 }
@@ -134,6 +135,8 @@ watch(video, (value) => {
     isProcessStar.value = false
     isProcessLike.value = false
     refreshRootCommentList()
+    relatedList.splice(0)
+
     pullVideo(10).then((res) => {
       relatedList.splice(0)
       res.forEach((e) => {
@@ -267,9 +270,9 @@ const onPostNewComment = () => {
       newCommentContent.value,
       video.value.id,
       undefined
-    ).then((commentId) => {
-      refreshRootCommentList()
+    ).then((comment) => {
       newCommentContent.value = ''
+      refreshRootCommentList()
     })
   }
 }
@@ -412,7 +415,7 @@ const handleClickStar = () => {
         <div class="user-info">
           <a-avatar
             :size="60"
-            :image-url="'/images/avatar.jpeg'"
+            :image-url="author?.avatar"
             :style="{ marginRight: '8px' }"
           ></a-avatar>
           <div class="basic-info">
@@ -485,11 +488,16 @@ const handleClickStar = () => {
 
         <div class="comments-list">
           <CommentCard
-            v-for="(comment, index) in comments"
-            :comment="comment"
+            v-for="(comment, index) in comments.filter((e) => e !== undefined)"
+            :comment="comment as Comment"
             :key="index"
             :index="index"
             :video="video"
+            @delete="
+              (index) => {
+                delete comments[index]
+              }
+            "
             @refresh="
               (object) => {
                 onRefreshComment(object)

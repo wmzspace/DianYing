@@ -21,7 +21,7 @@ export const useUserStore = defineStore('user', {
     // ...
   }),
   getters: {
-    getCurrentUser: (state) => state.userData,
+    getCurrentUser: (state) => state.userData as User,
     getUserById: (state) => {
       return (userId: number) =>
         new Promise<User>((resolve, reject) => {
@@ -36,9 +36,12 @@ export const useUserStore = defineStore('user', {
     }
   },
   actions: {
-    async userLogin(user: User) {
+    async userLogin(userId: number) {
       try {
-        this.userData = user
+        // this.userData = user
+        this.getUserById(userId).then((user) => {
+          this.userData = user
+        })
         // this.userData = await api.post({ login, password })
         // showTooltip(`Welcome back ${this.userData.name}!`)
       } catch (error) {
@@ -47,16 +50,5 @@ export const useUserStore = defineStore('user', {
         return error
       }
     }
-    // async registerUser(user: User) {
-    //   try {
-    //     this.userList.push(user)
-    //     // this.userData = await api.post({ login, password })
-    //     // showTooltip(`Welcome back ${this.userData.name}!`)
-    //   } catch (error) {
-    //     // showTooltip(error)
-    //     // 让表单组件显示错误
-    //     return error
-    //   }
-    // }
   }
 })

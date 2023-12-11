@@ -14,7 +14,7 @@ import { getTimeDiffUntilNow } from '@/utils/tools'
 import type { VideoMedia } from '@/types'
 import { Message } from '@arco-design/web-vue'
 
-const emit = defineEmits(['refresh'])
+const emit = defineEmits(['refresh', 'delete'])
 
 const userStore = useUserStore()
 const props = defineProps<{
@@ -22,6 +22,7 @@ const props = defineProps<{
   index: any
   video: VideoMedia | undefined
 }>()
+
 const openReply = () => {
   isReplying.value = true
   nextTick(() => {
@@ -30,13 +31,18 @@ const openReply = () => {
 }
 const isReplying = ref(false)
 const author = ref<User | undefined>(undefined)
-const isLoadingUser = ref(false)
+const isLoadingUser = ref(true)
 const refreshUserInfo = () => {
-  isLoadingUser.value = true
-  userStore.getUserById(props.comment.authorId).then((user) => {
-    author.value = user
-    isLoadingUser.value = false
-  })
+  // isLoadingUser.value = true
+  userStore
+    .getUserById(props.comment.authorId)
+    .then((user) => {
+      author.value = user
+      // isLoadingUser.value = false
+    })
+    .catch(() => {
+      emitRefresh(true)
+    })
 }
 
 const isLiked = ref(false)
@@ -46,28 +52,38 @@ const commentLikeShowNum = ref(0)
 
 const refreshCommentLike = () => {
   isProcessLike.value = true
-  getCommentLikeUsersByCommentId(props.comment.id).then((users) => {
-    commentLikeUsers.splice(0)
-    commentLikeShowNum.value = 0
-    isLiked.value = false
-    users.forEach((user) => {
-      if (user.id === userStore.getCurrentUser.id) {
-        isLiked.value = true
-      }
-      commentLikeShowNum.value++
-      commentLikeUsers.push(user)
+  getCommentLikeUsersByCommentId(props.comment.id)
+    .then((users) => {
+      commentLikeUsers.splice(0)
+      commentLikeShowNum.value = 0
+      isLiked.value = false
+      users.forEach((user) => {
+        if (user.id === userStore.getCurrentUser.id) {
+          isLiked.value = true
+        }
+        commentLikeShowNum.value++
+        commentLikeUsers.push(user)
+      })
     })
-    isProcessLike.value = false
-  })
+    .catch(() => {
+      emitRefresh(true)
+    })
+    .finally(() => {
+      isProcessLike.value = false
+    })
 }
 
 const handleClickLike = () => {
   if (isProcessLike.value) {
     // Message.info('点击太频繁')
   } else {
-    likeCommentOrNot(props.comment.id, userStore.getCurrentUser.id, !isLiked.value).then(() => {
-      refreshCommentLike()
-    })
+    likeCommentOrNot(props.comment.id, userStore.getCurrentUser.id, !isLiked.value)
+      .then(() => {
+        refreshCommentLike()
+      })
+      .catch(() => {
+        emitRefresh(true)
+      })
     isLiked.value = !isLiked.value
   }
 }
@@ -91,18 +107,23 @@ const onPostReplyComment = () => {
   if (author.value !== undefined) {
     isProcessReplyComment.value = true
     postComment(userStore.getCurrentUser.id, replyCommentContent.value, undefined, props.comment.id)
-      .then((commentId) => {
-        if (commentId !== undefined) {
-          refreshUserInfo()
-          refreshChildrenComments()
+      .then((comment) => {
+        if (comment !== undefined) {
+          // refreshUserInfo()
+          // refreshChildrenComments()
           // focusCommentId.value = commentId
+          // console.log(comment)
+          // childrenComments.unshift(comment)
           replyCommentContent.value = ''
           isReplying.value = false
+          refreshChildrenComments()
+
+          // refreshUserInfo()
         } else {
           refreshUserInfo()
           refreshChildrenComments()
+          emitRefresh(true)
         }
-        emitRefresh(undefined)
       })
       .finally(() => {
         isProcessReplyComment.value = false
@@ -118,28 +139,43 @@ const onDeleteComment = () => {
     return
   }
   processDeleteComment.value = true
-  deleteComment(props.comment.id).then((success) => {
-    // if (success) {
-    //   refreshChildrenComments()
-    // }
-    processDeleteComment.value = false
-    refreshUserInfo()
-    // refreshChildrenComments()
-    emitRefresh(undefined)
-  })
+  deleteComment(props.comment.id)
+    .then((success) => {
+      // if (success) {
+      //   refreshChildrenComments()
+      // }
+      // refreshChildrenComments()
+
+      if (success) {
+        // isDeleted.value = true
+        // emit('delete', props.index)
+        // refreshChildrenComments()
+        emitRefresh(false)
+      } else {
+        refreshUserInfo()
+        emitRefresh(true)
+      }
+    })
+    .finally(() => {
+      processDeleteComment.value = false
+    })
 }
 
 const childrenLoaded = ref(false)
-const childrenComments = reactive<Comment[]>([])
+const childrenComments = reactive<(Comment | undefined)[]>([])
 const refreshChildrenComments = () => {
   childrenLoaded.value = false
-  getCommentsByVideoIdOrParent(undefined, props.comment.id).then((res) => {
-    childrenComments.splice(0)
-    res.reverse().forEach((e) => {
-      childrenComments.push(e)
+  getCommentsByVideoIdOrParent(undefined, props.comment.id)
+    .then((res) => {
+      childrenComments.splice(0)
+      res.reverse().forEach((e) => {
+        childrenComments.push(e)
+      })
+      childrenLoaded.value = true
     })
-    childrenLoaded.value = true
-  })
+    .catch((res) => {
+      emitRefresh(true)
+    })
 }
 onMounted(() => {
   refreshUserInfo()
@@ -152,32 +188,46 @@ const isLoadingComment = computed(() => {
     !childrenLoaded.value ||
     isLoadingUser.value ||
     processDeleteComment.value ||
-    isProcessLike.value ||
+    // isProcessLike.value ||
     isProcessReplyComment.value
   )
 })
 
-const emitRefresh = (child_object: any) => {
+const emitRefresh = (refreshAll: boolean) => {
   // let args = props.index
   // args['index'] = index
-  let object = {
-    children: child_object,
-    index: props.index
-  }
+  // let object = {
+  //   children: child_object,
+  //   index: props.index
+  // }
 
-  emit('refresh', object)
+  emit('refresh', refreshAll)
 }
+
+const isDeleted = ref(false)
 </script>
 
 <template>
   <a-comment
+    v-show="!isDeleted"
     class="comment-item"
     align="left"
     :author="author?.nickname"
-    :avatar="author?.avatar"
     :datetime="getTimeDiffUntilNow(props.comment.publishTime)"
     style="margin-bottom: 0; padding-bottom: 0"
   >
+    <template #avatar>
+      <a-avatar
+        :size="32"
+        :image-url="author?.avatar"
+        @load="
+          () => {
+            console.log('!')
+            isLoadingUser = false
+          }
+        "
+      ></a-avatar>
+    </template>
     <template #content>
       <div
         class="comment-content-text-container"
@@ -241,14 +291,24 @@ const emitRefresh = (child_object: any) => {
     <a-spin class="load-more" dot v-if="isLoadingComment" :loading="isLoadingComment" />
     <CommentCard
       v-else
-      v-for="(comment, index) in childrenComments"
+      v-for="(comment, index) in childrenComments.filter((e) => e !== undefined)"
       :index="index"
-      :comment="comment"
+      :comment="comment as Comment"
       :key="index"
       :video="props.video"
-      @refresh="
+      @delete="
         (index_) => {
-          emitRefresh(index_)
+          // isDeleted = true
+          // delete childrenComments[index_]
+        }
+      "
+      @refresh="
+        (refreshAll) => {
+          if (refreshAll) {
+            emitRefresh(true)
+          } else {
+            refreshChildrenComments()
+          }
         }
       "
     />

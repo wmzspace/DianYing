@@ -1,3 +1,4 @@
+import copy
 import datetime
 
 from flask import request
@@ -128,16 +129,19 @@ def post_comment():
         "publish_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     })
 
-    comment_id = comment.id
-
+    # res_comment = model2dict(copy.deepcopy([comment]))[0]
+    # print(res_comment)
     # 将评论对象添加到会话中
     db.session.add(comment)
 
     # 提交更改到数据库
+    # db.session.commit()
+    db.session.flush()
+    res_comment = model2dict([comment])[0]
     db.session.commit()
 
     return AjaxResponse.success(
-        {'comment_id': comment_id},
+        res_comment,
         "评论已发布")
 
 
@@ -167,4 +171,4 @@ def delete_comment(comment_id):
     # print(comment.content)
     db.session.delete(comment)
     db.session.commit()
-    return AjaxResponse.success(None,"删除成功")
+    return AjaxResponse.success(None, "删除成功")

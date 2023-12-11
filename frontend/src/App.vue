@@ -15,14 +15,15 @@ onMounted(() => {
     document.documentElement.style.height = `${window.innerHeight}px`
   })
   const store = useUserStore()
-  store.userLogin({
-    register_time: '',
-    sex: '',
-    username: '',
-    id: 1,
-    nickname: '19岁带饭冲锋🌈',
-    avatar: 'images/avatar.jpeg'
-  })
+  // store.userLogin({
+  //   register_time: '',
+  //   sex: '',
+  //   username: '',
+  //   id: 1,
+  //   nickname: '19岁带饭冲锋🌈',
+  //   avatar: 'images/avatar.jpeg'
+  // })
+  store.userLogin(2)
 })
 </script>
 

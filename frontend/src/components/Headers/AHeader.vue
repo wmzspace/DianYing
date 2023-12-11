@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@arco-design/web-vue'
 import { nextTick, ref } from 'vue'
+import { useUserStore } from '@/store/user'
+
+const userStore = useUserStore()
 
 const searchButtonProps: ButtonProps = {
   // type: 'dashed',
@@ -106,7 +109,7 @@ const setSearchBarPopWidth = () => {
           <a-popover position="br" id="popover-a-avatar" :trigger="['focus', 'hover']">
             <a-button class="button">
               <a-avatar>
-                <img alt="avatar" src="/images/avatar.jpeg" />
+                <img alt="avatar" :src="userStore.getCurrentUser.avatar" />
               </a-avatar>
             </a-button>
             <template #title>
@@ -116,7 +119,7 @@ const setSearchBarPopWidth = () => {
                 <!--                    <img alt="avatar" src="/images/avatar.jpeg" />-->
                 <!--                  </a-avatar>-->
                 <div class="name">
-                  19岁带饭冲锋🌈
+                  {{ userStore.getCurrentUser.nickname }}
                   <icon-right />
                 </div>
                 <!--                  <div class="statistic">-->

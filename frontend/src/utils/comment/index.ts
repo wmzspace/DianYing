@@ -4,6 +4,18 @@ import { Message } from '@arco-design/web-vue'
 import type { User } from '@/store/user'
 import type { AjaxResponse } from '@/api'
 
+export const parseCommentByRaw = (r: RawComment): Comment => {
+  const comment: Comment = {
+    id: r.id,
+    authorId: r.author_id,
+    content: r.content,
+    parentId: r.parent_id === null ? undefined : r.parent_id,
+    publishTime: r.publish_time,
+    videoId: r.video_id
+  }
+  return comment
+}
+
 export const getCommentsByVideoIdOrParent = (
   videoId: number | undefined,
   parentId: number | undefined
@@ -21,14 +33,7 @@ export const getCommentsByVideoIdOrParent = (
             if (ajaxData.ajax_ok) {
               const data = ajaxData.ajax_data as RawComment[]
               data.forEach((e) => {
-                const comment: Comment = {
-                  authorId: e.author_id,
-                  content: e.content,
-                  publishTime: e.publish_time,
-                  id: e.id,
-                  parentId: e.parent_id === null ? undefined : e.parent_id,
-                  videoId: e.video_id
-                }
+                const comment = parseCommentByRaw(e)
                 result.push(comment)
               })
               resolve(_.cloneDeep(result))
@@ -52,6 +57,9 @@ export const getCommentLikeUsersByCommentId = (commentId: number) =>
           res.json().then((ajaxData: AjaxResponse) => {
             if (ajaxData.ajax_ok) {
               resolve(ajaxData.ajax_data as User[])
+            } else {
+              Message.info('获取评论点赞信息失败：' + ajaxData.ajax_msg)
+              reject()
             }
           })
         }
@@ -76,10 +84,11 @@ export const likeCommentOrNot = (commentId: number, userId: number, toLike: bool
           res.json().then((ajaxData: AjaxResponse) => {
             if (ajaxData.ajax_ok) {
               Message.success(ajaxData.ajax_msg)
+              resolve()
             } else {
-              Message.info(ajaxData.ajax_msg)
+              Message.info('操作失败：' + ajaxData.ajax_msg)
+              reject()
             }
-            resolve()
           })
         }
       })
@@ -100,7 +109,7 @@ export const postComment = (
 ) => {
   const videoString = videoId === undefined ? '' : `&video_id=${videoId}`
   const parentString = parentId === undefined ? '' : `&parent_id=${parentId}`
-  return new Promise<number | undefined>((resolve, reject) => {
+  return new Promise<Comment | undefined>((resolve, reject) => {
     fetch(
       prefix_url
         .concat(`comment/post?`)
@@ -117,10 +126,10 @@ export const postComment = (
           res.json().then((ajaxData: AjaxResponse) => {
             if (ajaxData.ajax_ok) {
               Message.success(ajaxData.ajax_msg)
-              const data = ajaxData.ajax_data as PostCommentRawResponse
-              resolve(data.comment_id)
+              const data = ajaxData.ajax_data as RawComment
+              resolve(parseCommentByRaw(data))
             } else {
-              Message.info(ajaxData.ajax_msg)
+              Message.info('评论失败：' + ajaxData.ajax_msg)
               resolve(undefined)
             }
           })
