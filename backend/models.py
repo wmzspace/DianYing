@@ -141,7 +141,10 @@ class Video(db.Model):
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     author = db.relationship("User", back_populates="videos")
     video_likes = db.relationship("VideoLike", back_populates="video")
-    comments = db.relationship("Comment", backref="video", cascade="all, delete-orphan")
+    comments = db.relationship(
+        "Comment",
+        backref="video",
+        cascade="all, delete-orphan")
 
     def __init__(self, args):
         if 'title' in args:
@@ -194,10 +197,16 @@ class Comment(db.Model):
     __tablename__ = 'comments'
 
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.String(400), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
-    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'), nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    video_id = db.Column(
+        db.Integer,
+        db.ForeignKey('videos.id'),
+        nullable=False)
+    author_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        nullable=False)
     publish_time = db.Column(
         db.String(50),
         nullable=False,
@@ -228,6 +237,8 @@ class Comment(db.Model):
             self.video_id = args['video_id']
         if 'author_id' in args:
             self.author_id = args['author_id']
+        if 'publish_time' in args:
+            self.publish_time = args['publish_time']
 
 
 # 定义视频点赞模型
@@ -249,7 +260,9 @@ class CommentLike(db.Model):
     user = db.relationship("User", back_populates="comment_likes")
     comment = db.relationship("Comment", back_populates="comment_liked")
     __table_args__ = (
-        db.CheckConstraint('(comment_id, user_id) <> (\'value1\', \'value2\')', name='check_column1_column2'),
+        db.CheckConstraint(
+            '(comment_id, user_id) <> (\'value1\', \'value2\')',
+            name='check_column1_column2'),
     )
 
 
@@ -348,13 +361,27 @@ def load_init_data():
         ]
     )
 
-    db.session.add_all(
-        [
-            Comment({'video_id': 1, 'author_id': 1, 'content': '别太荒谬了哥们，别太荒谬了哥们', 'likes': 665}),
-            Comment({'video_id': 1, 'author_id': 2, 'content': '跟我谈😍', 'likes': 70, 'parent_id': 1}),
-            Comment({'video_id': 1, 'author_id': 3, 'content': '我好喜欢', 'likes': 6}),
-        ]
-    )
+    db.session.add_all([Comment({'video_id': 1,
+                                 'author_id': 1,
+                                 'content': '别太荒谬了哥们，别太荒谬了哥们'}),
+                        Comment({'video_id': 1,
+                                 'author_id': 2,
+                                 'content': '跟我谈😍',
+                                 'parent_id': 1}),
+                        Comment({'video_id': 1,
+                                 'author_id': 3,
+                                 'content': '我好喜欢'}),
+                        Comment({'video_id': 1,
+                                 'author_id': 1,
+                                 'content': '我也好喜欢',
+                                 'parent_id': 3,
+                                 'publish_time': datetime.datetime(2023,
+                                                                   10,
+                                                                   2,
+                                                                   21,
+                                                                   50,
+                                                                   16).strftime('%Y-%m-%d %H:%M:%S')}),
+                        ])
 
     db.session.commit()
     db.session.add_all(
@@ -365,8 +392,11 @@ def load_init_data():
             VTRelation({'video_id': 1, 'tag_id': 4}),
             VTRelation({'video_id': 1, 'tag_id': 5}),
         ]
+
     )
-    pass
+
+
+pass
 
 # class Income(Invoice, db.Model):
 #     """

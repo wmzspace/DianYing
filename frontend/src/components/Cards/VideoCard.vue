@@ -94,7 +94,8 @@ import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/e
 import type { VideoMedia } from '@/types'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { User, useUserStore } from '@/store/user'
+import { useUserStore } from '@/store/user'
+import type { User } from '@/store/user'
 import { getTimeDiffUntilNow } from '@/utils/tools'
 
 const emit = defineEmits(['loadeddata'])

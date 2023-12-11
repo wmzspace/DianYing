@@ -236,6 +236,23 @@
 
       }
 
+      .comment-content-text-container{
+        //height:300px;
+        //font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
+        //font-size: 14px;
+        //font-weight: 400;
+        //line-height: 22px;
+        &:not(.show-all){
+          overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
+          text-overflow: ellipsis; /*可以用来多行文本的情况下，用省略号“…”隐藏超出范围的文本 。*/
+          display: -webkit-box; /*必须结合的属性 ，将对象作为弹性伸缩盒子模型显示 。*/
+          -webkit-line-clamp: 3; /*用来限制在一个块元素显示的文本的行数。*/
+          -webkit-box-orient: vertical;
+          cursor: pointer;
+        }
+
+      }
+
       .detail-comment-divider {
         width: 100%;
         display: flex;

@@ -1,4 +1,7 @@
+import datetime
+
 from flask import request
+from sqlalchemy.orm.collections import InstrumentedList
 
 from blueprints.comment import comment_bp
 from exts import AjaxResponse, db
@@ -27,8 +30,11 @@ def get_comments_by_video_id_or_comment_id():
         video = Video.query.get(video_id)
         if video is None:
             return AjaxResponse.error("视频不存在")
-        target = video.comments
-        # target = Comment.query.filter_by(video_id=video_id).all()
+
+        def is_root_comment(comment: Comment):
+            return comment.parent_id is None
+
+        target = list(filter(is_root_comment, video.comments))
     return AjaxResponse.success(model2dict(target))
 
 
@@ -58,7 +64,8 @@ def like_or_dislike_comment():
         return AjaxResponse.error("用户或评论不存在")
 
     # 检查用户是否已经点赞过该评论
-    existing_like = CommentLike.query.filter_by(user_id=user_id, comment_id=comment_id).all()
+    existing_like = CommentLike.query.filter_by(
+        user_id=user_id, comment_id=comment_id).all()
 
     # 已经点过赞
     if len(existing_like) > 0:
@@ -91,20 +98,33 @@ def post_comment():
     parent_id = request.args.get("parent_id")
     content = request.args.get("content")
 
-    author = User.query.get(author_id)
-    parent = Comment.query.get(parent_id)
-    video = request.args.get(video_id)
+    if (author_id is None or content is None
+            or (video_id is None and parent_id is None)):
+        return AjaxResponse.error("参数缺失")
 
-    if not author or not parent or not video:
-        return AjaxResponse.error("资源不存在")
+    author = User.query.get(author_id)
+    if not author:
+        return AjaxResponse.error("资源不存在: author")
+    if parent_id is not None:
+        parent = Comment.query.get(parent_id)
+        if not parent:
+            return AjaxResponse.error("资源不存在: parent")
+        video_id = parent.video_id
+    elif video_id is not None:
+        video = Video.query.get(video_id)
+        if not video:
+            return AjaxResponse.error("资源不存在: video")
 
     # 创建评论对象
     comment = Comment({
         'content': content,
         'parent_id': parent_id,
         'video_id': video_id,
-        "author_id": author_id
+        "author_id": author_id,
+        "publish_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     })
+
+    comment_id = comment.id
 
     # 将评论对象添加到会话中
     db.session.add(comment)
@@ -112,4 +132,6 @@ def post_comment():
     # 提交更改到数据库
     db.session.commit()
 
-    return "评论已发布！"
+    return AjaxResponse.success(
+        {'comment_id': comment_id},
+        "评论已发布")

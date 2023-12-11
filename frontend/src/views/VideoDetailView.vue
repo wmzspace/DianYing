@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { getCommentsByVideoIdOrParent, getVideoById, pullVideo } from '@/mock'
-import type { Comment } from '@/mock'
+import { getVideoById, pullVideo } from '@/utils/video'
+import type { Comment } from '@/utils/comment'
+import { getCommentsByVideoIdOrParent, postComment } from '@/utils/comment'
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import PresetPlayer, { Events } from 'xgplayer'
 import Danmu from 'xgplayer/es/plugins/danmu'
@@ -21,6 +22,7 @@ import type { IUrl } from 'xgplayer/es/player'
 import CommentCard from '@/components/Cards/CommentCard.vue'
 import _ from 'lodash'
 import VideoCardSmall from '@/components/Cards/VideoCardSmall.vue'
+import { Message } from '@arco-design/web-vue'
 // import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
@@ -40,17 +42,24 @@ const player = ref<Player | undefined>(undefined)
 getVideoById(props.video_id).then((res: VideoMedia | undefined) => {
   video.value = _.cloneDeep(res)
 })
+
+const refreshRootCommentList = () => {
+  getCommentsByVideoIdOrParent(parseInt(props.video_id), undefined).then((res) => {
+    comments.splice(0)
+    setTimeout(() => {
+      res.reverse().forEach((e) => {
+        comments.push(e)
+      }, 1000)
+    })
+  })
+}
+
 watch(video, (value, oldValue, onCleanup) => {
   if (value !== undefined) {
     userStore.getUserById(value.authorId).then((user) => {
       author.value = user
     })
-    getCommentsByVideoIdOrParent(parseInt(props.video_id), undefined).then((res) => {
-      comments.splice(0)
-      res.forEach((e) => {
-        comments.push(e)
-      })
-    })
+    refreshRootCommentList()
     pullVideo(10).then((res) => {
       relatedList.splice(0)
       res.forEach((e) => {
@@ -175,6 +184,31 @@ onUnmounted(() => {
 })
 
 const newCommentContent = ref<string>('')
+const onPostNewComment = () => {
+  if (newCommentContent.value.length <= 0) {
+    // Message.info('评论内容异常')
+    return
+  }
+  if (author.value !== undefined && video.value !== undefined) {
+    postComment(
+      userStore.getCurrentUser.id,
+      newCommentContent.value,
+      video.value.id,
+      undefined
+    ).then((success) => {
+      if (success) {
+        refreshRootCommentList()
+        newCommentContent.value = ''
+      } else {
+        refreshRootCommentList()
+      }
+    })
+  }
+}
+
+const onRepliedComment = () => {
+  refreshRootCommentList()
+}
 </script>
 
 <template>
@@ -276,13 +310,16 @@ const newCommentContent = ref<string>('')
             <a-input
               placeholder="留下你的精彩评论吧"
               class="comment-input"
-              v-model:model-value="newCommentContent"
+              v-model:model-value.trim="newCommentContent"
+              :max-length="400"
+              @pressEnter="onPostNewComment"
             >
               <template #suffix>
                 <img class="icon-at" src="/images/videoDetails/comment_at.svg" />
                 <img
                   class="icon-send"
                   src="/images/videoDetails/send_comment.svg"
+                  @click="onPostNewComment"
                   v-if="newCommentContent.length > 0"
               /></template>
             </a-input>
@@ -298,10 +335,12 @@ const newCommentContent = ref<string>('')
 
         <div class="comments-list">
           <CommentCard
-            v-for="(comment, index) in comments.filter((e) => e.parentId === undefined)"
+            v-for="(comment, index) in comments"
             :comment="comment"
             :key="index"
             :index="index"
+            :video="video"
+            @reply="onRepliedComment"
           >
           </CommentCard>
           <p class="comments-list-append">暂时没有更多评论</p>

@@ -2,7 +2,7 @@
 import VideoCard from '@/components/Cards/VideoCard.vue'
 import type { VideoMedia } from '@/types'
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { pullVideo } from '@/mock'
+import { pullVideo } from '@/utils/video'
 import { debounce } from 'lodash-es'
 import { Message } from '@arco-design/web-vue'
 
