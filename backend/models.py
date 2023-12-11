@@ -49,16 +49,16 @@ class User(db.Model):
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # videos = db.relationship("Video", backref="author")
-    videos = db.relationship("Video", back_populates="author")
+    videos = db.relationship("Video", back_populates="author", cascade="all, delete")
     # 定义与评论的关联关系
-    comments = db.relationship("Comment", back_populates="author")
+    comments = db.relationship("Comment", back_populates="author", cascade="all, delete")
     # comments = db.relationship("Comment", backref="user", cascade="all, delete-orphan")
 
     # 定义与视频的关联关系
     # videos = db.relationship("Video", backref="user", cascade="all, delete-orphan")
 
-    video_liked = db.relationship("VideoLike", back_populates="user")
-    comment_likes = db.relationship("CommentLike", back_populates="user")
+    video_liked = db.relationship("VideoLike", back_populates="user", cascade="all, delete")
+    comment_likes = db.relationship("CommentLike", back_populates="user", cascade="all, delete-orphan")
 
     def __init__(self, args):
         if 'username' in args:
@@ -128,7 +128,7 @@ class Video(db.Model):
     __tablename__ = 'videos'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
     # backref: author = User
     url = db.Column(db.String(100), nullable=False)
     cover = db.Column(db.String(100), nullable=False)
@@ -140,7 +140,7 @@ class Video(db.Model):
         nullable=False,
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     author = db.relationship("User", back_populates="videos")
-    video_liked = db.relationship("VideoLike", back_populates="video")
+    video_liked = db.relationship("VideoLike", back_populates="video", cascade="all, delete")
     comments = db.relationship(
         "Comment",
         backref="video",
@@ -186,8 +186,8 @@ class VTRelation(db.Model):
             self.video_id = args['video_id']
 
     id = db.Column(db.Integer, primary_key=True)
-    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'))
-    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'))
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id', ondelete="cascade"))
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id', ondelete="cascade"))
 
     pass
 
@@ -198,14 +198,14 @@ class Comment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(400), nullable=False)
-    parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    parent_id = db.Column(db.Integer, db.ForeignKey('comments.id', ondelete="cascade"))
     video_id = db.Column(
         db.Integer,
-        db.ForeignKey('videos.id'),
+        db.ForeignKey('videos.id', ondelete="cascade"),
         nullable=False)
     author_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id'),
+        db.ForeignKey('users.id', ondelete="cascade"),
         nullable=False)
     publish_time = db.Column(
         db.String(50),
@@ -215,9 +215,10 @@ class Comment(db.Model):
     # comment_likes = db.relationship("CommentLike", back_populates="comment")  # TODO: delete?
     # users_liked = db.relationship("User", secondary="comment_likes", backref="liked_comments")
     # users_liked = db.relationship("User", backref="liked_comments")
-    comment_liked = db.relationship("CommentLike", back_populates="comment")
+    comment_liked = db.relationship("CommentLike", back_populates="comment", cascade="all, delete")
     # 定义与子评论的关联关系
-    parent = db.relationship("Comment", backref="replies", remote_side=[id])
+    # replies = db.relationship("Comment", backref="parent", remote_side=[id],cascade="all, delete")
+    replies = db.relationship("Comment", backref=db.backref('parent', remote_side=[id]), cascade="all, delete")
 
     def __init__(self, args):
         """
@@ -245,8 +246,8 @@ class Comment(db.Model):
 class VideoLike(db.Model):
     __tablename__ = 'video_likes'
     id = db.Column(db.Integer, primary_key=True)
-    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id', ondelete="cascade"))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
     user = db.relationship("User", back_populates="video_liked")
     video = db.relationship("Video", back_populates="video_liked")
 
@@ -255,8 +256,8 @@ class VideoLike(db.Model):
 class CommentLike(db.Model):
     __tablename__ = 'comment_likes'
     id = db.Column(db.Integer, primary_key=True)
-    comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comment_id = db.Column(db.Integer, db.ForeignKey('comments.id', ondelete="cascade"))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
     user = db.relationship("User", back_populates="comment_likes")
     comment = db.relationship("Comment", back_populates="comment_liked")
     __table_args__ = (
