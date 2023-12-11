@@ -57,7 +57,7 @@ class User(db.Model):
     # 定义与视频的关联关系
     # videos = db.relationship("Video", backref="user", cascade="all, delete-orphan")
 
-    video_likes = db.relationship("VideoLike", back_populates="user")
+    video_liked = db.relationship("VideoLike", back_populates="user")
     comment_likes = db.relationship("CommentLike", back_populates="user")
 
     def __init__(self, args):
@@ -140,7 +140,7 @@ class Video(db.Model):
         nullable=False,
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     author = db.relationship("User", back_populates="videos")
-    video_likes = db.relationship("VideoLike", back_populates="video")
+    video_liked = db.relationship("VideoLike", back_populates="video")
     comments = db.relationship(
         "Comment",
         backref="video",
@@ -247,8 +247,8 @@ class VideoLike(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(db.Integer, db.ForeignKey('videos.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship("User", back_populates="video_likes")
-    video = db.relationship("Video", back_populates="video_likes")
+    user = db.relationship("User", back_populates="video_liked")
+    video = db.relationship("Video", back_populates="video_liked")
 
 
 # 定义评论点赞模型
