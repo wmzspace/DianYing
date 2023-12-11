@@ -96,9 +96,9 @@ export const pullVideo = (num: number) =>
 //       })
 //   })
 // }
-export const getVideoLikeUsersByVideoId = (videoId: number) =>
+export const getVideoActionUsersByVideoId = (videoId: number, action: string) =>
   new Promise<User[]>((resolve, reject) => {
-    fetch(prefix_url.concat(`video/get_likes?video_id=${videoId}`))
+    fetch(prefix_url.concat(`video/get_actions?video_id=${videoId}&action=${action}`))
       .then((res) => {
         if (res.ok) {
           res.json().then((ajaxData: AjaxResponse) => {
@@ -115,11 +115,21 @@ export const getVideoLikeUsersByVideoId = (videoId: number) =>
       })
   })
 
-export const likeVideoOrNot = (videoId: number, userId: number, toLike: boolean) =>
+export const likeOrStarVideoOrNot = (
+  videoId: number,
+  userId: number,
+  toStatus: boolean,
+  action: string
+) =>
   new Promise<void>((resolve, reject) => {
-    fetch(prefix_url.concat(`video/like?video_id=${videoId}&user_id=${userId}&to_like=${toLike}`), {
-      method: 'POST'
-    })
+    fetch(
+      prefix_url.concat(
+        `video/action?video_id=${videoId}&user_id=${userId}&to_status=${toStatus}&action=${action}`
+      ),
+      {
+        method: 'POST'
+      }
+    )
       .then((res) => {
         if (res.ok) {
           res.json().then((ajaxData: AjaxResponse) => {

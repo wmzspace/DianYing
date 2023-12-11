@@ -158,9 +158,15 @@
                   margin: 0 24px 0 0;
                   padding: 0;
 
-                  &.like-action,&.star-action{
+
+                  &.like-action, &.star-action {
                     cursor: pointer;
-                    svg{
+
+                    &.like-action {
+                      margin-top: -1px;
+                    }
+
+                    svg {
                       margin-right: 0 !important;
                       vertical-align: middle;
                     }
@@ -244,13 +250,13 @@
 
       }
 
-      .comment-content-text-container{
+      .comment-content-text-container {
         //height:300px;
         //font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
         //font-size: 14px;
         //font-weight: 400;
         //line-height: 22px;
-        &:not(.show-all){
+        &:not(.show-all) {
           overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
           text-overflow: ellipsis; /*可以用来多行文本的情况下，用省略号“…”隐藏超出范围的文本 。*/
           display: -webkit-box; /*必须结合的属性 ，将对象作为弹性伸缩盒子模型显示 。*/
@@ -399,12 +405,19 @@
 
       .comments-list {
         .arco-comment {
+          &.animated {
+            >.arco-comment-inner {
+              background: $input-linear !important;
+              //background: $color-bg-guide !important;
+            }
+          }
+
           //background-color: transparent;
           .arco-comment-inner {
             // 评论内容
             &:has(>.arco-comment-inner-comment>.reply-comment) {
               //>.arco-comment-inner-content {
-                background: $input-linear;
+              background: $input-linear;
               //}
             }
 
@@ -429,6 +442,7 @@
               .arco-comment-actions {
                 .action {
                   cursor: pointer;
+
 
                   .like-icon {
                     padding-right: 3px;

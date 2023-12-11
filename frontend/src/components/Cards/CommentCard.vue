@@ -2,7 +2,7 @@
 import type { Comment } from '@/utils/comment'
 import { useUserStore } from '@/store/user'
 import type { User } from '@/store/user'
-import { nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import {
   deleteComment,
   getCommentLikeUsersByCommentId,
@@ -13,12 +13,13 @@ import {
 import { getTimeDiffUntilNow } from '@/utils/tools'
 import type { VideoMedia } from '@/types'
 import { Message } from '@arco-design/web-vue'
+
 const emit = defineEmits(['refresh'])
 
 const userStore = useUserStore()
 const props = defineProps<{
   comment: Comment
-  index: number
+  index: any
   video: VideoMedia | undefined
 }>()
 const openReply = () => {
@@ -29,9 +30,12 @@ const openReply = () => {
 }
 const isReplying = ref(false)
 const author = ref<User | undefined>(undefined)
+const isLoadingUser = ref(false)
 const refreshUserInfo = () => {
+  isLoadingUser.value = true
   userStore.getUserById(props.comment.authorId).then((user) => {
     author.value = user
+    isLoadingUser.value = false
   })
 }
 
@@ -41,6 +45,7 @@ const commentLikeUsers = reactive<User[]>([])
 const commentLikeShowNum = ref(0)
 
 const refreshCommentLike = () => {
+  isProcessLike.value = true
   getCommentLikeUsersByCommentId(props.comment.id).then((users) => {
     commentLikeUsers.splice(0)
     commentLikeShowNum.value = 0
@@ -78,30 +83,30 @@ const replyCommentContent = ref('')
 //   }
 // })
 
+const isProcessReplyComment = ref(false)
 const onPostReplyComment = () => {
-  if (replyCommentContent.value.length <= 0) {
-    // Message.info('评论内容异常')
+  if (replyCommentContent.value.length <= 0 || isProcessReplyComment.value) {
     return
   }
   if (author.value !== undefined) {
-    postComment(
-      userStore.getCurrentUser.id,
-      replyCommentContent.value,
-      undefined,
-      props.comment.id
-    ).then((commentId) => {
-      if (commentId !== undefined) {
-        refreshUserInfo()
-        refreshChildrenComments()
-        // focusCommentId.value = commentId
-        replyCommentContent.value = ''
-        isReplying.value = false
-      } else {
-        refreshUserInfo()
-        refreshChildrenComments()
-      }
-      emit('refresh')
-    })
+    isProcessReplyComment.value = true
+    postComment(userStore.getCurrentUser.id, replyCommentContent.value, undefined, props.comment.id)
+      .then((commentId) => {
+        if (commentId !== undefined) {
+          refreshUserInfo()
+          refreshChildrenComments()
+          // focusCommentId.value = commentId
+          replyCommentContent.value = ''
+          isReplying.value = false
+        } else {
+          refreshUserInfo()
+          refreshChildrenComments()
+        }
+        emitRefresh(undefined)
+      })
+      .finally(() => {
+        isProcessReplyComment.value = false
+      })
   }
 }
 
@@ -120,17 +125,20 @@ const onDeleteComment = () => {
     processDeleteComment.value = false
     refreshUserInfo()
     // refreshChildrenComments()
-    emit('refresh')
+    emitRefresh(undefined)
   })
 }
 
+const childrenLoaded = ref(false)
 const childrenComments = reactive<Comment[]>([])
 const refreshChildrenComments = () => {
+  childrenLoaded.value = false
   getCommentsByVideoIdOrParent(undefined, props.comment.id).then((res) => {
     childrenComments.splice(0)
     res.reverse().forEach((e) => {
       childrenComments.push(e)
     })
+    childrenLoaded.value = true
   })
 }
 onMounted(() => {
@@ -138,10 +146,32 @@ onMounted(() => {
   refreshCommentLike()
   refreshChildrenComments()
 })
+
+const isLoadingComment = computed(() => {
+  return (
+    !childrenLoaded.value ||
+    isLoadingUser.value ||
+    processDeleteComment.value ||
+    isProcessLike.value ||
+    isProcessReplyComment.value
+  )
+})
+
+const emitRefresh = (child_object: any) => {
+  // let args = props.index
+  // args['index'] = index
+  let object = {
+    children: child_object,
+    index: props.index
+  }
+
+  emit('refresh', object)
+}
 </script>
 
 <template>
   <a-comment
+    class="comment-item"
     align="left"
     :author="author?.nickname"
     :avatar="author?.avatar"
@@ -208,13 +238,19 @@ onMounted(() => {
     <!--    New comment input-->
 
     <!--    Children Comment-->
+    <a-spin class="load-more" dot v-if="isLoadingComment" :loading="isLoadingComment" />
     <CommentCard
+      v-else
       v-for="(comment, index) in childrenComments"
       :index="index"
       :comment="comment"
       :key="index"
       :video="props.video"
-      @refresh="emit('refresh')"
+      @refresh="
+        (index_) => {
+          emitRefresh(index_)
+        }
+      "
     />
     <!--    Children Comment-->
   </a-comment>

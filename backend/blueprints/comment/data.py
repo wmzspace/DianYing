@@ -154,7 +154,6 @@ def delete_comment(comment_id):
     comment = Comment.query.get(comment_id)
     if not comment:
         return AjaxResponse.error("资源不存在: comment")
-    print(comment_id)
     # children_comment = comment.replies
     # if not children_comment:
     #     # 可以直接删除

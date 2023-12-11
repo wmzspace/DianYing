@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { getVideoById, getVideoLikeUsersByVideoId, likeVideoOrNot, pullVideo } from '@/utils/video'
+import {
+  getVideoActionUsersByVideoId,
+  getVideoById,
+  likeOrStarVideoOrNot,
+  pullVideo
+} from '@/utils/video'
 import type { Comment } from '@/utils/comment'
 import {
   getCommentLikeUsersByCommentId,
@@ -7,7 +12,7 @@ import {
   likeCommentOrNot,
   postComment
 } from '@/utils/comment'
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { Events } from 'xgplayer'
 import Player from 'xgplayer'
 import { debounce } from 'lodash-es'
@@ -34,15 +39,85 @@ getVideoById(props.video_id).then((res: VideoMedia | undefined) => {
   video.value = _.cloneDeep(res)
 })
 
-const refreshRootCommentList = () => {
+// const CommentCardRefs = ref()
+const focusComment = (
+  finder: CommentFinder,
+  root_comment: HTMLElement | undefined
+): HTMLElement | undefined => {
+  // if (finder === undefined) {
+  //   return
+  // }
+  // console.log(root_comment)
+  // console.log(finder)
+  if (root_comment === undefined) {
+    let firstElement: HTMLElement | null = document.querySelector('.comment-item')
+    // console.log(firstElement)
+    if (firstElement === null) {
+      return undefined
+    }
+
+    let childNodes = (firstElement.parentNode as HTMLElement).children
+    let siblingsArray = Array.from(childNodes) as HTMLElement[]
+    let commentElements = siblingsArray.filter((sibling) => {
+      return sibling.classList.contains('comment-item')
+    })
+    // .querySelectorAll('~ .comment-item')[finder.index]
+    // console.log('commentElements', commentElements)
+    return focusComment(finder.children as CommentFinder, commentElements[finder.index])
+  }
+  if (finder.children === undefined) {
+    return root_comment.getElementsByClassName('comment-item')[finder.index] as HTMLElement
+  }
+  // nextTick(() => {
+
+  let childrenElements = root_comment.getElementsByClassName('comment-item')[finder.index]
+  return focusComment(finder.children, childrenElements as HTMLElement)
+
+  // nextTick(() => {
+  // })
+  // let target = comments[i]
+  // target.scrollIntoView({ behavior: 'smooth' })
+  // .scrollIntoView({ behavior: 'smooth' })
+  // console.log(comments[i])
+  // target.classList.add('animated')
+  // setTimeout(() => {
+  // target.classList.remove('animated')
+  // }, 1000)
+  // })
+}
+
+const refreshRootCommentList = (focusIndex?: CommentFinder) => {
   comments.splice(0)
   getCommentsByVideoIdOrParent(parseInt(props.video_id), undefined).then((res) => {
     comments.splice(0)
-    setTimeout(() => {
-      res.reverse().forEach((e) => {
-        comments.push(e)
-      }, 1000)
+    // setTimeout(() => {
+    res.reverse().forEach((e) => {
+      comments.push(e)
+      // }, 1000)
     })
+    if (focusIndex !== undefined) {
+      // console.log(commentElements[0])
+      setTimeout(() => {
+        let targetParent = focusComment(focusIndex, undefined)
+        if (targetParent !== undefined) {
+          let childNodes = targetParent.querySelectorAll('.comment-item')
+          // console.log('parent', targetParent)
+          // console.log('children', childNodes)
+          // let commentElements = childNodes.querySelector()
+          let target = childNodes[0]
+          // console.log(target)
+          target.scrollIntoView({ behavior: 'smooth' })
+          target.classList.add('animated')
+          setTimeout(() => {
+            if (target !== undefined) {
+              target.classList.remove('animated')
+            }
+          }, 1000)
+        }
+
+        // target.scrollIntoView({ behavior: 'smooth' })
+      }, 5000)
+    }
   })
 }
 
@@ -53,7 +128,11 @@ watch(video, (value) => {
     })
     videoLikeShowNum.value = 0
     isLiked.value = false
-    refreshVideoLike()
+    videoStarShowNum.value = 0
+    isStarred.value = false
+    refreshVideoLikeAndStar()
+    isProcessStar.value = false
+    isProcessLike.value = false
     refreshRootCommentList()
     pullVideo(10).then((res) => {
       relatedList.splice(0)
@@ -165,6 +244,7 @@ onMounted(() => {
   //   console.log('autoplay was prevented!!')
   // })
   //
+  // 在组件挂载后，可以访问子组件的 $refs 属性
 
   window.addEventListener('resize', resizeEventHandler)
 })
@@ -194,8 +274,13 @@ const onPostNewComment = () => {
   }
 }
 
-const onRefreshComment = () => {
-  refreshRootCommentList()
+interface CommentFinder {
+  children?: CommentFinder
+  index: number
+}
+
+const onRefreshComment = (object: CommentFinder) => {
+  refreshRootCommentList(object)
 }
 
 const isLiked = ref(false)
@@ -203,8 +288,13 @@ const isProcessLike = ref(true)
 const videoLikeUsers = reactive<User[]>([])
 const videoLikeShowNum = ref(0)
 
-const refreshVideoLike = () => {
-  getVideoLikeUsersByVideoId(parseInt(props.video_id)).then((users) => {
+const isStarred = ref(false)
+const isProcessStar = ref(true)
+const videoStarUsers = reactive<User[]>([])
+const videoStarShowNum = ref(0)
+
+const refreshVideoLikeAndStar = () => {
+  getVideoActionUsersByVideoId(parseInt(props.video_id), 'like').then((users) => {
     videoLikeUsers.splice(0)
     videoLikeShowNum.value = 0
     isLiked.value = false
@@ -215,20 +305,61 @@ const refreshVideoLike = () => {
       videoLikeShowNum.value++
       videoLikeUsers.push(user)
     })
-    isProcessLike.value = false
+    setTimeout(() => {
+      isProcessLike.value = false
+    }, 1000)
+  })
+  getVideoActionUsersByVideoId(parseInt(props.video_id), 'star').then((users) => {
+    videoStarUsers.splice(0)
+    videoStarShowNum.value = 0
+    isStarred.value = false
+    users.forEach((user) => {
+      if (user.id === userStore.getCurrentUser.id) {
+        isStarred.value = true
+      }
+      videoStarShowNum.value++
+      videoStarUsers.push(user)
+    })
+    setTimeout(() => {
+      isProcessStar.value = false
+    }, 1000)
   })
 }
 
 const handleClickLike = () => {
   if (isProcessLike.value) {
-    // Message.info('点击太频繁')
+    debounce(() => {
+      isProcessLike.value = false
+    }, 3000)
   } else {
-    likeVideoOrNot(parseInt(props.video_id), userStore.getCurrentUser.id, !isLiked.value).then(
-      () => {
-        refreshVideoLike()
-      }
-    )
+    isProcessLike.value = true
+    likeOrStarVideoOrNot(
+      parseInt(props.video_id),
+      userStore.getCurrentUser.id,
+      !isLiked.value,
+      'like'
+    ).then(() => {
+      refreshVideoLikeAndStar()
+    })
     isLiked.value = !isLiked.value
+  }
+}
+const handleClickStar = () => {
+  if (isProcessStar.value) {
+    debounce(() => {
+      isProcessStar.value = false
+    }, 3000)
+  } else {
+    isProcessStar.value = true
+    likeOrStarVideoOrNot(
+      parseInt(props.video_id),
+      userStore.getCurrentUser.id,
+      !isStarred.value,
+      'star'
+    ).then(() => {
+      refreshVideoLikeAndStar()
+    })
+    isStarred.value = !isStarred.value
   }
 }
 </script>
@@ -256,9 +387,9 @@ const handleClickLike = () => {
                 <icon-message />
                 <span>323</span>
               </a-list-item>
-              <a-list-item class="star-action">
-                <icon-star-fill />
-                <span>683</span>
+              <a-list-item @click="handleClickStar" class="star-action">
+                <span class="star-icon"><IconStarFill v-if="isStarred" /><IconStar v-else /></span>
+                <span>{{ videoStarShowNum }}</span>
               </a-list-item>
             </a-list>
             <div class="detail-video-actions-right">
@@ -359,7 +490,11 @@ const handleClickLike = () => {
             :key="index"
             :index="index"
             :video="video"
-            @refresh="onRefreshComment"
+            @refresh="
+              (object) => {
+                onRefreshComment(object)
+              }
+            "
           >
           </CommentCard>
           <p class="comments-list-append">暂时没有更多评论</p>

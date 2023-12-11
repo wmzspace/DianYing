@@ -58,6 +58,7 @@ class User(db.Model):
     # videos = db.relationship("Video", backref="user", cascade="all, delete-orphan")
 
     video_liked = db.relationship("VideoLike", back_populates="user", cascade="all, delete")
+    video_starred = db.relationship("VideoStar", back_populates="user", cascade="all, delete")
     comment_likes = db.relationship("CommentLike", back_populates="user", cascade="all, delete-orphan")
 
     def __init__(self, args):
@@ -141,6 +142,7 @@ class Video(db.Model):
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     author = db.relationship("User", back_populates="videos")
     video_liked = db.relationship("VideoLike", back_populates="video", cascade="all, delete")
+    video_starred = db.relationship("VideoStar", back_populates="video", cascade="all, delete")
     comments = db.relationship(
         "Comment",
         backref="video",
@@ -250,6 +252,16 @@ class VideoLike(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
     user = db.relationship("User", back_populates="video_liked")
     video = db.relationship("Video", back_populates="video_liked")
+
+
+# 定义视频收藏模型
+class VideoStar(db.Model):
+    __tablename__ = 'video_stars'
+    id = db.Column(db.Integer, primary_key=True)
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id', ondelete="cascade"))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="cascade"))
+    user = db.relationship("User", back_populates="video_starred")
+    video = db.relationship("Video", back_populates="video_starred")
 
 
 # 定义评论点赞模型
