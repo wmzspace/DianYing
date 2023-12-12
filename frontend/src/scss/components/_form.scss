@@ -1,4 +1,4 @@
-#sms-login-form,#pwd-login-form{
+#sms-login-form, #pwd-login-form {
   padding: 0 55px;
   width: 100%;
   //border: 0;
@@ -21,6 +21,10 @@
         margin-bottom: 0;
       }
 
+      &:has(.captcha-code-input) {
+        margin-bottom: 12px;
+      }
+
       //&:has(.phone-input){
       //  margin-bottom: 0;
       //}
@@ -40,15 +44,41 @@
 
       &.phone-input {
         //margin: 38px 0 0 0;
+        border: none;
 
         .arco-input-prepend {
           padding: 0 10px 0 0;
+        }
+
+        .arco-input-wrapper {
+          border: none;
+        }
+
+        .arco-input-focus {
+          background: transparent;
         }
       }
 
       &.captcha-code-input {
         margin-top: 5px;
-        margin-bottom: 25px;
+        //margin-bottom: 25px;
+        .arco-input-wrapper {
+          border: none;
+        }
+
+        .arco-input-focus {
+          background: transparent;
+        }
+
+        .arco-input-append {
+          padding: 0;
+        }
+
+        .arco-btn {
+          background: transparent;
+          padding: 0 5px;
+          margin: 0 0 0 15px;
+        }
       }
     }
 
@@ -80,7 +110,8 @@
     .confirm-button-container {
       //width: 100%;
       margin-top: 10px;
-      .arco-btn{
+
+      .arco-btn {
         background: #fe2c55;
         border-radius: 10px;
         color: #fff;
@@ -93,7 +124,7 @@
         width: 100%;
         font-size: 16px;
         //cursor: pointer;
-        &.arco-btn-disabled{
+        &.arco-btn-disabled {
           background: #ffc2c6;
           color: #fff;
           cursor: default;

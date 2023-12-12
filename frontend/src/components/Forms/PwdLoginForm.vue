@@ -1,5 +1,5 @@
 <template>
-  <div id="pwd-login-form">
+  <div id="sms-login-form">
     <a-form ref="smsLoginFormRef" :model="form">
       <a-form-item field="name" :rules="rules">
         <a-input class="phone-input" v-model="form.name" placeholder="手机号">
