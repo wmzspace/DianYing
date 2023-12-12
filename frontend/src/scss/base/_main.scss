@@ -6,6 +6,11 @@
   font-weight: normal;
 }
 
+* {
+  font-family: PingFang SC,DFPKingGothicGB-Regular,sans-serif;
+  outline: none;
+}
+
 html {
   //@extend .show-border;
   background: rgba(22, 24, 35, 1);

@@ -457,7 +457,7 @@ const handleClickStar = () => {
         <div class="new-comment">
           <a-row :wrap="false">
             <a-avatar>
-              <img alt="avatar" src="/images/avatar.jpeg" />
+              <img alt="avatar" :src="userStore.getCurrentUser.avatar" />
             </a-avatar>
 
             <a-input

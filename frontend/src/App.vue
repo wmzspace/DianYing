@@ -2,6 +2,7 @@
 import { RouterView, useRoute } from 'vue-router'
 import { computed, onMounted } from 'vue'
 import { useUserStore } from '@/store/user/'
+import LoginCard from '@/components/Cards/LoginCard.vue'
 // import { useUserStore } from '@/store'
 // import { useStore } from '@/store'
 
@@ -23,7 +24,7 @@ onMounted(() => {
   //   nickname: '19岁带饭冲锋🌈',
   //   avatar: 'images/avatar.jpeg'
   // })
-  store.userLogin(2)
+  store.userLogin(1)
 })
 </script>
 
@@ -35,6 +36,7 @@ onMounted(() => {
       <!--      <router-view />-->
     </component>
     <!--    Layout & Router View-->
+    <LoginCard />
   </a-config-provider>
   <!-- Component Library Config Provider-->
 
