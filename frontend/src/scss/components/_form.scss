@@ -1,0 +1,105 @@
+#sms-login-form,#pwd-login-form{
+  padding: 0 55px;
+  width: 100%;
+  //border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  vertical-align: baseline;
+
+  .arco-form {
+    .arco-form-item-label-col {
+      display: none;
+      //width: 0;
+    }
+
+    .arco-form-item {
+      .arco-form-item-wrapper-col {
+        flex: auto;
+      }
+
+      &:has(.read-checkbox) {
+        margin-bottom: 0;
+      }
+
+      //&:has(.phone-input){
+      //  margin-bottom: 0;
+      //}
+    }
+
+    .phone-input, .captcha-code-input {
+      background: #f2f2f4;
+      border: none;
+      border-radius: 10px;
+      color: rgba(22, 24, 35, .34);
+      height: 52px;
+      line-height: 24px;
+      padding: 8px 20px 8px 10px;
+      border: 0;
+      box-sizing: border-box;
+      vertical-align: baseline;
+
+      &.phone-input {
+        //margin: 38px 0 0 0;
+
+        .arco-input-prepend {
+          padding: 0 10px 0 0;
+        }
+      }
+
+      &.captcha-code-input {
+        margin-top: 5px;
+        margin-bottom: 25px;
+      }
+    }
+
+    .read-checkbox {
+      font-size: 14px;
+      height: 22px;
+      line-height: 22px;
+
+      .login-confirm-info__before-text {
+        color: #999;
+        border: 0;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        vertical-align: baseline;
+      }
+
+      .login-confirm-info__info {
+        color: rgba(22, 24, 35, .75);
+        margin: 0 6px;
+        text-decoration: none;
+        border: 0;
+        box-sizing: border-box;
+        padding: 0;
+        vertical-align: baseline;
+      }
+    }
+
+    .confirm-button-container {
+      //width: 100%;
+      margin-top: 10px;
+      .arco-btn{
+        background: #fe2c55;
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 500;
+        height: 48px;
+        line-height: 48px;
+        vertical-align: middle;
+        outline: none;
+        text-align: center;
+        width: 100%;
+        font-size: 16px;
+        //cursor: pointer;
+        &.arco-btn-disabled{
+          background: #ffc2c6;
+          color: #fff;
+          cursor: default;
+        }
+      }
+    }
+  }
+
+}

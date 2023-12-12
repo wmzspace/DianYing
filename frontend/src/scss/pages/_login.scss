@@ -7,30 +7,47 @@
 
   .arco-modal-mask {
     //border-radius: 16px;
-    //background: $login-url;
     background: $color-mask-m1;
+
   }
 
   .arco-modal-wrapper {
+
     .arco-modal {
-      //height: 490px !important;
-      min-height: 490px !important;
+      //position: absolute;
+      height: 490px !important;
+      min-height: 600px;
+      @media screen and (max-height: 790px) {
+        height: 490px !important;
+        min-height: 490px !important;
+        padding-bottom: 19px;
+      }
       width: 480px;
+      transform: scale(.75) !important;
+      //width: 480px;
       border-radius: 16px;
       background: $login-url;
+      //background-image: url(https://p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/login-resetpwd-bg.png);
+      ////background: url(https://p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/login-resetpwd-bg.png) 0% 0% / 10 0% no-repeat rgb(255, 255, 255);
+      //background: url(https://p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/login-resetpwd-bg.png) 0% 0% / 50% no-repeat rgb(255, 255, 255);
       padding: 24px 38px 40px;
       box-shadow: 0 0 24px rgba(0, 0, 0, .1);
-      padding-bottom: 19px;
+
 
       .arco-modal-header {
         background: transparent;
         border-radius: 4px 4px 0 0;
         color: #2f3035;
-        height: 100%;
+        border: none;
+        //height: 100%;
         padding: 0;
         margin: 0 auto 24px;
         text-align: center;
         width: 100%;
+
+        .arco-modal-close-btn {
+          transform: translateY(-25px) translateX(20px) scale(1.5);
+        }
 
         .arco-modal-title {
           flex-direction: column;
@@ -67,6 +84,7 @@
                     margin-left: -7px;
                     //padding-left: 22px;
                     padding-left: 16px;
+                    border: none;
                     position: relative;
 
                     .arco-list-item-main {
@@ -95,8 +113,118 @@
         }
       }
 
+
       .arco-modal-body {
 
+        padding: 0;
+        box-shadow: 0 0 60px rgba(226, 97, 89, .2);
+        //&::before {
+        //  background: hsla(0, 0%, 100%, .9);
+        //  border-radius: 12px;
+        //  box-shadow: 0 0 60px rgba(226, 97, 89, .2);
+        //  content: "";
+        //  height: 423px;
+        //  left: 0;
+        //  position: absolute !important;
+        //  top: 7px;
+        //  width: 405px;
+        //}
+        border-radius: 12px;
+
+        #login-container {
+          @media screen and (max-height: 790px) {
+            min-height: 370px !important;
+            height: 370px;
+          }
+          height: 446px;
+          //height: max-content;
+          position: relative;
+
+          //@extend .border-3;
+          //border-radius: 12px;
+          min-height: 446px;
+          //width: 404px;
+
+          background: #fff;
+
+          border-radius: 12px;
+          color: rgba(22, 24, 35, .34);
+          overflow: visible;
+          width: 404px;
+          border-bottom: 1px solid #f1f2f5;
+
+
+          .arco-tabs-nav {
+            &::before {
+              background-color: #f1f2f5;;
+              //display: none;
+            }
+
+            .arco-tabs-nav-tab {
+
+              width: 100%;
+
+              .arco-tabs-nav-tab-list {
+                display: flex;
+                box-sizing: border-box;
+                justify-content: space-around;
+                padding: 0 25px;
+                width: 100%;
+                //padding:-5px 0;
+                //margin: -3px 0;
+                .arco-tabs-nav-ink {
+                  border-bottom: 3px solid #fe2c55;
+
+                }
+
+                .arco-tabs-tab {
+
+                  color: #161823;
+                  cursor: pointer;
+
+                  font-size: 18px;
+                  font-weight: 400;
+                  height: 60px;
+                  line-height: 60px;
+                  margin: 0;
+                  min-width: 90px;
+                  outline: none;
+                  position: relative;
+                  text-align: center;
+                  justify-content: center;
+                  &.arco-tabs-tab-active {
+                    color: #161823 !important;
+                    font-weight: 500;
+                  }
+
+                  .arco-tabs-tab-title {
+                    &::before {
+                      background-color: transparent !important;
+
+                    }
+                  }
+                }
+              }
+
+            }
+          }
+
+          .arco-tabs-content {
+            height: 100%;
+            padding-top: 0;
+
+            .arco-tabs-content-list {
+              .arco-tabs-content-item {
+                .arco-tabs-pane {
+                  display: flex;
+                  align-items: center;
+
+                }
+              }
+            }
+          }
+
+        }
       }
 
       .arco-modal-footer {
