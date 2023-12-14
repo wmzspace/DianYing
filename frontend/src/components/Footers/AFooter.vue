@@ -20,8 +20,7 @@
               fill="#111827"
             />
           </svg>
-          by <a href="https://github.com/wmzspace">wmzspace</a> for a better
-          web.
+          by <a href="https://github.com/wmzspace">wmzspace</a> for a better web.
         </p>
         <!-- / Footer Copyright Notice -->
       </a-col>
@@ -49,9 +48,7 @@
               ><span>论坛</span>
               <template #title>
                 <div>
-                  <a
-                    href="https://github.com/wmzspace"
-                    class="text-white text-underline"
+                  <a href="https://github.com/wmzspace" class="text-white text-underline"
                     >点此访问 Github</a
                   >
                 </div>
@@ -66,10 +63,4 @@
   <!-- / Layout Footer -->
 </template>
 
-<script>
-export default {
-  data() {
-    return {};
-  },
-};
-</script>
+<script setup lang="ts"></script>

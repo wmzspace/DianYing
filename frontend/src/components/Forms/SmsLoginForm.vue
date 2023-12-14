@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, UnwrapRef, watch } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { checkTelephone, getCaptchaCode } from '@/api/sms'
 import type { GetCaptchaResponse } from '@/api/sms'
 import type { ValidatedError, ValidateStatus } from '@arco-design/web-vue'
@@ -61,7 +61,7 @@ const onGetSmsCode = () => {
     return
   }
   gettingSmsCode.value = true
-  smsLoginFormRef.value.validateField('phone').then((res) => {
+  smsLoginFormRef.value.validateField('phone').then((res: any) => {
     if (res && res.phone) {
       Message.error({
         id: 'loginForm',
@@ -70,7 +70,7 @@ const onGetSmsCode = () => {
       gettingSmsCode.value = false
     } else {
       gettingSmsCode.value = true
-      getCaptchaCode(form.phone)
+      getCaptchaCode(parseInt(form.phone))
         .then((res: GetCaptchaResponse) => {
           getSmsCoolDownCount.value = 60
           let cd = window.setInterval(() => {
@@ -108,7 +108,7 @@ const form = reactive({
 
 const phoneRules = [
   {
-    validator: (value: string, cb) => {
+    validator: (value: string, cb: any) => {
       return new Promise<void>((resolve) => {
         // window.setTimeout(() => {
 
@@ -123,7 +123,7 @@ const phoneRules = [
 ]
 const smsRules = [
   {
-    validator: (value: string | undefined, cb) => {
+    validator: (value: string | undefined, cb: any) => {
       return new Promise<void>((resolve, reject) => {
         // window.setTimeout(() => {
         // if (!checkTelephone(value)) {
@@ -148,7 +148,7 @@ const handleClick = () => {
   isHandlingSubmit.value = true
   smsLoginFormRef.value
     .validate()
-    .then((res) => {
+    .then((res: any) => {
       if (res === undefined) {
         // 表单验证成功
         console.log('登录验证')

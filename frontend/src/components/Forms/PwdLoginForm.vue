@@ -36,7 +36,7 @@ const form = reactive({
 })
 const rules = [
   {
-    validator: (value, cb) => {
+    validator: (value: any, cb: any) => {
       return new Promise<void>((resolve) => {
         window.setTimeout(() => {
           if (value !== 'admin') {

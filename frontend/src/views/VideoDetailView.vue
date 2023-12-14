@@ -482,7 +482,7 @@ const handleClickStar = () => {
         <div class="usually-search">
           大家都在搜：<a class="usually-search-topic"
             ><span class="usually-search-topic-text">亿万富翁找回儿子</span>
-            <img class="usually-search-icon" src="images/videoDetails/usually_search.svg" />
+            <img class="usually-search-icon" src="/images/videoDetails/usually_search.svg" />
           </a>
         </div>
 

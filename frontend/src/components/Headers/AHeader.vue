@@ -199,11 +199,11 @@ const setSearchBarPopWidth = () => {
                 <a-divider direction="vertical" :mode="'horizontal'" />
                 <a-menu class="profile-menu-right">
                   <a-menu-item>
-                    <img src="images/theme.svg" align="center" />
+                    <img src="/images/theme.svg" align="center" />
                     <span style="opacity: 0.34">换肤</span>
                   </a-menu-item>
                   <a-menu-item>
-                    <img src="images/settings.svg" align="center" />
+                    <img src="/images/settings.svg" align="center" />
                     <span style="opacity: 0.34">设置</span>
                   </a-menu-item></a-menu
                 >
