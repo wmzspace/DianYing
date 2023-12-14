@@ -1,7 +1,14 @@
+import datetime
 import os
 
+from flask import redirect
 # 导入所需包
 from flask_cors import CORS
+from flask_mail import Mail
+from sqlalchemy import event
+
+from exts import db, scheduler
+from models import Register
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -17,17 +24,34 @@ class Config:
     SECRET_KEY = "web2_cwk2"
     username = "web2_cwk2"
     password = SECRET_KEY
-    ipaddress = "114.132.204.214"
+    ipaddress = "server.wmzspace.space"
     # ipaddress = "www.wmzspace.space"
     port = "3306"
     database = "web2_cwk2"
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{username}:{password}@{ipaddress}:{port}/{database}"
 
+    MAIL_SERVER = 'smtp.qq.com'
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = '517941374'
+    MAIL_PASSWORD = 'jfdhqbglogcubihe'
+
     @staticmethod  # 此注释可表明使用类名可以直接调用该方法
     def init_app(app):
         # 执行当前需要的环境的初始化
         CORS(app)
-        pass
+
+        def delete_due_registry(target):
+            with app.app_context():
+                db.session.delete(target)
+                db.session.commit()
+
+        # 在记录插入后调度删除任务
+        @event.listens_for(Register, 'after_insert')
+        def schedule_record_deletion(mapper, connection, target):
+            scheduler.add_job(delete_due_registry, 'date',
+                              run_date=datetime.datetime.now() + datetime.timedelta(minutes=2),
+                              args=[target])
 
 
 class DevelopmentConfig(Config):

@@ -5,7 +5,7 @@ export const useMainStore = defineStore('main', {
   state: () => ({
     // userList: [] as User[]
     // ...
-    loginModalVisible: true
+    loginModalVisible: false
   }),
   getters: {},
   actions: {

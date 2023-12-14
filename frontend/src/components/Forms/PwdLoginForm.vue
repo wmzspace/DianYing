@@ -2,13 +2,18 @@
   <div id="pwd-login-form">
     <a-form ref="pwdLoginFormRef" :model="form" :scroll-to-first-error="true">
       <a-form-item field="email" :rules="emailRules" feedback>
-        <a-input class="email-input" v-model.trim="form.pwd" placeholder="邮箱" :allow-clear="true">
+        <a-input
+          class="email-input"
+          v-model.trim="form.email"
+          placeholder="邮箱"
+          :allow-clear="true"
+        >
           <!--          <template #prefix>1</template>-->
           <template #prepend><IconEmail /></template>
         </a-input>
       </a-form-item>
-      <a-form-item field="pwd" :rules="pwdRules" feedback>
-        <a-input class="pwd-input" v-model.trim="form.pwd" :max-length="6" placeholder="请输入密码">
+      <a-form-item field="pwd" :rules="pwdRules" feedback :validate-trigger="'change'">
+        <a-input class="pwd-input" v-model.trim="form.pwd" placeholder="请输入密码">
           <template #prepend>
             <IconLock />
           </template>
@@ -22,7 +27,9 @@
       </a-form-item>
       <a-form-item :no-style="true">
         <div class="confirm-button-container">
-          <a-button :disabled="!form.isRead" @click="handleClick">登录 / 注册</a-button>
+          <a-button :disabled="!form.isRead" @click="handleLogin" :loading="isChecking"
+            >登录</a-button
+          >
         </div>
       </a-form-item>
     </a-form>
@@ -35,6 +42,7 @@ import { ref, reactive, watch } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { reject } from 'lodash-es'
 import { checkEmail } from '@/api/email'
+import { useUserStore } from '@/store/user'
 
 const pwdLoginFormRef = ref()
 const form = reactive({
@@ -90,25 +98,42 @@ const pwdRules = [
   }
 ]
 
+const userStore = useUserStore()
 const isHandlingSubmit = ref(false)
-const handleClick = () => {
+const isChecking = ref(false)
+const handleLogin = () => {
   isHandlingSubmit.value = true
   pwdLoginFormRef.value
     .validate()
     .then((res: any) => {
       if (res === undefined) {
         // 表单验证成功
-        console.log('登录验证')
+        isChecking.value = true
+        userStore
+          .pwdLogin(form.email, form.pwd)
+          .then((user) => {
+            console.log('success:', user)
+            userStore.userLogin(user.id)
+          })
+          .catch((msg) => {
+            Message.error({
+              id: 'loginRes',
+              content: msg
+            })
+          })
+          .finally(() => {
+            isChecking.value = false
+          })
       } else {
-        if (res.pwd !== undefined) {
+        if (res.email !== undefined) {
+          Message.error({
+            id: 'loginForm',
+            content: res.email.message
+          })
+        } else if (res.pwd !== undefined) {
           Message.error({
             id: 'loginForm',
             content: res.pwd.message
-          })
-        } else if (res.pwdCode !== undefined) {
-          Message.error({
-            id: 'loginForm',
-            content: res.pwdCode.message
           })
         }
       }

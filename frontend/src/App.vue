@@ -3,6 +3,7 @@ import { RouterView, useRoute } from 'vue-router'
 import { computed, onMounted } from 'vue'
 import { useUserStore } from '@/store/user/'
 import LoginCard from '@/components/Cards/LoginCard.vue'
+import { useMainStore } from '@/store/main'
 // import { useUserStore } from '@/store'
 // import { useStore } from '@/store'
 
@@ -10,12 +11,14 @@ const route = useRoute()
 // 配置布局
 const layout = computed(() => 'layout-' + ((route.meta.layout as string) || 'a').toLowerCase())
 
+const mainStore = useMainStore()
+const userStore = useUserStore()
+
 onMounted(() => {
   document.documentElement.style.height = `${window.innerHeight}px`
   window.addEventListener('resize', () => {
     document.documentElement.style.height = `${window.innerHeight}px`
   })
-  const store = useUserStore()
   // store.userLogin({
   //   register_time: '',
   //   sex: '',
@@ -24,7 +27,14 @@ onMounted(() => {
   //   nickname: '19岁带饭冲锋🌈',
   //   avatar: 'images/avatar.jpeg'
   // })
-  store.userLogin(1)
+  const storedUser = localStorage.getItem('currentUser') as string | null
+  console.log(storedUser)
+  if (storedUser === null) {
+    //TODO
+    mainStore.setLoginVisible(true)
+  } else {
+    userStore.userLogin(storedUser)
+  }
 })
 </script>
 

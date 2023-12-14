@@ -111,6 +111,17 @@ $sidebar-width: 160px;
                   color: white;
                   display: flex;
                   flex-direction: column;
+
+                  &:not(.header-login-btn) {
+                    //padding: 20px;
+                    //border:thin solid red;
+                  }
+
+                  &.header-login-btn {
+                    margin: 0 15px 0 0;
+                    padding: 10px;
+                    background-color: $color-primary;
+                  }
                 }
 
                 .arco-btn-icon {
@@ -348,7 +359,8 @@ $sidebar-width: 160px;
           font-size: 10px;
           margin: 10px;
           text-align: center;
-          a{
+
+          a {
             color: $color-text-4;
             text-decoration: none;
           }
@@ -665,6 +677,16 @@ $sidebar-width: 160px;
             .trust-login-switch-button {
 
             }
+          }
+
+          .guest-replace-trust-login {
+            font-size: 12px;
+            font-weight: 400;
+            height: 22px;
+            letter-spacing: 0.6px;
+            line-height: 22px;
+            opacity: 0.34;
+            margin-right: 8px;
           }
 
           //

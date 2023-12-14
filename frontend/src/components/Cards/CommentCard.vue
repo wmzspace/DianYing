@@ -13,6 +13,7 @@ import {
 import { getTimeDiffUntilNow } from '@/utils/tools'
 import type { VideoMedia } from '@/types'
 import { Message } from '@arco-design/web-vue'
+import { useMainStore } from '@/store/main'
 
 const emit = defineEmits(['refresh', 'delete'])
 
@@ -50,6 +51,7 @@ const isProcessLike = ref(true)
 const commentLikeUsers = reactive<User[]>([])
 const commentLikeShowNum = ref(0)
 
+const mainStore = useMainStore()
 const refreshCommentLike = () => {
   isProcessLike.value = true
   getCommentLikeUsersByCommentId(props.comment.id)
@@ -58,7 +60,7 @@ const refreshCommentLike = () => {
       commentLikeShowNum.value = 0
       isLiked.value = false
       users.forEach((user) => {
-        if (user.id === userStore.getCurrentUser.id) {
+        if (userStore.getCurrentUser && user.id === userStore.getCurrentUser.id) {
           isLiked.value = true
         }
         commentLikeShowNum.value++
@@ -74,18 +76,25 @@ const refreshCommentLike = () => {
 }
 
 const handleClickLike = () => {
-  if (isProcessLike.value) {
-    // Message.info('点击太频繁')
-  } else {
-    likeCommentOrNot(props.comment.id, userStore.getCurrentUser.id, !isLiked.value)
-      .then(() => {
-        refreshCommentLike()
-      })
-      .catch(() => {
-        emitRefresh(true)
-      })
-    isLiked.value = !isLiked.value
-  }
+  userStore
+    .checkLogin()
+    .then((user) => {
+      if (isProcessLike.value) {
+        // Message.info('点击太频繁')
+      } else {
+        likeCommentOrNot(props.comment.id, user.id, !isLiked.value)
+          .then(() => {
+            refreshCommentLike()
+          })
+          .catch(() => {
+            emitRefresh(true)
+          })
+        isLiked.value = !isLiked.value
+      }
+    })
+    .catch(() => {
+      mainStore.setLoginVisible(true)
+    })
 }
 
 const commentContentShowAll = ref(false)
@@ -101,34 +110,41 @@ const replyCommentContent = ref('')
 
 const isProcessReplyComment = ref(false)
 const onPostReplyComment = () => {
-  if (replyCommentContent.value.length <= 0 || isProcessReplyComment.value) {
-    return
-  }
-  if (author.value !== undefined) {
-    isProcessReplyComment.value = true
-    postComment(userStore.getCurrentUser.id, replyCommentContent.value, undefined, props.comment.id)
-      .then((comment) => {
-        if (comment !== undefined) {
-          // refreshUserInfo()
-          // refreshChildrenComments()
-          // focusCommentId.value = commentId
-          // console.log(comment)
-          // childrenComments.unshift(comment)
-          replyCommentContent.value = ''
-          isReplying.value = false
-          refreshChildrenComments()
+  userStore
+    .checkLogin()
+    .then((user) => {
+      if (replyCommentContent.value.length <= 0 || isProcessReplyComment.value) {
+        return
+      }
+      if (author.value !== undefined) {
+        isProcessReplyComment.value = true
+        postComment(user.id, replyCommentContent.value, undefined, props.comment.id)
+          .then((comment) => {
+            if (comment !== undefined) {
+              // refreshUserInfo()
+              // refreshChildrenComments()
+              // focusCommentId.value = commentId
+              // console.log(comment)
+              // childrenComments.unshift(comment)
+              replyCommentContent.value = ''
+              isReplying.value = false
+              refreshChildrenComments()
 
-          // refreshUserInfo()
-        } else {
-          refreshUserInfo()
-          refreshChildrenComments()
-          emitRefresh(true)
-        }
-      })
-      .finally(() => {
-        isProcessReplyComment.value = false
-      })
-  }
+              // refreshUserInfo()
+            } else {
+              refreshUserInfo()
+              refreshChildrenComments()
+              emitRefresh(true)
+            }
+          })
+          .finally(() => {
+            isProcessReplyComment.value = false
+          })
+      }
+    })
+    .catch(() => {
+      mainStore.setLoginVisible(true)
+    })
 }
 
 const processDeleteComment = ref(false)
@@ -249,8 +265,9 @@ const isDeleted = ref(false)
         class="action"
         @click="onDeleteComment"
         v-if="
-          props.comment.authorId === userStore.getCurrentUser.id ||
-          props.video?.authorId === userStore.getCurrentUser.id
+          userStore.getCurrentUser &&
+          (props.comment.authorId === userStore.getCurrentUser.id ||
+            props.video?.authorId === userStore.getCurrentUser.id)
         "
       >
         <IconDelete /> 删除
@@ -260,7 +277,7 @@ const isDeleted = ref(false)
     <!--    New comment input-->
     <a-comment
       align="right"
-      :avatar="userStore.getCurrentUser.avatar"
+      :avatar="userStore.getUserAvatar"
       class="reply-comment"
       v-if="isReplying"
     >

@@ -2,15 +2,18 @@
 import os
 
 import click
+from apscheduler.schedulers.blocking import BlockingScheduler
 from flask import render_template, Flask
+from flask_mail import Mail, Message
 
 import models
 from blueprints.comment import comment_bp
+from blueprints.email import email_bp
 from blueprints.video import video_bp
 from models import *
 from blueprints.user import user_bp
 from config import config
-from exts import db
+from exts import db, mail, scheduler
 
 # from flask_script import Manager, Shell
 
@@ -21,6 +24,7 @@ app = Flask(__name__)
 app.register_blueprint(user_bp)
 app.register_blueprint(video_bp)
 app.register_blueprint(comment_bp)
+app.register_blueprint(email_bp)
 # app.register_blueprint(api.get)
 # app.register_blueprint(api.delete)
 # app.register_blueprint(api.update)
@@ -33,7 +37,30 @@ config[config_name].init_app(app)
 # bootstrap.app_init(app)
 # mail.init_app(app)
 # moment.init_app(app)
+# MAIL_SERVER = 'smtp.qq.email'
+# MAIL_PORT = 465
+# MAIL_USE_SSL = True
+# MAIL_USERNAME = '517941374@qq.com'
+# MAIL_PASSWORD = 'jfdhqbglogcubihe'
+# app.config['MAIL_SERVER'] = 'smtp.qq.email'
+# app.config['MAIL_PORT'] = '465'
+# app.config['MAIL_USERNAME'] = '517941374@qq.com'
+# app.config['MAIL_PASSWORD'] = 'jfdhqbglogcubihe'
+#
+# # 启用/禁用传输安全层加密
+# app.config['MAIL_USE_TLS'] = False
+# # 启用/禁用安全套接字层加密
+# app.config['MAIL_USE_SSL'] = True
+# app.config.update(MAIL_SERVER='smtp.qq.com',
+#                   MAIL_PORT='465',
+#                   MAIL_USE_SSL=True,
+#                   MAIL_USERNAME='517941374',  # 使用qq，不是邮箱
+#                   MAIL_PASSWORD='jfdhqbglogcubihe')  # config配置
+# mail = Mail(app)
+
+mail.init_app(app)
 db.init_app(app)
+scheduler.start()
 
 
 # 路由和其他处理程序定义
@@ -101,4 +128,5 @@ def db_init():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000)
+    app.run(host='0.0.0.0', port=5000)
+    # app.run(debug=True)

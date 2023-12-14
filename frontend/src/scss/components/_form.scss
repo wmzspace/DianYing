@@ -7,6 +7,7 @@
   vertical-align: baseline;
 
 
+
   .arco-form {
     .arco-form-item-label-col {
       display: none;
@@ -22,7 +23,7 @@
         margin-bottom: 0;
       }
 
-      &:has(.captcha-code-input) {
+      &:has(.captcha-code-input, .pwd-input ) {
         margin-bottom: 12px;
       }
 
@@ -43,7 +44,11 @@
       box-sizing: border-box;
       vertical-align: baseline;
 
-      &.email-input, &.pwd-input {
+      .cool-down{
+        color:rgba(0, 0, 0,0.2);
+        cursor: default;
+      }
+      &.email-input{
         //margin: 38px 0 0 0;
         border: none;
 
@@ -60,7 +65,7 @@
         }
       }
 
-      &.captcha-code-input {
+      &.captcha-code-input, &.pwd-input  {
         margin-top: 5px;
         //margin-bottom: 25px;
         .arco-input-wrapper {
@@ -135,3 +140,4 @@
   }
 
 }
+

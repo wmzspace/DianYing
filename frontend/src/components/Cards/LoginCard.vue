@@ -1,18 +1,9 @@
 <script lang="ts" setup>
 import { useMainStore } from '@/store/main'
-import type { CSSProperties } from 'vue'
 import SmsLoginForm from '@/components/Forms/EmailLoginForm.vue'
 import PwdLoginForm from '@/components/Forms/PwdLoginForm.vue'
 
 const mainStore = useMainStore()
-const onLoginOk = () => {}
-
-const onLoginCancel = () => {}
-
-const maskStyle: CSSProperties = {
-  background:
-    'url(https://p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/login-resetpwd-bg.png) 0% 0% / 100% no-repeat rgb(255, 255, 255);'
-}
 </script>
 
 <template>

@@ -1,7 +1,15 @@
 # 导入所需包
+from apscheduler.schedulers.background import BackgroundScheduler
+from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
+
 # 导出 SQLAlchemy db
 db: SQLAlchemy = SQLAlchemy()
+mail = Mail()
+
+# 初始化定时任务
+# scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler()
 
 
 class AjaxResponse:

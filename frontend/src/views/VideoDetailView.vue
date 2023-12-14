@@ -23,8 +23,10 @@ import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import CommentCard from '@/components/Cards/CommentCard.vue'
 import _ from 'lodash'
 import VideoCardSmall from '@/components/Cards/VideoCardSmall.vue'
+import { useMainStore } from '@/store/main'
 
 const userStore = useUserStore()
+const mainStore = useMainStore()
 const props = defineProps<{
   video_id: string
 }>()
@@ -260,21 +262,23 @@ onUnmounted(() => {
 
 const newCommentContent = ref<string>('')
 const onPostNewComment = () => {
-  if (newCommentContent.value.length <= 0) {
-    // Message.info('评论内容异常')
-    return
-  }
-  if (author.value !== undefined && video.value !== undefined) {
-    postComment(
-      userStore.getCurrentUser.id,
-      newCommentContent.value,
-      video.value.id,
-      undefined
-    ).then((comment) => {
-      newCommentContent.value = ''
-      refreshRootCommentList()
+  userStore
+    .checkLogin()
+    .then((user) => {
+      if (newCommentContent.value.length <= 0) {
+        // Message.info('评论内容异常')
+        return
+      }
+      if (author.value !== undefined && video.value !== undefined) {
+        postComment(user.id, newCommentContent.value, video.value.id, undefined).then((comment) => {
+          newCommentContent.value = ''
+          refreshRootCommentList()
+        })
+      }
     })
-  }
+    .catch(() => {
+      mainStore.setLoginVisible(true)
+    })
 }
 
 interface CommentFinder {
@@ -302,7 +306,7 @@ const refreshVideoLikeAndStar = () => {
     videoLikeShowNum.value = 0
     isLiked.value = false
     users.forEach((user) => {
-      if (user.id === userStore.getCurrentUser.id) {
+      if (userStore.getCurrentUser && user.id === userStore.getCurrentUser.id) {
         isLiked.value = true
       }
       videoLikeShowNum.value++
@@ -317,7 +321,7 @@ const refreshVideoLikeAndStar = () => {
     videoStarShowNum.value = 0
     isStarred.value = false
     users.forEach((user) => {
-      if (user.id === userStore.getCurrentUser.id) {
+      if (userStore.getCurrentUser && user.id === userStore.getCurrentUser.id) {
         isStarred.value = true
       }
       videoStarShowNum.value++
@@ -330,40 +334,46 @@ const refreshVideoLikeAndStar = () => {
 }
 
 const handleClickLike = () => {
-  if (isProcessLike.value) {
-    debounce(() => {
-      isProcessLike.value = false
-    }, 3000)
-  } else {
-    isProcessLike.value = true
-    likeOrStarVideoOrNot(
-      parseInt(props.video_id),
-      userStore.getCurrentUser.id,
-      !isLiked.value,
-      'like'
-    ).then(() => {
-      refreshVideoLikeAndStar()
+  userStore
+    .checkLogin()
+    .then((user) => {
+      if (isProcessLike.value) {
+        debounce(() => {
+          isProcessLike.value = false
+        }, 3000)
+      } else {
+        isProcessLike.value = true
+        likeOrStarVideoOrNot(parseInt(props.video_id), user.id, !isLiked.value, 'like').then(() => {
+          refreshVideoLikeAndStar()
+        })
+        isLiked.value = !isLiked.value
+      }
     })
-    isLiked.value = !isLiked.value
-  }
+    .catch(() => {
+      mainStore.setLoginVisible(true)
+    })
 }
 const handleClickStar = () => {
-  if (isProcessStar.value) {
-    debounce(() => {
-      isProcessStar.value = false
-    }, 3000)
-  } else {
-    isProcessStar.value = true
-    likeOrStarVideoOrNot(
-      parseInt(props.video_id),
-      userStore.getCurrentUser.id,
-      !isStarred.value,
-      'star'
-    ).then(() => {
-      refreshVideoLikeAndStar()
+  userStore
+    .checkLogin()
+    .then((user) => {
+      if (isProcessStar.value) {
+        debounce(() => {
+          isProcessStar.value = false
+        }, 3000)
+      } else {
+        isProcessStar.value = true
+        likeOrStarVideoOrNot(parseInt(props.video_id), user.id, !isStarred.value, 'star').then(
+          () => {
+            refreshVideoLikeAndStar()
+          }
+        )
+        isStarred.value = !isStarred.value
+      }
     })
-    isStarred.value = !isStarred.value
-  }
+    .catch(() => {
+      mainStore.setLoginVisible(true)
+    })
 }
 </script>
 
@@ -457,7 +467,7 @@ const handleClickStar = () => {
         <div class="new-comment">
           <a-row :wrap="false">
             <a-avatar>
-              <img alt="avatar" :src="userStore.getCurrentUser.avatar" />
+              <img alt="avatar" :src="userStore.getUserAvatar" />
             </a-avatar>
 
             <a-input

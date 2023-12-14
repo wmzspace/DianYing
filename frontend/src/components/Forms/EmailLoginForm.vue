@@ -1,7 +1,7 @@
 <template>
   <div id="email-login-form">
     <a-form ref="emailLoginFormRef" :model="form" :scroll-to-first-error="true">
-      <a-form-item field="email" :rules="phoneRules" feedback>
+      <a-form-item field="email" :rules="emailRules" feedback>
         <a-input
           class="email-input"
           v-model.trim="form.email"
@@ -9,26 +9,29 @@
           :allow-clear="true"
         >
           <!--          <template #prefix>1</template>-->
-          <template #prepend><IconEmail /></template>
+          <template #prepend>
+            <IconEmail />
+          </template>
         </a-input>
       </a-form-item>
-      <a-form-item field="emailCode" :rules="emailRules" feedback>
+      <a-form-item field="code" :rules="codeRules" feedback>
         <a-input
           class="captcha-code-input"
-          v-model.trim="form.emailCode"
+          v-model.trim="form.code"
           :max-length="6"
-          placeholder="请输入验证码"
+          placeholder="输入六位数验证码"
         >
           <template #append>
             <a-button
               :type="'text'"
-              @click="onGetEmailCode"
-              :loading="gettingEmailCode"
-              :disabled="getEmailCoolDownCount > 0"
-              >{{
-                getEmailCoolDownCount <= 0 ? '获取验证码' : `重新获取: ${getEmailCoolDownCount}s`
-              }}</a-button
-            >
+              @click="onGetCode"
+              :loading="gettingCode"
+              :disabled="getCodeCoolDownCount > 0"
+              :class="{
+                'cool-down': getCodeCoolDownCount > 0
+              }"
+              >{{ getCodeCoolDownCount <= 0 ? '获取验证码' : `重新获取 ${getCodeCoolDownCount}s` }}
+            </a-button>
           </template>
         </a-input>
       </a-form-item>
@@ -40,7 +43,12 @@
       </a-form-item>
       <a-form-item :no-style="true">
         <div class="confirm-button-container">
-          <a-button :disabled="!form.isRead" @click="handleClick">登录</a-button>
+          <a-button
+            :disabled="!form.isRead"
+            @click="handleClick"
+            :loading="isHandlingSubmit || isValidatingCode"
+            >注册 / 登录</a-button
+          >
         </div>
       </a-form-item>
     </a-form>
@@ -49,63 +57,66 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { checkEmail, getCaptchaCode } from '@/api/email'
+import { checkCaptchaCode, checkEmail, getCaptchaCode, validateCaptchaCode } from '@/api/email'
 import type { GetCaptchaResponse } from '@/api/email'
 import type { ValidatedError, ValidateStatus } from '@arco-design/web-vue'
 import { Message } from '@arco-design/web-vue'
 import { reject } from 'lodash-es'
+import { useUserStore } from '@/store/user'
 
-const onGetEmailCode = () => {
-  if (getEmailCoolDownCount.value > 0) {
+const onGetCode = () => {
+  if (getCodeCoolDownCount.value > 0) {
     return
   }
-  gettingEmailCode.value = true
+  gettingCode.value = true
   emailLoginFormRef.value.validateField('email').then((res: any) => {
     if (res && res.email) {
       Message.error({
         id: 'loginForm',
         content: res.email.message
       })
-      gettingEmailCode.value = false
+      gettingCode.value = false
     } else {
-      gettingEmailCode.value = true
-      getCaptchaCode(parseInt(form.email))
-        .then((res: GetCaptchaResponse) => {
-          getEmailCoolDownCount.value = 60
+      gettingCode.value = true
+      getCaptchaCode(form.email)
+        .then(() => {
+          getCodeCoolDownCount.value = 15
           let cd = window.setInterval(() => {
-            if (--getEmailCoolDownCount.value <= 0) {
+            if (--getCodeCoolDownCount.value <= 0) {
               clearInterval(cd)
             }
           }, 1000)
-
-          console.log(res)
-          Message.info({
-            id: 'loginForm',
-            content: '验证码发送成功'
-          })
+          // console.log(res)
+          // Message.info({
+          //   id: 'loginForm',
+          //   content: '验证码发送成功'
+          // })
         })
-        .catch((e) => {
-          console.error(e)
-          gettingEmailCode.value = false
+        .catch((msg) => {
+          Message.error({
+            id: 'loginRes',
+            content: msg
+          })
+          gettingCode.value = false
         })
         .finally(() => {
-          gettingEmailCode.value = false
+          gettingCode.value = false
         })
     }
   })
 }
-const gettingEmailCode = ref(false)
-// const getEmailCodeBtnText = ref('获取验证码')
-const getEmailCoolDownCount = ref(0)
+const gettingCode = ref(false)
+// const getCodeBtnText = ref('获取验证码')
+const getCodeCoolDownCount = ref(0)
 
 const emailLoginFormRef = ref()
 const form = reactive({
   email: '',
-  emailCode: '',
+  code: '',
   isRead: false
 })
 
-const phoneRules = [
+const emailRules = [
   {
     validator: (value: string, cb: any) => {
       return new Promise<void>((resolve) => {
@@ -120,21 +131,21 @@ const phoneRules = [
     }
   }
 ]
-const emailRules = [
+const codeRules = [
   {
     validator: (value: string | undefined, cb: any) => {
       return new Promise<void>((resolve, reject) => {
         // window.setTimeout(() => {
-        // if (!checkTelephone(value)) {
+        // if (!checkTeleemail(value)) {
         //   cb()
         // }
         if (value === undefined || value === '') {
           cb('请输入验证码')
-        } else if (value.length != 6) {
-          cb('验证码格式不正确')
+        } else if (!checkCaptchaCode(value)) {
+          cb('验证码应为六位数字')
         } else if (isHandlingSubmit.value) {
-          cb('验证码错误')
-          form.emailCode = ''
+          // cb('验证码错误')
+          // form.code = ''
         }
         resolve()
         // }, 2000)
@@ -142,25 +153,43 @@ const emailRules = [
     }
   }
 ]
+
+const userStore = useUserStore()
+
 const isHandlingSubmit = ref(false)
+const isValidatingCode = ref(false)
 const handleClick = () => {
   isHandlingSubmit.value = true
   emailLoginFormRef.value
     .validate()
     .then((res: any) => {
       if (res === undefined) {
-        // 表单验证成功
-        console.log('登录验证')
+        // 表单验证成功, 进行登录验证
+        isValidatingCode.value = true
+        validateCaptchaCode(form.email, form.code)
+          .then((userId) => {
+            // 登录成功
+            userStore.userLogin(userId)
+          })
+          .catch((msg) => {
+            Message.error({
+              id: 'loginRes',
+              content: msg
+            })
+          })
+          .finally(() => {
+            isValidatingCode.value = false
+          })
       } else {
         if (res.email !== undefined) {
           Message.error({
             id: 'loginForm',
             content: res.email.message
           })
-        } else if (res.emailCode !== undefined) {
+        } else if (res.code !== undefined) {
           Message.error({
             id: 'loginForm',
-            content: res.emailCode.message
+            content: res.code.message
           })
         }
       }
@@ -173,7 +202,7 @@ const handleClick = () => {
   //     status: 'error',
   //     message: '手机号格式不正确'
   //   },
-  //   emailCode: {
+  //   code: {
   //     status: 'error',
   //     message: 'valid post'
   //   }

@@ -156,8 +156,9 @@
 
           .arco-tabs-nav {
             &::before {
-              background-color: #f1f2f5;;
+              background-color: #f1f2f5;
               //display: none;
+
             }
 
             .arco-tabs-nav-tab {
@@ -173,8 +174,10 @@
                 //padding:-5px 0;
                 //margin: -3px 0;
                 .arco-tabs-nav-ink {
+                  //border:none;
                   border-bottom: 3px solid #fe2c55;
-
+                  transition: left 0.2s cubic-bezier(0.34, 0.69, 0.1, 1),
+                  width 0.2s cubic-bezier(0.34, 0.69, 0.1, 1); // FIXME
                 }
 
                 .arco-tabs-tab {
@@ -192,6 +195,7 @@
                   position: relative;
                   text-align: center;
                   justify-content: center;
+
                   &.arco-tabs-tab-active {
                     color: #161823 !important;
                     font-weight: 500;
