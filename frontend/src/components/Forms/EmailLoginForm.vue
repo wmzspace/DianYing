@@ -1,33 +1,32 @@
 <template>
-  <div id="sms-login-form">
-    <a-form ref="smsLoginFormRef" :model="form" :scroll-to-first-error="true">
-      <a-form-item field="phone" :rules="phoneRules" feedback>
+  <div id="email-login-form">
+    <a-form ref="emailLoginFormRef" :model="form" :scroll-to-first-error="true">
+      <a-form-item field="email" :rules="phoneRules" feedback>
         <a-input
-          class="phone-input"
-          v-model.trim="form.phone"
-          :max-length="11"
-          placeholder="手机号"
+          class="email-input"
+          v-model.trim="form.email"
+          placeholder="邮箱"
           :allow-clear="true"
         >
           <!--          <template #prefix>1</template>-->
-          <template #prepend>+86</template>
+          <template #prepend><IconEmail /></template>
         </a-input>
       </a-form-item>
-      <a-form-item field="smsCode" :rules="smsRules" feedback>
+      <a-form-item field="emailCode" :rules="emailRules" feedback>
         <a-input
           class="captcha-code-input"
-          v-model.trim="form.smsCode"
+          v-model.trim="form.emailCode"
           :max-length="6"
           placeholder="请输入验证码"
         >
           <template #append>
             <a-button
               :type="'text'"
-              @click="onGetSmsCode"
-              :loading="gettingSmsCode"
-              :disabled="getSmsCoolDownCount > 0"
+              @click="onGetEmailCode"
+              :loading="gettingEmailCode"
+              :disabled="getEmailCoolDownCount > 0"
               >{{
-                getSmsCoolDownCount <= 0 ? '获取验证码' : `重新获取: ${getSmsCoolDownCount}s`
+                getEmailCoolDownCount <= 0 ? '获取验证码' : `重新获取: ${getEmailCoolDownCount}s`
               }}</a-button
             >
           </template>
@@ -50,31 +49,31 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { checkTelephone, getCaptchaCode } from '@/api/sms'
-import type { GetCaptchaResponse } from '@/api/sms'
+import { checkEmail, getCaptchaCode } from '@/api/email'
+import type { GetCaptchaResponse } from '@/api/email'
 import type { ValidatedError, ValidateStatus } from '@arco-design/web-vue'
 import { Message } from '@arco-design/web-vue'
 import { reject } from 'lodash-es'
 
-const onGetSmsCode = () => {
-  if (getSmsCoolDownCount.value > 0) {
+const onGetEmailCode = () => {
+  if (getEmailCoolDownCount.value > 0) {
     return
   }
-  gettingSmsCode.value = true
-  smsLoginFormRef.value.validateField('phone').then((res: any) => {
-    if (res && res.phone) {
+  gettingEmailCode.value = true
+  emailLoginFormRef.value.validateField('email').then((res: any) => {
+    if (res && res.email) {
       Message.error({
         id: 'loginForm',
-        content: res.phone.message
+        content: res.email.message
       })
-      gettingSmsCode.value = false
+      gettingEmailCode.value = false
     } else {
-      gettingSmsCode.value = true
-      getCaptchaCode(parseInt(form.phone))
+      gettingEmailCode.value = true
+      getCaptchaCode(parseInt(form.email))
         .then((res: GetCaptchaResponse) => {
-          getSmsCoolDownCount.value = 60
+          getEmailCoolDownCount.value = 60
           let cd = window.setInterval(() => {
-            if (--getSmsCoolDownCount.value <= 0) {
+            if (--getEmailCoolDownCount.value <= 0) {
               clearInterval(cd)
             }
           }, 1000)
@@ -87,22 +86,22 @@ const onGetSmsCode = () => {
         })
         .catch((e) => {
           console.error(e)
-          gettingSmsCode.value = false
+          gettingEmailCode.value = false
         })
         .finally(() => {
-          gettingSmsCode.value = false
+          gettingEmailCode.value = false
         })
     }
   })
 }
-const gettingSmsCode = ref(false)
-// const getSmsCodeBtnText = ref('获取验证码')
-const getSmsCoolDownCount = ref(0)
+const gettingEmailCode = ref(false)
+// const getEmailCodeBtnText = ref('获取验证码')
+const getEmailCoolDownCount = ref(0)
 
-const smsLoginFormRef = ref()
+const emailLoginFormRef = ref()
 const form = reactive({
-  phone: '',
-  smsCode: '',
+  email: '',
+  emailCode: '',
   isRead: false
 })
 
@@ -112,8 +111,8 @@ const phoneRules = [
       return new Promise<void>((resolve) => {
         // window.setTimeout(() => {
 
-        if (!checkTelephone(value)) {
-          cb('手机号格式不正确')
+        if (!checkEmail(value)) {
+          cb('邮箱格式不正确')
         }
         resolve()
         // }, 2000)
@@ -121,7 +120,7 @@ const phoneRules = [
     }
   }
 ]
-const smsRules = [
+const emailRules = [
   {
     validator: (value: string | undefined, cb: any) => {
       return new Promise<void>((resolve, reject) => {
@@ -135,7 +134,7 @@ const smsRules = [
           cb('验证码格式不正确')
         } else if (isHandlingSubmit.value) {
           cb('验证码错误')
-          form.smsCode = ''
+          form.emailCode = ''
         }
         resolve()
         // }, 2000)
@@ -146,22 +145,22 @@ const smsRules = [
 const isHandlingSubmit = ref(false)
 const handleClick = () => {
   isHandlingSubmit.value = true
-  smsLoginFormRef.value
+  emailLoginFormRef.value
     .validate()
     .then((res: any) => {
       if (res === undefined) {
         // 表单验证成功
         console.log('登录验证')
       } else {
-        if (res.phone !== undefined) {
+        if (res.email !== undefined) {
           Message.error({
             id: 'loginForm',
-            content: res.phone.message
+            content: res.email.message
           })
-        } else if (res.smsCode !== undefined) {
+        } else if (res.emailCode !== undefined) {
           Message.error({
             id: 'loginForm',
-            content: res.smsCode.message
+            content: res.emailCode.message
           })
         }
       }
@@ -169,12 +168,12 @@ const handleClick = () => {
     .finally(() => {
       isHandlingSubmit.value = false
     })
-  // smsLoginFormRef.value.setFields({
-  //   phone: {
+  // emailLoginFormRef.value.setFields({
+  //   email: {
   //     status: 'error',
   //     message: '手机号格式不正确'
   //   },
-  //   smsCode: {
+  //   emailCode: {
   //     status: 'error',
   //     message: 'valid post'
   //   }

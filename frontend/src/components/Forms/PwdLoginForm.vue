@@ -1,14 +1,18 @@
 <template>
-  <div id="sms-login-form">
-    <a-form ref="smsLoginFormRef" :model="form">
-      <a-form-item field="name" :rules="rules">
-        <a-input class="phone-input" v-model="form.name" placeholder="手机号">
+  <div id="pwd-login-form">
+    <a-form ref="pwdLoginFormRef" :model="form" :scroll-to-first-error="true">
+      <a-form-item field="email" :rules="emailRules" feedback>
+        <a-input class="email-input" v-model.trim="form.pwd" placeholder="邮箱" :allow-clear="true">
           <!--          <template #prefix>1</template>-->
-          <template #prepend>+86</template>
+          <template #prepend><IconEmail /></template>
         </a-input>
       </a-form-item>
-      <a-form-item field="post">
-        <a-input class="captcha-code-input" v-model="form.post" placeholder="请输入验证码" />
+      <a-form-item field="pwd" :rules="pwdRules" feedback>
+        <a-input class="pwd-input" v-model.trim="form.pwd" :max-length="6" placeholder="请输入密码">
+          <template #prepend>
+            <IconLock />
+          </template>
+        </a-input>
       </a-form-item>
       <a-form-item field="isRead">
         <a-checkbox class="read-checkbox" v-model="form.isRead">
@@ -18,7 +22,7 @@
       </a-form-item>
       <a-form-item :no-style="true">
         <div class="confirm-button-container">
-          <a-button :disabled="!form.isRead" @click="handleClick">登录</a-button>
+          <a-button :disabled="!form.isRead" @click="handleClick">登录 / 注册</a-button>
         </div>
       </a-form-item>
     </a-form>
@@ -26,38 +30,101 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 
-const smsLoginFormRef = ref()
+import { Message } from '@arco-design/web-vue'
+import { reject } from 'lodash-es'
+import { checkEmail } from '@/api/email'
+
+const pwdLoginFormRef = ref()
 const form = reactive({
-  name: '',
-  post: '',
+  email: '',
+  pwd: '',
   isRead: false
 })
-const rules = [
+const emailRules = [
   {
-    validator: (value: any, cb: any) => {
-      return new Promise<void>((resolve) => {
-        window.setTimeout(() => {
-          if (value !== 'admin') {
-            cb('name must be admin')
-          }
-          resolve()
-        }, 2000)
+    validator: (value: string | undefined, cb: any) => {
+      return new Promise<void>((resolve, reject) => {
+        // window.setTimeout(() => {
+        // if (!checkTelephone(value)) {
+        //   cb()
+        // }
+        if (value === undefined || value === '') {
+          cb('请输入邮箱')
+        } else if (!checkEmail(value)) {
+          cb('邮箱格式不正确')
+        } else if (isHandlingSubmit.value) {
+          // TODO: 邮箱后端验证
+          // cb('密码错误')
+          // form.pwd = ''
+        }
+        resolve()
+        // }, 2000)
       })
     }
   }
 ]
-const handleClick = () => {
-  smsLoginFormRef.value.setFields({
-    name: {
-      status: 'error',
-      message: 'async name error'
-    },
-    post: {
-      status: 'error',
-      message: 'valid post'
+
+const pwdRules = [
+  {
+    validator: (value: string | undefined, cb: any) => {
+      return new Promise<void>((resolve, reject) => {
+        // window.setTimeout(() => {
+        // if (!checkTelephone(value)) {
+        //   cb()
+        // }
+        if (value === undefined || value === '') {
+          cb('请输入密码')
+        } else if (value.length < 6) {
+          cb('密码长度应不少于六位')
+        } else if (isHandlingSubmit.value) {
+          // TODO: 验证密码
+          // cb('密码错误')
+          // form.pwd = ''
+        }
+        resolve()
+        // }, 2000)
+      })
     }
-  })
+  }
+]
+
+const isHandlingSubmit = ref(false)
+const handleClick = () => {
+  isHandlingSubmit.value = true
+  pwdLoginFormRef.value
+    .validate()
+    .then((res: any) => {
+      if (res === undefined) {
+        // 表单验证成功
+        console.log('登录验证')
+      } else {
+        if (res.pwd !== undefined) {
+          Message.error({
+            id: 'loginForm',
+            content: res.pwd.message
+          })
+        } else if (res.pwdCode !== undefined) {
+          Message.error({
+            id: 'loginForm',
+            content: res.pwdCode.message
+          })
+        }
+      }
+    })
+    .finally(() => {
+      isHandlingSubmit.value = false
+    })
+  // pwdLoginFormRef.value.setFields({
+  //   pwd: {
+  //     status: 'error',
+  //     message: '手机号格式不正确'
+  //   },
+  //   pwdCode: {
+  //     status: 'error',
+  //     message: 'valid post'
+  //   }
+  // })
 }
 </script>

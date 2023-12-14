@@ -1,5 +1,5 @@
-// http://youlanjihua.com/youlanApi/v1/phonecode/send.php?secret={your secret}&phone={phone}
-// http://youlanjihua.com/youlanApi/v1/phonecode/validate.php?secret={your secret}&requestId={requestId}&code={短信验证码}
+// http://youlanjihua.com/youlanApi/v1/emailcode/send.php?secret={your secret}&email={email}
+// http://youlanjihua.com/youlanApi/v1/emailcode/validate.php?secret={your secret}&requestId={requestId}&code={短信验证码}
 import { reject } from 'lodash-es'
 
 const SECRET_KEY = 'rlj3r210'
@@ -19,12 +19,12 @@ export interface ValidateCaptchaResponse {
   msg: string
 }
 
-export const getCaptchaCode = (phone: number) =>
+export const getCaptchaCode = (email: number) =>
   new Promise<GetCaptchaResponse>((resolve, reject) => {
     console.log('start send')
     // TODO
     fetch(
-      `http://youlanjihua.com/youlanApi/v1/phonecode/send.php?secret=${SECRET_KEY}&phone=${phone}`,
+      `http://youlanjihua.com/youlanApi/v1/emailcode/send.php?secret=${SECRET_KEY}&email=${email}`,
       {
         method: 'GET',
         mode: 'cors',
@@ -52,7 +52,7 @@ export const getCaptchaCode = (phone: number) =>
 export const validateCaptchaCode = (requestId: number, code: number) =>
   new Promise<string>((resolve, reject) => {
     fetch(
-      `http://youlanjihua.com/youlanApi/v1/phonecode/validate.php?secret=${SECRET_KEY}&requestId=${requestId}&code=${code}`,
+      `http://youlanjihua.com/youlanApi/v1/emailcode/validate.php?secret=${SECRET_KEY}&requestId=${requestId}&code=${code}`,
       {
         method: 'GET'
       }
@@ -69,16 +69,14 @@ export const validateCaptchaCode = (requestId: number, code: number) =>
     })
   })
 
-export const checkTelephone = (telephone: number | string | undefined) => {
-  if (telephone === undefined) {
+export const checkEmail = (email: string | undefined) => {
+  if (email === undefined) {
     return false
   }
-  if (typeof telephone === 'number') {
-    telephone = telephone.toString()
-  }
-  if (telephone.length != 11) {
+
+  if (email.length == 0) {
     return false
   }
-  const reg = /^[1][3,4,5,7,8][0-9]{9}$/
-  return reg.test(telephone)
+  const reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+  return reg.test(email)
 }

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useMainStore } from '@/store/main'
 import type { CSSProperties } from 'vue'
-import SmsLoginForm from '@/components/Forms/SmsLoginForm.vue'
+import SmsLoginForm from '@/components/Forms/EmailLoginForm.vue'
 import PwdLoginForm from '@/components/Forms/PwdLoginForm.vue'
 
 const mainStore = useMainStore()

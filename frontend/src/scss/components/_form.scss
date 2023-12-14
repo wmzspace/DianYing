@@ -1,10 +1,11 @@
-#sms-login-form, #pwd-login-form {
+#email-login-form, #pwd-login-form {
   padding: 0 55px;
   width: 100%;
   //border: 0;
   box-sizing: border-box;
   margin: 0;
   vertical-align: baseline;
+
 
   .arco-form {
     .arco-form-item-label-col {
@@ -25,12 +26,12 @@
         margin-bottom: 12px;
       }
 
-      //&:has(.phone-input){
+      //&:has(.email-input){
       //  margin-bottom: 0;
       //}
     }
 
-    .phone-input, .captcha-code-input {
+    .email-input, .captcha-code-input, .pwd-input {
       background: #f2f2f4;
       border: none;
       border-radius: 10px;
@@ -42,12 +43,12 @@
       box-sizing: border-box;
       vertical-align: baseline;
 
-      &.phone-input {
+      &.email-input, &.pwd-input {
         //margin: 38px 0 0 0;
         border: none;
 
         .arco-input-prepend {
-          padding: 0 10px 0 0;
+          //padding: 0 10px 0 0;
         }
 
         .arco-input-wrapper {
