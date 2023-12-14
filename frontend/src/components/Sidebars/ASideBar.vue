@@ -4,6 +4,7 @@
 // const IconFont = Icon.addFromIconFontCn({
 //   src: 'https://at.alicdn.com/t/font_180975_ue66sq60vyd.js'
 // })
+import AFooter from '@/components/Footers/AFooter.vue'
 </script>
 
 <template>
@@ -146,9 +147,16 @@
       <a-menu-item disabled>
         <a-divider class="divider" />
       </a-menu-item>
+      <a-menu-item disabled>
+        <!--        TODO-->
+        <footer style="font-size: 10px; margin: 0; text-align: center" title="备案号">
+          <a href="https://beian.miit.gov.cn/" target="_blank">您的备案号</a>
+          <a href="https://beian.miit.gov.cn/" target="_blank">粤B2-20****59-1</a>
+        </footer>
+      </a-menu-item>
     </a-menu>
     <!-- Footer Copyright Notice -->
-
+    <!--    <AFooter />-->
     <!-- / Footer Copyright Notice -->
   </div>
 </template>
