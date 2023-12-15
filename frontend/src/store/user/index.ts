@@ -6,6 +6,7 @@ import type { AjaxResponse } from '@/api'
 import { methods } from '@arco-design/web-vue/es/_utils/date'
 import { Message } from '@arco-design/web-vue'
 import { useMainStore } from '@/store/main'
+import { useRouter } from 'vue-router'
 
 export interface User {
   avatar: string

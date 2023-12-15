@@ -10,7 +10,18 @@ import AFooter from '@/components/Footers/AFooter.vue'
 <template>
   <div id="a-side-bar">
     <div class="logo border-4">
-      <div><a class="logo-img"></a></div>
+      <div>
+        <!--        <a class="logo-img"></a>-->
+        <a
+          ><a-image
+            class="logo-img"
+            src="/images/logo/transparent-white-text.png"
+            :fit="'contain'"
+            width="100%"
+            height="100%"
+          ></a-image
+        ></a>
+      </div>
     </div>
     <div class="scroll-content">
       <a-menu mode="pop" :default-selected-keys="['1']" class="nav-menu" :theme="'dark'">

@@ -17,7 +17,7 @@ const mainStore = useMainStore()
           <a-list-item-meta>
             <template #avatar>
               <a-avatar shape="square" :size="15">
-                <img alt="avatar" :src="'images/login/heart.png'" /> </a-avatar
+                <img alt="avatar" :src="'/images/login/heart.png'" /> </a-avatar
             ></template>
           </a-list-item-meta>
         </a-list-item>
@@ -26,7 +26,7 @@ const mainStore = useMainStore()
           <a-list-item-meta>
             <template #avatar>
               <a-avatar shape="square" :size="15">
-                <img alt="avatar" :src="'images/login/live.png'" /> </a-avatar
+                <img alt="avatar" :src="'/images/login/live.png'" /> </a-avatar
             ></template>
           </a-list-item-meta>
         </a-list-item>
@@ -35,7 +35,7 @@ const mainStore = useMainStore()
           <a-list-item-meta>
             <template #avatar>
               <a-avatar shape="square" :size="15">
-                <img alt="avatar" :src="'images/login/friends.png'" /> </a-avatar
+                <img alt="avatar" :src="'/images/login/friends.png'" /> </a-avatar
             ></template>
           </a-list-item-meta>
         </a-list-item>

@@ -6,6 +6,7 @@
     "src/**/*.vue",
     "src/**/*.ts",
     "src/**/*.d.ts",
+    "src/**/*.json",
     "src/**/*.tsx"
   ],
   "exclude": [

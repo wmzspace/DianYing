@@ -7,26 +7,26 @@
 }
 
 * {
-  font-family: PingFang SC,DFPKingGothicGB-Regular,sans-serif;
+  font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
   outline: none;
 }
 
 html {
   //@extend .show-border;
-  background: rgba(22, 24, 35, 1);
+  //background: rgba(22, 24, 35, 1);
 
 }
 
 //html,body,body > div:first-child{
 //  height: 100%;
 //}
-$min-width:768px;
+$min-width: 768px;
 
 
 body, body > div:first-child, html {
   //height: 200%;
   //@media(min-width: $min-width){
-    height: 100%;
+  height: 100%;
   //}
 }
 
@@ -48,23 +48,6 @@ body {
 
 }
 
-.main-background {
-  //background: #fff;
-
-  //background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
-  background: #fff;
-  background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
-  //height: 100vh;
-  //height: 200vh;
-  //position: fixed;
-  //width: 200%;
-  width: 100%;
-  display: flex;
-  //background-position: top;
-  //background-size: cover;
-  height: 100%;
-  //width: 100vw;
-}
 
 .show-border {
   .border-1 {

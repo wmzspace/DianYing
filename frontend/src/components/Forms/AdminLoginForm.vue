@@ -6,6 +6,7 @@
           class="pwd-input"
           v-model.trim="form.pwd"
           placeholder="请输入授权码"
+          autocomplete
           :type="'password'"
         >
           <template #prepend>

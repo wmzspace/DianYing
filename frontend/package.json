@@ -12,9 +12,15 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vueuse/core": "^10.7.0",
+    "axios": "^1.6.2",
+    "echarts": "^5.4.3",
     "lodash-es": "^4.17.21",
     "pinia": "^2.1.7",
+    "query-string": "^8.1.0",
     "vue": "^3.3.4",
+    "vue-echarts": "^6.6.4",
+    "vue-i18n": "^9.8.0",
     "vue-router": "^4.2.5",
     "xgplayer": "^3.0.10"
   },
@@ -31,6 +37,7 @@
     "@vue/tsconfig": "^0.4.0",
     "eslint": "^8.49.0",
     "eslint-plugin-vue": "^9.17.0",
+    "less": "^4.2.0",
     "npm-run-all2": "^6.1.1",
     "prettier": "^3.0.3",
     "sass": "^1.69.5",

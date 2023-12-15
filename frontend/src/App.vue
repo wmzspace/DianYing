@@ -13,29 +13,44 @@ const layout = computed(() => 'layout-' + ((route.meta.layout as string) || 'a')
 
 const mainStore = useMainStore()
 const userStore = useUserStore()
+import useLocale from '@/hooks/locale'
+import enUS from '@arco-design/web-vue/es/locale/lang/en-us'
+import zhCN from '@arco-design/web-vue/es/locale/lang/zh-cn'
 
+const { currentLocale } = useLocale()
+const locale = computed(() => {
+  switch (currentLocale.value) {
+    case 'zh-CN':
+      return zhCN
+    case 'en-US':
+      return enUS
+    default:
+      return enUS
+  }
+})
 onMounted(() => {
   document.documentElement.style.height = `${window.innerHeight}px`
   window.addEventListener('resize', () => {
     document.documentElement.style.height = `${window.innerHeight}px`
   })
-  userStore.isAdmin = true
+  // userStore.isAdmin = true
 
-  // const storedUser = localStorage.getItem('currentUser') as string | null
+  const storedUser = localStorage.getItem('currentUser') as string | null
   // console.log(storedUser)
-  // if (storedUser === null) {
-  //   //TODO
-  //   mainStore.setLoginVisible(true)
-  // } else {
-  //   userStore.userLogin(storedUser)
-  // }
+  if (storedUser === null) {
+    //TODO
+    mainStore.setLoginVisible(true)
+  } else {
+    userStore.userLogin(storedUser)
+  }
 })
 </script>
 
 <template>
   <!-- Component Library Config Provider-->
-  <a-config-provider>
+  <a-config-provider :locale="locale">
     <!--    Layout & Router View-->
+
     <component :is="layout">
       <!--      <router-view />-->
     </component>

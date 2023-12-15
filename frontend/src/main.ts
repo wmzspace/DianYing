@@ -14,6 +14,7 @@ import App from './App.vue'
 //
 // SimplePlayer.defaultPreset = defaultPreset
 // Player.defaultPreset = defaultPreset
+import globalComponents from '@/components'
 
 import 'xgplayer/dist/index.min.css'
 // 启用中文
@@ -29,6 +30,8 @@ import ArcoVueIcon from '@arco-design/web-vue/es/icon'
 import '@arco-design/web-vue/dist/arco.css'
 import router from './router'
 import LayoutA from '@/layout/LayoutA.vue'
+import LayoutB from '@/layout/LayoutB.vue'
+import i18n from '@/locale'
 
 const app = createApp(App)
 app
@@ -36,6 +39,9 @@ app
   .use(router)
   .use(ArcoVue)
   .use(ArcoVueIcon)
+  .use(i18n)
+  .use(globalComponents)
   .component('layout-a', LayoutA)
+  .component('layout-b', LayoutB)
   .mount('#app')
 Message._context = app._context

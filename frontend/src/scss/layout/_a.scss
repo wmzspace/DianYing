@@ -1,7 +1,16 @@
-$header-height: 68px;
-$sidebar-width: 160px;
+
 #layout-a {
+  $header-height: 68px;
+  $sidebar-width: 160px;
   font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
+
+  &.main-background {
+    //background: #fff;
+    background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
+    width: 100%;
+    display: flex;
+    height: 100%;
+  }
 
   #layout-a-right {
     box-sizing: border-box;
@@ -328,30 +337,8 @@ $sidebar-width: 160px;
         padding: 0;
 
         .nav-menu {
-          //@extend .hide-scroll-bar;
-          //height: calc(100vh - $header-height);
-          //position: absolute;
-          //top: $header-height;
           background-origin: padding-box;
           background-color: transparent;
-          //width: $sidebar-width;
-          //overflow-x: hidden !important;
-          //overflow-y: scroll !important;
-          //overscroll-behavior-x: contain !important;
-          //overscroll-behavior-y: contain !important;
-          //margin: 0;
-          //padding: 0;
-          // -------------------------------------------
-          //height: 1440px;
-          //height: 100%;
-          //bottom: 2px;
-          //position: absolute;
-          //width: 160px;
-          //width: 100px;
-          //align-items: flex-end;
-          //display: flex;
-          //flex-direction: column;
-          //flex-grow: 1;
         }
 
         .side-bar-footer {
@@ -555,13 +542,24 @@ $sidebar-width: 160px;
           .logo-img {
             /*-webkit-app-region: no-drag;*/
             /*background: url(//p3-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/logo-horizontal.svg) no-repeat;*/
-            /*background: $logo-small-url;*/
-            background: $logo-url;
-            width: 91px;
+            //background: $logo-small-url;
+            //background-size: auto;
+            //background-size: 150px;
+
+            //background-image: url("/images/logo/text-white.png");
+            //background-size: cover;
+            //background-position: center;
+            //background-repeat: no-repeat;
+            padding: 35px;
+            //margin-top: 5px;
+            //background: $logo-url;
             //width: 100%;
             display: block;
             /*height: 34px;*/
-            height: 28px;
+            //height: 108px;
+            //width: 91px;
+            //height: 28px;
+            //height: 68px;
             opacity: 1;
             transition: opacity 0.3s;
             //margin: 10px 0 10px 10px;
