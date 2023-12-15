@@ -22,11 +22,16 @@ export const guestUser = {
   avatar: prefix_url + 'static/user/avatars/default.jpeg',
   nickname: '未登录'
 }
+export const adminUser = {
+  avatar: prefix_url + 'static/user/avatars/default.jpeg',
+  nickname: 'Admin'
+}
 
 export const useUserStore = defineStore('user', {
   // 推荐使用 完整类型推断的箭头函数
   state: () => ({
     // userList: [] as User[]
+    isAdmin: false,
     userData: undefined as User | undefined
     // ...
   }),
@@ -35,7 +40,9 @@ export const useUserStore = defineStore('user', {
     getUserById: (state) => {
       return (userId: number) =>
         new Promise<User>((resolve, reject) => {
-          fetch(prefix_url + `/user/get?id=${userId}`).then((res) => {
+          fetch(prefix_url + `/user/get?id=${userId}`, {
+            method: 'GET'
+          }).then((res) => {
             if (res.ok) {
               res.json().then((data: User[]) => {
                 resolve(data[0])
@@ -45,9 +52,17 @@ export const useUserStore = defineStore('user', {
         })
     },
     getUserAvatar: (state) =>
-      state.userData !== undefined ? state.userData.avatar : guestUser.avatar,
+      state.userData !== undefined
+        ? state.userData.avatar
+        : state.isAdmin
+          ? adminUser.avatar
+          : guestUser.avatar,
     getUserNickname: (state) =>
-      state.userData !== undefined ? state.userData.nickname : guestUser.nickname
+      state.userData !== undefined
+        ? state.userData.nickname
+        : state.isAdmin
+          ? adminUser.nickname
+          : guestUser.nickname
   },
   actions: {
     async userLogin(userId: number | string) {
@@ -57,12 +72,13 @@ export const useUserStore = defineStore('user', {
       try {
         // this.userData = user
         this.getUserById(userId).then((user) => {
+          this.isAdmin = false
           this.userData = user
+          localStorage.setItem('currentUser', userId.toString())
+          const mainStore = useMainStore()
+          mainStore.setLoginVisible(false)
         })
 
-        localStorage.setItem('currentUser', userId.toString())
-        const mainStore = useMainStore()
-        mainStore.setLoginVisible(false)
         // this.userData = await api.post({ login, password })
         // showTooltip(`Welcome back ${this.userData.name}!`)
       } catch (error) {
@@ -101,6 +117,11 @@ export const useUserStore = defineStore('user', {
             Message.error(e.message)
           })
       })
+    },
+    adminLogin() {
+      this.isAdmin = true
+      const mainStore = useMainStore()
+      mainStore.setLoginVisible(false)
     },
     checkLogin() {
       return new Promise<User>((resolve, reject) => {

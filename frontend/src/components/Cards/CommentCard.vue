@@ -265,9 +265,10 @@ const isDeleted = ref(false)
         class="action"
         @click="onDeleteComment"
         v-if="
-          userStore.getCurrentUser &&
-          (props.comment.authorId === userStore.getCurrentUser.id ||
-            props.video?.authorId === userStore.getCurrentUser.id)
+          userStore.isAdmin ||
+          (userStore.getCurrentUser &&
+            (props.comment.authorId === userStore.getCurrentUser.id ||
+              props.video?.authorId === userStore.getCurrentUser.id))
         "
       >
         <IconDelete /> 删除

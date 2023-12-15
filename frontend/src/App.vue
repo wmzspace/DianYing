@@ -19,22 +19,16 @@ onMounted(() => {
   window.addEventListener('resize', () => {
     document.documentElement.style.height = `${window.innerHeight}px`
   })
-  // store.userLogin({
-  //   register_time: '',
-  //   sex: '',
-  //   username: '',
-  //   id: 1,
-  //   nickname: '19岁带饭冲锋🌈',
-  //   avatar: 'images/avatar.jpeg'
-  // })
-  const storedUser = localStorage.getItem('currentUser') as string | null
-  console.log(storedUser)
-  if (storedUser === null) {
-    //TODO
-    mainStore.setLoginVisible(true)
-  } else {
-    userStore.userLogin(storedUser)
-  }
+  userStore.isAdmin = true
+
+  // const storedUser = localStorage.getItem('currentUser') as string | null
+  // console.log(storedUser)
+  // if (storedUser === null) {
+  //   //TODO
+  //   mainStore.setLoginVisible(true)
+  // } else {
+  //   userStore.userLogin(storedUser)
+  // }
 })
 </script>
 
