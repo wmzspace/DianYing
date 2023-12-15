@@ -2,6 +2,7 @@
 import { useMainStore } from '@/store/main'
 import SmsLoginForm from '@/components/Forms/EmailLoginForm.vue'
 import PwdLoginForm from '@/components/Forms/PwdLoginForm.vue'
+import AdminLoginForm from '@/components/Forms/AdminLoginForm.vue'
 
 const mainStore = useMainStore()
 </script>
@@ -43,7 +44,7 @@ const mainStore = useMainStore()
     <a-tabs :type="'line'" :size="'medium'" id="login-container" :lazy-load="false" :justify="true">
       <a-tab-pane key="1" title="验证码登录"><SmsLoginForm /></a-tab-pane>
       <a-tab-pane key="2" title="密码登录"><PwdLoginForm /></a-tab-pane>
-      <a-tab-pane key="3" title="管理员登录"> Content of Tab Panel 3 </a-tab-pane>
+      <a-tab-pane key="3" title="管理员登录"><AdminLoginForm /></a-tab-pane>
     </a-tabs>
     <div></div>
   </a-modal>

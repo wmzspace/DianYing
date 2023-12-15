@@ -10,8 +10,8 @@ from sqlalchemy import event
 from exts import db, scheduler
 
 # PREFIX_URL = 'http://192.168.1.104:5000/'
-# PREFIX_URL = "http://127.0.0.1:5000/"
-PREFIX_URL = "https://wmzspace.space/"
+PREFIX_URL = "http://127.0.0.1:5000/"
+# PREFIX_URL = "https://wmzspace.space/"
 
 
 def model2dict(models: list[Any] | None) -> list[Any]:
