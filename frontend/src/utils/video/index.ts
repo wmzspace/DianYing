@@ -35,12 +35,18 @@ export const parseVideoMedia = (rawVideo: RawVideo): VideoMedia => {
   }
 }
 
-export const pullVideo = (num: number) =>
+export const pullVideo = (num?: number, authorId?: number, tagId?: number) =>
   new Promise<VideoMedia[]>((resolve, reject) => {
-    const result: VideoMedia[] = []
-    fetch(prefix_url.concat(`video/get?num=${num}`), {
-      method: 'GET'
-    })
+    const numString = typeof num !== 'undefined' ? `&num=${num}` : ''
+    const authorString = typeof authorId !== 'undefined' ? `&author_id=${authorId}` : ''
+    const tagString = typeof tagId !== 'undefined' ? `&tag_id=${tagId}` : ''
+
+    fetch(
+      prefix_url.concat(`video/get?`).concat(numString).concat(authorString).concat(tagString),
+      {
+        method: 'GET'
+      }
+    )
       .then((res) => {
         if (res.ok) {
           res.json().then((data: RawVideo[]) => {

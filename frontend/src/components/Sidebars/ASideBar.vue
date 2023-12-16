@@ -6,6 +6,7 @@
 // })
 import AFooter from '@/components/Footers/AFooter.vue'
 import { useUserStore } from '@/store'
+import { useRoute } from 'vue-router'
 const userStore = useUserStore()
 </script>
 
@@ -26,7 +27,7 @@ const userStore = useUserStore()
       </div>
     </div>
     <div class="scroll-content">
-      <a-menu mode="pop" :default-selected-keys="['1']" class="nav-menu" :theme="'dark'">
+      <a-menu mode="pop" :selected-keys="[$route.meta.key]" class="nav-menu" :theme="'dark'">
         <a-menu-item key="1">
           <a class="nav-a" @click="$router.push({ name: 'discover' })">
             <div class="nav-icon"></div>

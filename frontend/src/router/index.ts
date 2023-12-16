@@ -22,7 +22,8 @@ let routes: Array<RouteRecordRaw> = [
     path: '/discover',
     name: 'discover',
     meta: {
-      layout: 'a'
+      layout: 'a',
+      key: '1'
     },
     component: () => import('@/views/HomeView.vue')
   },
@@ -40,6 +41,7 @@ let routes: Array<RouteRecordRaw> = [
     name: 'userProfile',
     meta: {
       layout: 'a',
+      key: '5',
       requiresAuth: true,
       roles: ['user']
     },

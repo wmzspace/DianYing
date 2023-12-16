@@ -34,14 +34,24 @@ const onLoadMore = () => {
 }
 
 const onLoadedAll = () => {
-  console.log('loaded all')
-  isLoadedAll.value = true
+  if (currentShowNum.value !== 0) {
+    isLoadedAll.value = true
+  }
   currentShowNum.value = loadedNum.value
   nextTick(() => {
     calculateVideoPositions()
     if (videoListHeight.value < window.innerHeight * 1.5) {
       console.log('加载完毕，但数量不够')
-      onLoadMore()
+      console.log('loading more...')
+      isLoadedAll.value = false
+      pullVideo(20).then((res: VideoMedia[]) => {
+        res.forEach((e) => {
+          videoList.value.push(e)
+        })
+      })
+    } else {
+      console.log('loaded all')
+      isLoadedAll.value = true
     }
   })
 }
