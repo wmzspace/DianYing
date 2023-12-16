@@ -426,11 +426,33 @@ const handleClickStar = () => {
           <a-avatar
             :size="60"
             :image-url="author?.avatar"
-            :style="{ marginRight: '8px' }"
+            :style="{ marginRight: '8px', cursor: 'pointer' }"
+            @click="
+              () => {
+                if (author) {
+                  $router.push({
+                    name: 'userProfile',
+                    params: { user_id: author.id }
+                  })
+                }
+              }
+            "
           ></a-avatar>
           <div class="basic-info">
             <div class="text-info">
-              <a-link class="name">
+              <a-link
+                class="name"
+                @click="
+                  () => {
+                    if (author) {
+                      $router.push({
+                        name: 'userProfile',
+                        params: { user_id: author.id }
+                      })
+                    }
+                  }
+                "
+              >
                 <span> {{ video ? author?.nickname : '...' }} </span>
               </a-link>
               <div class="statistic">

@@ -65,7 +65,7 @@ const userStore = useUserStore()
             </div>
           </a>
         </a-menu-item>
-        <a-menu-item key="5" v-if="!userStore.isAdmin">
+        <a-menu-item key="5" v-if="!userStore.isAdmin && userStore.getCurrentUser">
           <a
             class="nav-a"
             @click="

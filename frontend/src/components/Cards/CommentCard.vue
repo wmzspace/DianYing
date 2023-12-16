@@ -228,10 +228,26 @@ const isDeleted = ref(false)
     v-show="!isDeleted"
     class="comment-item"
     align="left"
-    :author="author?.nickname"
     :datetime="getTimeDiffUntilNow(props.comment.publishTime)"
     style="margin-bottom: 0; padding-bottom: 0"
   >
+    <template #author>
+      <span
+        style="cursor: pointer"
+        @click="
+          () => {
+            if (author) {
+              $router.push({
+                name: 'userProfile',
+                params: { user_id: author.id }
+              })
+            }
+          }
+        "
+      >
+        {{ author?.nickname }}
+      </span>
+    </template>
     <template #avatar>
       <a-avatar
         :size="32"
@@ -240,6 +256,16 @@ const isDeleted = ref(false)
           () => {
             console.log('!')
             isLoadingUser = false
+          }
+        "
+        @click="
+          () => {
+            if (author) {
+              $router.push({
+                name: 'userProfile',
+                params: { user_id: author.id }
+              })
+            }
           }
         "
       ></a-avatar>
