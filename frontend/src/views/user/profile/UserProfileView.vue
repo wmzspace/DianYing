@@ -7,11 +7,57 @@
       <div class="videos-container">
         <a-tabs>
           <template #extra>
-            <a-input-search placeholder="搜索你发布的内容" />
+            <a-input-search
+              placeholder="按标题或作者筛选内容"
+              v-model.trim="searchText"
+              :allow-clear="true"
+            />
           </template>
-          <a-tab-pane key="1" title="作品 11"><VideoCards /></a-tab-pane>
-          <a-tab-pane key="2" title="喜欢">喜欢</a-tab-pane>
-          <a-tab-pane key="3" title="收藏"> Content of Tab Panel 3 </a-tab-pane>
+          <a-tab-pane key="1" :title="`作品 ${videoListByAuthor.length}`">
+            <div class="video-cards-container">
+              <div class="action-bar">{{ tabTitlePrefix }}视频</div>
+              <div class="content">
+                <ul>
+                  <li
+                    class="list-item"
+                    v-for="(video, index) in querySearch(videoListByAuthor)"
+                    :key="index"
+                  >
+                    <video-card-sm :src="video" />
+                  </li>
+                </ul>
+              </div></div
+          ></a-tab-pane>
+          <a-tab-pane key="2" title="喜欢">
+            <div class="video-cards-container">
+              <div class="action-bar">{{ tabTitlePrefix }}喜欢</div>
+              <div class="content">
+                <ul>
+                  <li
+                    class="list-item"
+                    v-for="(video, index) in querySearch(videosLiked)"
+                    :key="index"
+                  >
+                    <video-card-sm :src="video" />
+                  </li>
+                </ul>
+              </div></div
+          ></a-tab-pane>
+          <a-tab-pane key="3" title="收藏">
+            <div class="video-cards-container">
+              <div class="action-bar">{{ tabTitlePrefix }}收藏</div>
+              <div class="content">
+                <ul>
+                  <li
+                    class="list-item"
+                    v-for="(video, index) in querySearch(videosStarred)"
+                    :key="index"
+                  >
+                    <video-card-sm :src="video" />
+                  </li>
+                </ul>
+              </div></div
+          ></a-tab-pane>
         </a-tabs>
       </div>
     </div>
@@ -44,25 +90,112 @@
 <script lang="ts" setup>
 import UserPanel from './components/user-panel.vue'
 import { useUserStore } from '@/store'
-import { ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import type { User } from '@/store/user'
 
 const props = defineProps<{
   user_id: string
 }>()
+
+const tabTitlePrefix = computed(() =>
+  userStore.getCurrentUser &&
+  !userStore.isAdmin &&
+  userStore.getCurrentUserNotAdmin.id.toString() === props.user_id
+    ? '我的'
+    : 'TA的'
+)
+
+const searchText = ref('')
 const userStore = useUserStore()
 const queryUser = ref<User | undefined>(undefined)
 
 userStore.getUserById(props.user_id).then((user) => {
   queryUser.value = user
 })
-import BasicInformation from './components/basic-information.vue'
-import SecuritySettings from './components/security-settings.vue'
-import VideoCards from '@/views/user/profile/components/video-cards.vue'
-// import Certification from './components/certification.vue'
+
+let videoList: VideoMedia[] = reactive([])
+
+const querySearch = (videos: VideoMedia[]) => {
+  return videos.filter((v) => v.title.includes(searchText.value))
+}
+
+const videoListByAuthor = computed(() =>
+  videoList.filter((v) => queryUser.value && v.authorId === queryUser.value.id)
+)
+pullVideo().then((videos) => {
+  videos.forEach((video) => {
+    videoList.push(video)
+  })
+})
+
+const videosLiked: VideoMedia[] = reactive([])
+getVideosByUserLikeOrStar(props.user_id, 'like').then((videos) => {
+  videosLiked.slice(0)
+  videos.forEach((v) => {
+    videosLiked.push(v)
+  })
+})
+
+const videosStarred: VideoMedia[] = reactive([])
+getVideosByUserLikeOrStar(props.user_id, 'star').then((videos) => {
+  videosStarred.slice(0)
+  videos.forEach((v) => {
+    videosStarred.push(v)
+  })
+})
+
+import VideoCardSm from '@/views/user/profile/components/video-card-sm.vue'
+import type { VideoMedia } from '@/types'
+import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
 </script>
 
 <style scoped lang="less">
+.video-cards-container {
+  .action-bar {
+    height: 44px;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    line-height: 21px;
+    color: rgba(255, 255, 255, 0.9);
+    border-top-color: rgba(255, 255, 255, 0.04);
+    border-top-style: solid;
+    border-top-width: 0.666667px;
+  }
+
+  .content {
+    ul {
+      flex-wrap: wrap;
+      display: flex;
+      list-style-type: disc;
+      margin: 0;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      margin-inline-start: 0px;
+      margin-inline-end: 0px;
+      width: 100%;
+      padding: 0;
+      line-height: 0;
+
+      .list-item {
+        width: calc(16.66% - 16px);
+        padding: 0;
+        margin-bottom: 24px;
+        margin-right: 16px;
+        position: relative;
+        user-select: none;
+        line-height: 0;
+        overflow: hidden;
+        list-style: none;
+        display: inline-block;
+        @media (max-width: 1024px) {
+          width: calc(33.33% - 16px);
+        }
+      }
+    }
+  }
+}
 //.container {
 //  padding: 0 20px 20px 20px;
 //}

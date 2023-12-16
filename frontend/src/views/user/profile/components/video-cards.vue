@@ -1,33 +1,16 @@
 <script setup lang="ts">
-import VideoCard from '@/components/Cards/VideoCard.vue'
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import type { VideoMedia } from '@/types'
-import { getVideoById, pullVideo } from '@/utils/video'
+import { pullVideo } from '@/utils/video'
 import VideoCardSm from '@/views/user/profile/components/video-card-sm.vue'
-import Player from 'xgplayer'
 
 let videoList: VideoMedia[] = reactive([])
 
-pullVideo(5).then((videos) => {
+pullVideo().then((videos) => {
   videos.forEach((video) => {
     videoList.push(video)
   })
 })
-pullVideo(5).then((videos) => {
-  videos.forEach((video) => {
-    videoList.push(video)
-  })
-})
-pullVideo(5).then((videos) => {
-  videos.forEach((video) => {
-    videoList.push(video)
-  })
-})
-// pullVideo(10).then((videos) => {
-//   videos.forEach((video) => {
-//     videoList.push(video)
-//   })
-// })
 </script>
 
 <template>
@@ -39,7 +22,6 @@ pullVideo(5).then((videos) => {
           <video-card-sm :src="video" />
         </li>
       </ul>
-      <!--      <video-card v-for="(video, index) in videoList" :src="video" :key="index" />-->
     </div>
   </div>
 </template>
@@ -49,7 +31,6 @@ pullVideo(5).then((videos) => {
   .action-bar {
     height: 44px;
     padding: 0px;
-    //border-top: thin solid red;
     display: flex;
     align-items: center;
     font-size: 13px;
@@ -70,7 +51,6 @@ pullVideo(5).then((videos) => {
       margin-block-end: 1em;
       margin-inline-start: 0px;
       margin-inline-end: 0px;
-      //padding-inline-start: 40px;
       width: 100%;
       padding: 0;
       line-height: 0;

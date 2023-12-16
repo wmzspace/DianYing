@@ -78,13 +78,9 @@
     </div>
 
     <div class="trust-login-switch" v-if="userStore.userData !== undefined">
-      <a-tooltip :position="'br'">
-        <template #content>
-          <div>心之所向，便是阳光 🌈</div>
-          <div>喜欢摄影、唱歌，@向阳花木 👈</div>
-          <div>谢谢你长得这么好看还关注我❤️</div>
-        </template>
-        <icon-info-circle-fill />
+      <a-tooltip :position="'bottom'">
+        <template #content> 保存登录信息，重进页面免登录</template>
+        <icon-info-circle-fill style="cursor: pointer" />
       </a-tooltip>
       <span class="trust-login-switch-title">保存登录信息</span>
       <a-switch
@@ -92,11 +88,18 @@
         size="small"
         unchecked-color="rgba(255,255,255,0.2)"
         checked-color="rgb(254, 44, 85)"
+        v-model:model-value="storedTokenValue"
       />
     </div>
 
     <div class="user-panel-actions">
-      <a-button>编辑资料</a-button>
+      <a-button
+        v-if="
+          userStore.getCurrentUser &&
+          (userStore.isAdmin || userStore.getCurrentUserNotAdmin.id === props.userData?.id)
+        "
+        >编辑资料</a-button
+      >
     </div>
     <!--      <a-descriptions-->
     <!--        :data="renderData"-->
@@ -141,7 +144,12 @@ const props = defineProps<{
 }>()
 
 const userStore = useUserStore()
-
+const storedTokenValue = computed({
+  get: () => userStore.isStoredToken,
+  set: (value) => {
+    userStore.setStoreToken(value)
+  }
+})
 const avatarUrl = computed(() => props.userData?.avatar)
 const file = ref({
   uid: '-2',
