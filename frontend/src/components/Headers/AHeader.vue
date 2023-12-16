@@ -117,7 +117,7 @@ const handleLogOut = () => {
         </a-menu-item>
         <a-menu-item disabled>
           <a-popover position="br" id="popover-a-avatar" :trigger="['focus', 'hover']">
-            <a-button class="button" v-if="userStore.userData !== undefined">
+            <a-button class="button" v-if="userStore.userData !== undefined || userStore.isAdmin">
               <a-avatar>
                 <img alt="avatar" :src="userStore.getUserAvatar" />
               </a-avatar>
@@ -198,7 +198,7 @@ const handleLogOut = () => {
               </a-list>
 
               <a-divider />
-              <a-space class="profile-menu">
+              <a-space class="profile-menu" v-if="userStore.isAdmin || userStore.getCurrentUser">
                 <a-menu class="profile-menu-left" :mode="'horizontal'">
                   <a-menu-item @click="handleSwitchUser">
                     <span>切换账号</span>
@@ -206,8 +206,8 @@ const handleLogOut = () => {
                   <a-menu-item @click="handleLogOut">
                     <span>退出登录</span>
                   </a-menu-item>
-                  <a-menu-item disabled>
-                    <span>创作中心</span>
+                  <a-menu-item v-if="userStore.isAdmin" @click="$router.replace('/admin')">
+                    <span>登录后台</span>
                   </a-menu-item>
                 </a-menu>
                 <a-divider direction="vertical" :mode="'horizontal'" />

@@ -1,7 +1,7 @@
 import localeMessageBox from '@/components/message-box/locale/en-US'
 // import localeLogin from '@/views/login/locale/en-US'
 
-import localeDashboard from '@/views/dashboard/locale/en-US'
+import localeDashboard from '@/views/admin/dashboard/locale/en-US'
 
 // import localeMonitor from '@/views/dashboard/monitor/locale/en-US'
 //
@@ -24,7 +24,7 @@ import localeDashboard from '@/views/dashboard/locale/en-US'
 // import locale500 from '@/views/exception/500/locale/en-US'
 //
 // import localeUserInfo from '@/views/user/info/locale/en-US'
-// import localeUserSetting from '@/views/user/setting/locale/en-US'
+import localeUserSetting from '@/views/user/profile/locale/zh-CN'
 
 import localeSettings from './en-US/settings'
 
@@ -47,7 +47,7 @@ export default {
   ...localeSettings,
   ...localeMessageBox,
   // ...localeLogin,
-  ...localeDashboard
+  ...localeDashboard,
   //
   // ...localeMonitor,
   // ...localeSearchTable,
@@ -63,5 +63,5 @@ export default {
   // ...locale404,
   // ...locale500,
   // ...localeUserInfo,
-  // ...localeUserSetting,
+  ...localeUserSetting
 }

@@ -20,7 +20,7 @@ const BILLION = Math.pow(10, 9)
 //     }, delay)
 //   }
 // }
-export const simplifyNumber = (value: number, unit = 'EN') => {
+export const simplifyNumber = (value: number, fix: number, unit = 'EN') => {
   let prefix = ''
   if (value < 0) {
     value = Math.abs(value)
@@ -35,21 +35,21 @@ export const simplifyNumber = (value: number, unit = 'EN') => {
       }
     } else if (value >= YI) {
       return {
-        value: prefix.concat((value / YI).toFixed(1)),
+        value: prefix.concat((value / YI).toFixed(fix)),
         unit: '亿',
-        string: prefix.concat((value / YI).toFixed(1) + '亿')
+        string: prefix.concat((value / YI).toFixed(fix) + '亿')
       }
     } else if (value >= WAN) {
       return {
-        value: prefix.concat((value / WAN).toFixed(1)),
+        value: prefix.concat((value / WAN).toFixed(fix)),
         unit: '万',
-        string: prefix.concat((value / WAN).toFixed(1) + '万')
+        string: prefix.concat((value / WAN).toFixed(fix) + '万')
       }
     } else {
       return {
-        value: prefix.concat(value.toFixed(1)),
+        value: prefix.concat(value.toFixed(fix)),
         unit: '',
-        string: prefix.concat(value.toFixed(1) + '')
+        string: prefix.concat(value.toFixed(0) + '')
       }
     }
   } else {
@@ -61,27 +61,27 @@ export const simplifyNumber = (value: number, unit = 'EN') => {
       }
     } else if (value >= BILLION) {
       return {
-        value: prefix.concat((value / BILLION).toFixed(1)),
+        value: prefix.concat((value / BILLION).toFixed(fix)),
         unit: 'B',
-        string: prefix.concat((value / BILLION).toFixed(1) + 'B')
+        string: prefix.concat((value / BILLION).toFixed(fix) + 'B')
       }
     } else if (value >= MILLION) {
       return {
-        value: prefix.concat((value / MILLION).toFixed(1)),
+        value: prefix.concat((value / MILLION).toFixed(fix)),
         unit: 'M',
-        string: prefix.concat((value / MILLION).toFixed(1) + 'M')
+        string: prefix.concat((value / MILLION).toFixed(fix) + 'M')
       }
     } else if (value >= THOUSAND) {
       return {
-        value: prefix.concat((value / THOUSAND).toFixed(1)),
+        value: prefix.concat((value / THOUSAND).toFixed(fix)),
         unit: 'K',
-        string: prefix.concat((value / THOUSAND).toFixed(1) + 'K')
+        string: prefix.concat((value / THOUSAND).toFixed(fix) + 'K')
       }
     } else {
       return {
-        value: prefix.concat(value.toFixed(1)),
+        value: prefix.concat(value.toFixed(fix)),
         unit: '',
-        string: prefix.concat(value.toFixed(1) + '')
+        string: prefix.concat(value.toFixed(0) + '')
       }
     }
   }

@@ -1,0 +1,347 @@
+#user-profile {
+  .main-container {
+    width: 100%;
+    max-width: 1208px;
+    //margin: 28px auto 21px;
+    margin: 0 auto;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+
+    .background {
+      height: 300px;
+      width: 100vw;
+      pointer-events: none;
+      background-image: url(//lf3-cdn-tos.bytegoofy.com/obj/goofy/ies/douyin_web/media/personal_light.26636f02e04ac5a3.png);
+      background-position: 0 0;
+      background-size: 100% 140%;
+      background-repeat: no-repeat;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .user-panel {
+
+      background: transparent;
+
+      .arco-card-body {
+        display: flex;
+        flex-direction: row;
+
+        .arco-card-meta-footer {
+          margin-top: 0;
+        }
+
+        .user-info-content {
+          min-height: 120px;
+          flex-wrap: wrap;
+          flex: 1;
+          align-content: center;
+          align-items: center;
+          margin-left: 32px;
+          display: flex;
+
+          .name {
+            width: 100%;
+            display: flex;
+            position: relative;
+
+            h1 {
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              color: var(--color-text-t1);
+              max-width: 300px;
+              flex: none;
+              font-family: PingFang SC, DFPKingGothicGB-Medium, sans-serif;
+              font-size: 20px;
+              font-weight: 500;
+              line-height: 28px;
+              display: block;
+              overflow: hidden;
+              margin: 0;
+            }
+          }
+
+          .statistic {
+            width: 100%;
+            margin-top: 4px;
+            display: flex;
+
+            .statistic-item {
+              align-items: center;
+              display: flex;
+              cursor: pointer;
+
+              .label {
+                color: var(--color-text-t3);
+                margin-right: 6px;
+                font-size: 14px;
+                line-height: 22px;
+              }
+
+              .value {
+                color: var(--color-text-t1);
+                font-size: 16px;
+                line-height: 24px;
+              }
+            }
+          }
+
+          .basic-info {
+            width: 100%;
+            height: 20px;
+            align-items: center;
+            margin-top: 12px;
+            display: flex;
+
+            .user-id {
+              color: var(--color-text-t3);
+              margin-right: 20px;
+              font-size: 12px;
+              line-height: 20px;
+            }
+
+            .tag {
+              height: 20px;
+              color: var(--color-text-t2);
+              background: #f2f2f4;
+              background: var(--color-secondary-default);
+              border-radius: 4px;
+              align-items: center;
+              margin-right: 4px;
+              padding: 0 8px;
+              font-size: 12px;
+              line-height: 20px;
+              display: flex;
+
+              .arco-image {
+                display: flex;
+              }
+            }
+          }
+
+          .signature-container {
+            width: 100%;
+            height: 20px;
+            color: var(--color-text-t3);
+            margin-top: 4px;
+            display: flex;
+            position: relative;
+
+            .signature-inner-container {
+              display: flex;
+              position: relative;
+
+              .signature-content {
+                font-size: 12px;
+                color: var(--color-text-t1);
+                line-height: 20px;
+              }
+
+              .load-more {
+                color: var(--color-text-t4);
+                cursor: default;
+                margin-left: 4px;
+                position: relative;
+                font-size: 12px;
+                line-height: 20px;
+              }
+            }
+          }
+        }
+
+        .trust-login-switch {
+          align-items: center;
+          display: inline-flex;
+          position: relative !important;
+          height: 100%;
+
+          .trust-login-tips {
+            display: inline-block;
+            top: 2px;
+            left: -12px;
+            position: absolute;
+
+            .arco-icon {
+              width: 16px;
+              height: 16px;
+              cursor: pointer;
+            }
+          }
+
+          .trust-login-switch-title {
+            width: 76px;
+            height: 22px;
+            letter-spacing: .6px;
+            margin: 0 8px;
+            font-family: DFP King Gothic GB, sans-serif;
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 22px;
+          }
+
+          .trust-login-switch-button {
+            background-color: #fe2c55;
+          }
+        }
+
+        .user-panel-actions {
+          display: flex;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+
+          .arco-btn {
+            border: none;
+            margin: 0 0 0 8px;
+            font-size: 13px;
+            font-weight: 400;
+            background: #e4e4e6 !important;
+            background: var(--color-bg-b3) !important;
+            line-height: 22px;
+            min-width: 88px;
+            color: var(--color-text-t1) !important;
+            height: 36px;
+            border-radius: 8px;
+            font-family: PingFang SC, DFPKingGothicGB-Medium, sans-serif;
+            padding: 0 16px;
+            display: inline-flex;
+            position: relative;
+            outline: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+          }
+        }
+      }
+
+
+    }
+
+    .videos-container {
+      background: linear-gradient(270deg, #161823 0%, #161823 14.66%, rgba(22, 24, 35, 0) 87.32%);
+      margin-top: -16px;
+      padding-top: 16px;
+
+      .arco-tabs {
+        margin: 11px 0;
+
+        .arco-tabs-nav {
+
+          //padding: 0px;
+          align-items: center;
+          //margin: 0 auto;
+          display: flex;
+          position: relative;
+          background-color: var(--color-bg-b0);
+
+          width: 100%;
+          height: 36px;
+          justify-content: space-between;
+          margin: 11px 0;
+
+          //border-bottom: 1px solid var(--color-line-l3);
+
+          &:before {
+            background: none;
+            //border: 1px solid var(--color-line-l3);
+            //display: none;
+          }
+
+          .arco-tabs-nav-tab {
+            .arco-tabs-nav-tab-list {
+              height: 26px;
+              display: flex;
+
+              .arco-tabs-tab {
+
+                cursor: pointer;
+                align-items: center;
+                margin: 0 40px 0 0;
+                display: flex;
+
+                &.arco-tabs-tab-active {
+                  .arco-tabs-tab-title {
+                    color: var(--color-text-t0);
+                  }
+                }
+
+                .arco-tabs-tab-title {
+                  &::before{
+                    background-color: transparent !important;
+                  }
+                  font-size: 18px;
+                  line-height: 26px;
+                  margin-right: 6px;
+                  color: var(--color-text-t4);
+                  font-weight: 400;
+                  cursor: pointer;
+                }
+              }
+
+              .arco-tabs-nav-ink {
+                display: none;
+              }
+            }
+
+
+          }
+
+          .arco-tabs-nav-extra {
+            .arco-input-wrapper {
+              width: 272px;
+              height: 36px;
+              border: 1px solid var(--color-line-l2);
+              border-radius: 6px;
+              align-items: center;
+              padding: 0 8px;
+              display: flex;
+              position: relative;
+              background-color: transparent !important;
+
+
+            }
+          }
+        }
+
+        .arco-tabs-content {
+
+        }
+      }
+    }
+  }
+
+
+  .arco-form {
+    color: rgba(255, 255, 255, 0.9);
+
+    .arco-form-item {
+      //display: none !important;
+      .arco-form-item-label {
+        //display: none;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .arco-input-wrapper, .arco-textarea-wrapper, .arco-select-view-single {
+        background: rgba(51, 52, 63, 1);
+      }
+    }
+
+
+  }
+
+  .edit-tabs {
+    .arco-tabs-tab {
+      background-color: transparent;
+
+      &.arco-tabs-tab-active {
+        color: white;
+      }
+    }
+  }
+
+
+}

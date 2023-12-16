@@ -3,7 +3,7 @@
   <!--    &lt;!&ndash;    <div><a class="logo-img"></a></div>&ndash;&gt;-->
   <!--    后台管理系统-->
   <!--  </div>-->
-  <a-menu :defaultOpenKeys="['1']" :defaultSelectedKeys="['0_2']" @menuItemClick="onClickMenuItem">
+  <a-menu :defaultOpenKeys="['1']" :defaultSelectedKeys="['0_1']" @menuItemClick="onClickMenuItem">
     <a-menu-item key="0_1">
       <IconHome />
       首页

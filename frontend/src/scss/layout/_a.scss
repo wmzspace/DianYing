@@ -6,7 +6,9 @@
 
   &.main-background {
     //background: #fff;
-    background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
+    //background: no-repeat url(https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/test.png) $color-bg-b0;
+    background: no-repeat url("/images/background/bg-1.png") $color-bg-b0;
+
     width: 100%;
     display: flex;
     height: 100%;

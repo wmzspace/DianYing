@@ -44,7 +44,8 @@ import { ref, reactive, watch } from 'vue'
 import { Message } from '@arco-design/web-vue'
 import { reject } from 'lodash-es'
 import { checkEmail } from '@/api/email'
-import { useUserStore } from '@/store/user'
+import { adminUser, useUserStore } from '@/store/user'
+import router from '@/router'
 
 const adminLoginFormRef = ref()
 const form = reactive({
@@ -85,9 +86,10 @@ const handleLogin = () => {
       if (res === undefined) {
         // 表单验证成功
         if (form.pwd === 'root') {
-          Message.success('登陆成功：Admin')
+          Message.success(`登录成功：${adminUser.nickname}`)
           form.pwd = ''
           userStore.adminLogin()
+          router.push({ name: 'dashboard' })
         } else {
           Message.error('授权码错误')
         }

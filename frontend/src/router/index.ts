@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import VideoDetailView from '@/views/VideoDetailView.vue'
-import DashboardView from '@/views/dashboard/DashboardView.vue'
+import DashboardView from '@/views/admin/dashboard/DashboardView.vue'
 import EXCEPTION from '@/router/exception'
 import { useUserStore } from '@/store'
 
@@ -36,10 +36,22 @@ let routes: Array<RouteRecordRaw> = [
     props: true
   },
   {
+    path: '/user/:user_id',
+    name: 'userProfile',
+    meta: {
+      layout: 'a',
+      requiresAuth: true,
+      roles: ['user']
+    },
+    component: () => import('@/views/user/profile/UserProfileView.vue'),
+    props: true
+  },
+  {
     path: '/admin',
     meta: {
       layout: 'b',
-      requiresAuth: true
+      requiresAuth: true,
+      roles: ['admin']
     },
     redirect: '/admin/dashboard',
     children: [
@@ -48,7 +60,8 @@ let routes: Array<RouteRecordRaw> = [
         name: 'dashboard',
         meta: {
           layout: 'b',
-          requiresAuth: true
+          requiresAuth: true,
+          roles: ['admin']
         },
         component: DashboardView
       }
@@ -140,13 +153,21 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
 
-  const isAuthenticated = userStore.isAdmin // 根据你的验证逻辑获取用户是否已登录
+  // const isAuthenticated = userStore.isAdmin
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  console.log('!')
 
-  if (requiresAuth && !isAuthenticated) {
-    next('/') // 如果需要权限验证且用户未登录，则重定向到登录页面
+  if (requiresAuth) {
+    if (
+      ((to.meta.roles as string[]).includes('admin') && userStore.isAdmin) ||
+      ((to.meta.roles as string[]).includes('user') && !userStore.isAdmin)
+    ) {
+      next() //允许访问
+    } else {
+      next('/')
+    }
   } else {
-    next() // 否则，允许访问
+    next() //允许访问
   }
 })
 

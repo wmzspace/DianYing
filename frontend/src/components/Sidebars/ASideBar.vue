@@ -5,6 +5,8 @@
 //   src: 'https://at.alicdn.com/t/font_180975_ue66sq60vyd.js'
 // })
 import AFooter from '@/components/Footers/AFooter.vue'
+import { useUserStore } from '@/store'
+const userStore = useUserStore()
 </script>
 
 <template>
@@ -26,7 +28,7 @@ import AFooter from '@/components/Footers/AFooter.vue'
     <div class="scroll-content">
       <a-menu mode="pop" :default-selected-keys="['1']" class="nav-menu" :theme="'dark'">
         <a-menu-item key="1">
-          <a class="nav-a" @click="$router.push('/discover')">
+          <a class="nav-a" @click="$router.push({ name: 'discover' })">
             <div class="nav-icon"></div>
             <div class="nav-text"><span>首页</span></div>
           </a>
@@ -37,13 +39,13 @@ import AFooter from '@/components/Footers/AFooter.vue'
             <div class="nav-text"><span>推荐</span></div>
           </a>
         </a-menu-item>
-        <a-menu-item key="3">
+        <a-menu-item key="3" v-if="!userStore.isAdmin">
           <a class="nav-a">
             <div class="nav-icon"></div>
             <div class="nav-text"><span>关注</span></div>
           </a></a-menu-item
         >
-        <a-menu-item key="4">
+        <a-menu-item key="4" v-if="!userStore.isAdmin">
           <a class="nav-a">
             <div class="nav-icon"></div>
             <div class="nav-text">
@@ -62,8 +64,16 @@ import AFooter from '@/components/Footers/AFooter.vue'
             </div>
           </a>
         </a-menu-item>
-        <a-menu-item key="5">
-          <a class="nav-a">
+        <a-menu-item key="5" v-if="!userStore.isAdmin">
+          <a
+            class="nav-a"
+            @click="
+              $router.push({
+                name: 'userProfile',
+                params: { user_id: userStore.getCurrentUserNotAdmin.id }
+              })
+            "
+          >
             <div class="nav-icon"></div>
             <div class="nav-text"><span>我的</span></div>
           </a></a-menu-item

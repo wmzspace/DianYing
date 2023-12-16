@@ -1,4 +1,4 @@
-const textList = [
+export const textList = [
   {
     key: 1,
     clickNumber: '346.3w+',
@@ -30,7 +30,7 @@ const textList = [
     increases: 37
   }
 ]
-const imageList = [
+export const imageList = [
   {
     key: 1,
     clickNumber: '15.3w+',
@@ -62,7 +62,7 @@ const imageList = [
     increases: 4
   }
 ]
-const videoList = [
+export const videoList = [
   {
     key: 1,
     clickNumber: '367.6w+',

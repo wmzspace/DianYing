@@ -7,6 +7,7 @@ import { methods } from '@arco-design/web-vue/es/_utils/date'
 import { Message } from '@arco-design/web-vue'
 import { useMainStore } from '@/store/main'
 import { useRouter } from 'vue-router'
+import router from '@/router'
 
 export interface User {
   avatar: string
@@ -14,6 +15,7 @@ export interface User {
   nickname: string
   register_time: string
   sex: string
+  email: string
   username: string
 }
 // impo mandert { mande } from 'mande'
@@ -24,7 +26,7 @@ export const guestUser = {
   nickname: '未登录'
 }
 export const adminUser = {
-  avatar: prefix_url + 'static/user/avatars/default.jpeg',
+  avatar: prefix_url + 'static/user/avatars/admin-blue.png',
   nickname: 'Admin'
 }
 
@@ -38,8 +40,12 @@ export const useUserStore = defineStore('user', {
   }),
   getters: {
     getCurrentUser: (state) => state.userData as User | undefined,
+    getCurrentUserNotAdmin: (state) => {
+      // assert(!state.isAdmin, 'Is admin') // FIXME: getCurrentUserNotAdmin
+      return state.userData as User
+    },
     getUserById: (state) => {
-      return (userId: number) =>
+      return (userId: number | string) =>
         new Promise<User>((resolve, reject) => {
           fetch(prefix_url + `/user/get?id=${userId}`, {
             method: 'GET'
@@ -89,6 +95,7 @@ export const useUserStore = defineStore('user', {
       }
     },
     userLogOut() {
+      this.isAdmin = false
       localStorage.removeItem('currentUser')
       location.reload()
     },
@@ -121,6 +128,8 @@ export const useUserStore = defineStore('user', {
     },
     adminLogin() {
       this.isAdmin = true
+      this.userData = undefined
+      localStorage.setItem('currentUser', adminUser.nickname)
       const mainStore = useMainStore()
       mainStore.setLoginVisible(false)
     },

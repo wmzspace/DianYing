@@ -13,13 +13,26 @@
         </a-input>
       </a-form-item>
       <a-form-item field="pwd" :rules="pwdRules" feedback :validate-trigger="'change'">
-        <a-input class="pwd-input" v-model.trim="form.pwd" placeholder="请输入密码">
+        <a-input
+          class="pwd-input"
+          v-model.trim="form.pwd"
+          placeholder="请输入密码"
+          autocomplete
+          :type="'password'"
+        >
           <template #prepend>
             <IconLock />
           </template>
         </a-input>
       </a-form-item>
-      <a-form-item field="isRead">
+      <a-form-item
+        field="isRead"
+        @keydown.enter="
+          () => {
+            form.isRead = !form.isRead
+          }
+        "
+      >
         <a-checkbox class="read-checkbox" v-model="form.isRead">
           <span class="login-confirm-info__before-text">同意</span>
           <span class="login-confirm-info__info">用户协议</span>

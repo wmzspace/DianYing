@@ -139,6 +139,14 @@
             <!--              </a-space>-->
             <!--            </a-doption>-->
             <a-doption>
+              <a-space @click="$router.push({ name: 'discover' })">
+                <icon-home />
+                <span>
+                  {{ $t('messageBox.goUserHome') }}
+                </span>
+              </a-space>
+            </a-doption>
+            <a-doption>
               <a-space @click="handleLogout">
                 <icon-export />
                 <span>
