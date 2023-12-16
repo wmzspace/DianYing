@@ -35,11 +35,18 @@ export const parseVideoMedia = (rawVideo: RawVideo): VideoMedia => {
   }
 }
 
-export const pullVideo = (num?: number, authorId?: number, tagId?: number) =>
+export interface pullVideoRequest {
+  num?: number
+  authorId?: number
+  tagsId?: number[] | string[]
+}
+export const pullVideo = (request?: pullVideoRequest) =>
   new Promise<VideoMedia[]>((resolve, reject) => {
-    const numString = typeof num !== 'undefined' ? `&num=${num}` : ''
-    const authorString = typeof authorId !== 'undefined' ? `&author_id=${authorId}` : ''
-    const tagString = typeof tagId !== 'undefined' ? `&tag_id=${tagId}` : ''
+    const numString = request && typeof request.num !== 'undefined' ? `&num=${request.num}` : ''
+    const authorString =
+      request && typeof request.authorId !== 'undefined' ? `&author_id=${request.authorId}` : ''
+    const tagString =
+      request && typeof request.tagsId !== 'undefined' ? `&tags_id=${request.tagsId}` : ''
 
     fetch(
       prefix_url.concat(`video/get?`).concat(numString).concat(authorString).concat(tagString),
@@ -102,6 +109,7 @@ export const pullVideo = (num?: number, authorId?: number, tagId?: number) =>
 //       })
 //   })
 // }
+
 export const getVideoActionUsersByVideoId = (videoId: number, action: string) =>
   new Promise<User[]>((resolve, reject) => {
     fetch(prefix_url.concat(`video/get_actions?video_id=${videoId}&action=${action}`))
@@ -150,5 +158,28 @@ export const likeOrStarVideoOrNot = (
       })
       .catch((e) => {
         Message.error(e.message)
+      })
+  })
+
+export const getVideosByUserLikeOrStar = (userId: number | string, action: string) =>
+  new Promise<VideoMedia[]>((resolve, reject) => {
+    fetch(prefix_url.concat(`/user/get/actions?id=${userId}&action=${action}`), {
+      method: 'GET'
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              resolve(ajaxData.ajax_data as VideoMedia[])
+            } else {
+              reject(ajaxData.ajax_msg)
+            }
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
       })
   })

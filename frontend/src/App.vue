@@ -37,12 +37,15 @@ onMounted(() => {
   const storedUser = localStorage.getItem('currentUser') as string | null
   if (storedUser === null) {
     // no storedUser
+    userStore.isStoredToken = false
     mainStore.setLoginVisible(true)
   } else if (storedUser === adminUser.nickname) {
     // storedUser is admin nickname
+    userStore.isStoredToken = true
     userStore.adminLogin()
   } else {
     // storedUser is userId
+    userStore.isStoredToken = true
     userStore.userLogin(storedUser)
   }
 })

@@ -3,19 +3,54 @@ from sqlalchemy import func
 
 from blueprints.video import video_bp
 from exts import db, AjaxResponse
-from models import Video, model2dict, User, VideoLike, VideoStar
+from models import Video, model2dict, User, VideoLike, VideoStar, VTRelation
 
 
 @video_bp.route('/get', methods=['GET'])
 def get_all_users():
-    all_videos = Video.query.all()
-    num_records = request.args.get("num")
-    # 获取表中的记录总数
-    total_records = Video.query.count()
+    all_videos = Video.query.order_by(func.random())
+
     # 从表中抽取指定数量的记录
-    random_records = Video.query.order_by(
-        func.random()).limit(num_records).all()
-    return model2dict(random_records)
+    num_records = request.args.get("num")
+
+    # 从表中抽取指定作者的记录
+    author_id = request.args.get("author_id")
+
+    # 从表中抽取指定标签的记录
+    tags_id_raw = request.args.get("tags_id")
+    tags_id = []
+    if tags_id_raw is not None:
+
+        def filter_numbers(string_array):
+            return [s for s in string_array if s.isdigit()]
+
+        parsed_tags = filter_numbers(tags_id_raw.split(','))
+
+        def map_to_int(ch):
+            return int(ch)
+
+        if len(parsed_tags) > 0:
+            tags_id = list(map(map_to_int, parsed_tags))
+
+    results = []
+    for video in all_videos:
+        if author_id is not None and video.author_id != author_id:
+            continue
+
+        if len(tags_id) > 0:
+            tags = VTRelation.query.filter_by(video_id=video.id).all()
+            find = False
+            for tag in tags:
+                if tag.id in tags_id:
+                    find = True
+                    break
+            if not find:
+                continue
+
+        results.append(video)
+        if num_records is not None and len(results) >= int(num_records):
+            break
+    return model2dict(results)
 
 
 @video_bp.route('/query', methods=['GET'])
@@ -25,27 +60,7 @@ def query_video():
     return model2dict([target])
 
 
-# @video_bp.route('/like', methods=['POST', 'GET'])  # FIXME
-# def like_video():
-#     # 检查用户和视频是否存在
-#     user_id = request.args.get("user_id")
-#     video_id = request.args.get("video_id")
-#     user = User.query.get(user_id)
-#     video = Video.query.get(video_id)
-#     if not user or not video:
-#         return AjaxResponse.error("用户或视频不存在")
-#
-#     # 检查用户是否已经点赞过该视频
-#     existing_like = VideoLike.query.filter_by(user_id=user_id, video_id=video_id).first()
-#     if existing_like:
-#         return AjaxResponse.error("您已经点赞过该视频")
-#
-#     # 创建点赞记录
-#     like = VideoLike(user_id=user_id, video_id=video_id)
-#     db.session.add(like)
-#     db.session.commit()
-#     return AjaxResponse.success(None, "点赞成功")
-
+# 获取视频被哪些用户点赞或者收藏
 @video_bp.route('/get_actions', methods=['GET'])
 def get_video_liked_users():
     action = request.args.get("action")

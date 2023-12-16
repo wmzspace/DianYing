@@ -7,7 +7,7 @@ import { debounce } from 'lodash-es'
 
 const videoList = ref<VideoMedia[]>([])
 const currentShowNum = ref(0) // not include new loaded
-pullVideo(20).then((res: VideoMedia[]) => {
+pullVideo({ num: 20 }).then((res: VideoMedia[]) => {
   videoList.value = res
 })
 const isLoadedAll = ref(false)
@@ -25,7 +25,7 @@ const onLoadMore = () => {
   if (isLoadedAll.value) {
     isLoadedAll.value = false
     console.log('loading more...')
-    pullVideo(20).then((res: VideoMedia[]) => {
+    pullVideo({ num: 20 }).then((res: VideoMedia[]) => {
       res.forEach((e) => {
         videoList.value.push(e)
       })
@@ -44,7 +44,7 @@ const onLoadedAll = () => {
       console.log('加载完毕，但数量不够')
       console.log('loading more...')
       isLoadedAll.value = false
-      pullVideo(20).then((res: VideoMedia[]) => {
+      pullVideo({ num: 20 }).then((res: VideoMedia[]) => {
         res.forEach((e) => {
           videoList.value.push(e)
         })

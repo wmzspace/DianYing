@@ -35,11 +35,15 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     // userList: [] as User[]
     isAdmin: false,
-    userData: undefined as User | undefined
+    userData: undefined as User | undefined,
+    isStoredToken: false
     // ...
   }),
   getters: {
+    // 表示已登录
     getCurrentUser: (state) => state.userData as User | undefined,
+
+    // 表示登录的普通用户
     getCurrentUserNotAdmin: (state) => {
       // assert(!state.isAdmin, 'Is admin') // FIXME: getCurrentUserNotAdmin
       return state.userData as User
@@ -141,6 +145,18 @@ export const useUserStore = defineStore('user', {
           reject()
         }
       })
+    },
+    setStoreToken(toStore: boolean) {
+      if (toStore) {
+        localStorage.setItem(
+          'currentUser',
+          this.isAdmin ? adminUser.nickname : this.getCurrentUserNotAdmin.id.toString()
+        )
+        this.isStoredToken = true
+      } else {
+        localStorage.removeItem('currentUser')
+        this.isStoredToken = false
+      }
     }
   }
 })

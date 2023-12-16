@@ -139,7 +139,7 @@ watch(video, (value) => {
     refreshRootCommentList()
     relatedList.splice(0)
 
-    pullVideo(10).then((res) => {
+    pullVideo({ num: 10 }).then((res) => {
       relatedList.splice(0)
       res.forEach((e) => {
         relatedList.push(e)
