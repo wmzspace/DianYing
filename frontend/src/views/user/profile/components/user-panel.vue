@@ -54,24 +54,23 @@
           <template #icon>
             <a-image :src="'/images/male.svg'" alt="male"></a-image>
           </template>
-          20岁
+          <span></span>
+          {{ userData && userData.age ? `${userData.age}岁` : '未知' }}
         </a-tag>
-        <a-tag color="blue" class="tag">四川·成都</a-tag>
+        <a-tag color="blue" class="tag">中国·{{ userData?.area }}</a-tag>
       </p>
 
       <div class="signature-container">
         <div class="signature-inner-container">
-          <!--          TODO: 最长展示 25 字数-->
           <span class="signature-content">
-            心之所向，便是阳光 🌈 喜欢摄影、唱歌，@向阳花木 👈
+            {{ userData?.signature }}
           </span>
           <a-tooltip :position="'br'">
             <template #content>
-              <div>心之所向，便是阳光 🌈</div>
-              <div>喜欢摄影、唱歌，@向阳花木 👈</div>
-              <div>谢谢你长得这么好看还关注我❤️</div>
+              <span style="white-space: pre"> {{ userData?.signature }}</span>
             </template>
-            <div class="load-more">更多</div>
+            <div class="load-more" v-if="userData && userData.signature?.length > 0">全部</div>
+            <div v-else>暂无个人简介</div>
           </a-tooltip>
         </div>
       </div>
@@ -98,35 +97,10 @@
           userStore.getCurrentUser &&
           (userStore.isAdmin || userStore.getCurrentUserNotAdmin.id === props.userData?.id)
         "
-        >编辑资料</a-button
+        @click="emit('update:isEditProfile', !props.isEditProfile)"
+        >{{ props.isEditProfile ? '退出编辑' : '编辑资料' }}</a-button
       >
     </div>
-    <!--      <a-descriptions-->
-    <!--        :data="renderData"-->
-    <!--        :column="2"-->
-    <!--        align="right"-->
-    <!--        layout="inline-horizontal"-->
-    <!--        :label-style="{-->
-    <!--          width: '140px',-->
-    <!--          fontWeight: 'normal',-->
-    <!--          // color: 'rgb(var(&#45;&#45;gray-8))'-->
-    <!--          color: 'rgba(var(&#45;&#45;white), 0.9)'-->
-    <!--        }"-->
-    <!--        :value-style="{-->
-    <!--          width: '200px',-->
-    <!--          paddingLeft: '8px',-->
-    <!--          textAlign: 'left',-->
-    <!--          color: 'rgba(var(&#45;&#45;white), 0.5)'-->
-    <!--        }"-->
-    <!--      >-->
-    <!--        <template #label="{ label }">{{ $t(label) }} :</template>-->
-    <!--        <template #value="{ value, data }">-->
-    <!--          <a-tag v-if="data.label === 'userSetting.label.certification'" color="green" size="small">-->
-    <!--            已认证-->
-    <!--          </a-tag>-->
-    <!--          <span v-else>{{ value }}</span>-->
-    <!--        </template>-->
-    <!--      </a-descriptions>-->
   </a-card>
 </template>
 
@@ -141,8 +115,9 @@ import { simplifyNumber } from '../../../../utils/tools'
 
 const props = defineProps<{
   userData: User | undefined
+  isEditProfile: boolean
 }>()
-
+const emit = defineEmits(['update:isEditProfile'])
 const userStore = useUserStore()
 const storedTokenValue = computed({
   get: () => userStore.isStoredToken,

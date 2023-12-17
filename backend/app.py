@@ -32,8 +32,10 @@ app.register_blueprint(email_bp)
 # app.register_blueprint(api.database)
 
 app.config.from_object(config[config_name])  # 可以直接把对象里面的配置数据转换到app.config里面
+# app.json.ensure_ascii = False  # 解决中文乱码问题
+# app.config['JSON_AS_ASCII'] = False  # 解决中文乱码问题
 config[config_name].init_app(app)
-
+# page.encoding='utf-8'
 # bootstrap.app_init(app)
 # mail.init_app(app)
 # moment.init_app(app)

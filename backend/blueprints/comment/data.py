@@ -36,10 +36,11 @@ def get_comments_by_video_id_or_comment_id():
         if video is None:
             return AjaxResponse.error("资源不存在: video")
 
-        def is_root_comment(comment: Comment):
-            return comment.parent_id is None
-
-        target = list(filter(is_root_comment, video.comments))
+        target = video.comments
+        # def is_root_comment(comment: Comment):
+        #     return comment.parent_id is None
+        #
+        # target = list(filter(is_root_comment, video.comments))
     return AjaxResponse.success(model2dict(target))
 
 

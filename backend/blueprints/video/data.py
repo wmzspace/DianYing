@@ -123,3 +123,16 @@ def like_or_dislike_video():
                 None, f"{action_text}成功")
         else:
             return AjaxResponse.error("点击太频繁")
+
+
+@video_bp.route('/delete', methods=['POST'])
+def delete_video_by_id():
+    id = request.args.get('id')
+    if id is None:
+        return AjaxResponse.error("参数缺失: id")
+    video = Video.query.filter_by(id=id).first()
+    if video is None:
+        return AjaxResponse.error("视频不存在")
+    db.session.delete(video)
+    db.session.commit()
+    return AjaxResponse.success(None, "视频已删除")

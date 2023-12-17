@@ -206,19 +206,32 @@
             justify-content: flex-end;
             line-height: 18px;
 
-            .report {
+            .delete-video {
+              cursor: pointer;
               align-items: center;
               //color: rgba(22,24,35,.34);
               color: $color-text-t4;
               display: flex;
+              //margin-left: 3px;
+              margin-right: 10px;
+              background-color: transparent;
+
+              &::before {
+                display: none;
+              }
+
+              &:hover, &.arco-btn-loading {
+                color: $color-primary
+              }
 
               span {
+
                 font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
                 font-size: 13px;
                 font-weight: 400;
                 line-height: 22px;
-                margin-left: 3px;
-                margin-right: 24px;
+                //margin-left: 3px;
+                //margin-right: 20px;
               }
             }
 
@@ -234,6 +247,7 @@
     }
 
     .commentContainer {
+      overflow: auto;
       @media (min-width: 0) {
         //display: none;
         order: 3;
@@ -251,11 +265,8 @@
       }
 
       .comment-content-text-container {
-        //height:300px;
-        //font-family: PingFang SC, DFPKingGothicGB-Regular, sans-serif;
-        //font-size: 14px;
-        //font-weight: 400;
-        //line-height: 22px;
+        overflow-wrap: anywhere;
+
         &:not(.show-all) {
           overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
           text-overflow: ellipsis; /*可以用来多行文本的情况下，用省略号“…”隐藏超出范围的文本 。*/
@@ -406,7 +417,7 @@
       .comments-list {
         .arco-comment {
           &.animated {
-            >.arco-comment-inner {
+            > .arco-comment-inner {
               background: $input-linear !important;
               //background: $color-bg-guide !important;
             }

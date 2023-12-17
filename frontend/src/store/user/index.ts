@@ -14,9 +14,12 @@ export interface User {
   id: number
   nickname: string
   register_time: string
-  sex: string
+  area: string
+  gender: string
+  age: number
   email: string
   username: string
+  signature: string
 }
 // impo mandert { mande } from 'mande'
 // const api = mande('/api/users')
@@ -40,6 +43,10 @@ export const useUserStore = defineStore('user', {
     // ...
   }),
   getters: {
+    isAdminOrCurUser: (state) => (userId?: number) => {
+      return state.isAdmin || (state.userData && state.userData.id === userId)
+    },
+
     // 表示已登录
     getCurrentUser: (state) => state.userData as User | undefined,
 

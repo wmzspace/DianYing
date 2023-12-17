@@ -3,8 +3,11 @@
     <div class="main-container">
       <!--      <div class="background"></div>-->
       <Breadcrumb :items="['menu.user']" :addition-items="[queryUser?.nickname]" />
-      <UserPanel :user-data="queryUser" />
-      <div class="videos-container">
+      <UserPanel :user-data="queryUser" v-model:is-edit-profile="isEditProfile" />
+      <div v-if="isEditProfile" class="form-container">
+        <BasicInformation @update="refreshUserInfo" />
+      </div>
+      <div v-else class="videos-container">
         <a-tabs>
           <template #extra>
             <a-input-search
@@ -26,8 +29,9 @@
                     <video-card-sm :src="video" />
                   </li>
                 </ul>
-              </div></div
-          ></a-tab-pane>
+              </div>
+            </div>
+          </a-tab-pane>
           <a-tab-pane key="2" title="喜欢">
             <div class="video-cards-container">
               <div class="action-bar">{{ tabTitlePrefix }}喜欢</div>
@@ -41,8 +45,9 @@
                     <video-card-sm :src="video" />
                   </li>
                 </ul>
-              </div></div
-          ></a-tab-pane>
+              </div>
+            </div>
+          </a-tab-pane>
           <a-tab-pane key="3" title="收藏">
             <div class="video-cards-container">
               <div class="action-bar">{{ tabTitlePrefix }}收藏</div>
@@ -56,8 +61,9 @@
                     <video-card-sm :src="video" />
                   </li>
                 </ul>
-              </div></div
-          ></a-tab-pane>
+              </div>
+            </div>
+          </a-tab-pane>
         </a-tabs>
       </div>
     </div>
@@ -90,12 +96,14 @@
 <script lang="ts" setup>
 import UserPanel from './components/user-panel.vue'
 import { useUserStore } from '@/store'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import type { User } from '@/store/user'
 
 const props = defineProps<{
   user_id: string
 }>()
+
+const isEditProfile = ref(false)
 
 const tabTitlePrefix = computed(() =>
   userStore.getCurrentUser &&
@@ -109,9 +117,12 @@ const searchText = ref('')
 const userStore = useUserStore()
 const queryUser = ref<User | undefined>(undefined)
 
-userStore.getUserById(props.user_id).then((user) => {
-  queryUser.value = user
-})
+const refreshUserInfo = () => {
+  isEditProfile.value = false
+  userStore.getUserById(props.user_id).then((user) => {
+    queryUser.value = user
+  })
+}
 
 let videoList: VideoMedia[] = reactive([])
 
@@ -144,9 +155,14 @@ getVideosByUserLikeOrStar(props.user_id, 'star').then((videos) => {
   })
 })
 
+onMounted(() => {
+  refreshUserInfo()
+})
+
 import VideoCardSm from '@/views/user/profile/components/video-card-sm.vue'
 import type { VideoMedia } from '@/types'
 import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
+import BasicInformation from '@/views/user/profile/components/basic-information.vue'
 </script>
 
 <style scoped lang="less">
@@ -196,6 +212,7 @@ import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
     }
   }
 }
+
 //.container {
 //  padding: 0 20px 20px 20px;
 //}

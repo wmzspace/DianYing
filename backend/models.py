@@ -11,6 +11,8 @@ from exts import db, scheduler
 
 # PREFIX_URL = 'http://192.168.1.104:5000/'
 PREFIX_URL = "http://127.0.0.1:5000/"
+
+
 # PREFIX_URL = "https://wmzspace.space/"
 
 
@@ -53,10 +55,13 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(100))
     nickname = db.Column(db.String(100), default="未命名用户")
+    age = db.Column(db.Integer, default=0,nullable=False)
     avatar = db.Column(
         db.String(100),
         default=PREFIX_URL + "static/user/avatars/default.jpeg")
-    sex = db.Column(db.String(10))
+    gender = db.Column(db.String(10), default="male")
+    area = db.Column(db.String(20))
+    signature = db.Column(db.String(120))
     register_time = db.Column(
         db.String(50),
         nullable=False,
@@ -91,7 +96,7 @@ class User(db.Model):
         cascade="all, delete-orphan")
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.nickname
 
     def __init__(self, args):
         if 'email' in args:
@@ -100,8 +105,14 @@ class User(db.Model):
             self.nickname = args['nickname']
         if 'avatar' in args:
             self.avatar = args['avatar']
-        if 'sex' in args:
-            self.sex = args['sex']
+        if 'gender' in args:
+            self.gender = args['gender']
+        if 'age' in args:
+            self.age = args['age']
+        if 'area' in args:
+            self.area = args['area']
+        if 'signature' in args:
+            self.signature = args['signature']
         if 'password' in args:
             self.password = args['password']
 
@@ -375,7 +386,7 @@ def load_init_data():
     # username = db.Column(db.String(100), nullable=False)
     # nickname = db.Column(db.String(100), default="未命名用户")
     # avatar = db.Column(db.String(100), default="未命名用户")
-    # sex = db.Column(db.String(10), nullable=False)
+    # gender = db.Column(db.String(10), nullable=False)
     # register_time = db.Column(
     #     db.String(50),
     #     nullable=False,
@@ -383,25 +394,32 @@ def load_init_data():
     db.session.add_all([
         User({
             'nickname': '19岁带饭冲锋🌈',
+            'area': '四川',
             'email': "1@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/1.jpeg',
-            'sex': 'male',
-            'password': '123456'
+            'gender': 'male',
+            'age': 20,
+            'password': '123456',
+            'signature': "心之所向，便是阳光 🌈\n喜欢摄影、唱歌，@向阳花木👈\n谢谢你长得这么好看还关注我❤️"
+
         }), User({
             'nickname': '鹿非🌈',
+            'area': '重庆',
             'email': "2@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/2.jpeg',
-            'sex': 'male'
+            'gender': 'male'
         }), User({
             'nickname': '活着就不算坏',
+            'area': '重庆',
             'email': "3@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/3.jpeg',
-            'sex': 'male'
+            'gender': 'male'
         }), User({
             'nickname': '浅梦',
+            'area': '浙江',
             'email': "4@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/4.jpeg',
-            'sex': 'male'
+            'gender': 'male'
         })
     ])
 

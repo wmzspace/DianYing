@@ -15,7 +15,7 @@ import type { VideoMedia } from '@/types'
 import { Message } from '@arco-design/web-vue'
 import { useMainStore } from '@/store/main'
 
-const emit = defineEmits(['refresh', 'delete'])
+const emit = defineEmits(['refresh', 'change'])
 
 const userStore = useUserStore()
 const props = defineProps<{
@@ -126,6 +126,7 @@ const onPostReplyComment = () => {
               // focusCommentId.value = commentId
               // console.log(comment)
               // childrenComments.unshift(comment)
+              emit('change')
               replyCommentContent.value = ''
               isReplying.value = false
               refreshChildrenComments()
@@ -164,7 +165,7 @@ const onDeleteComment = () => {
 
       if (success) {
         // isDeleted.value = true
-        // emit('delete', props.index)
+        emit('change')
         // refreshChildrenComments()
         emitRefresh(false)
       } else {
@@ -340,10 +341,9 @@ const isDeleted = ref(false)
       :comment="comment as Comment"
       :key="index"
       :video="props.video"
-      @delete="
-        (index_) => {
-          // isDeleted = true
-          // delete childrenComments[index_]
+      @change="
+        () => {
+          emit('change')
         }
       "
       @refresh="

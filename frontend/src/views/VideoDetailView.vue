@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  deleteVideoById,
   getVideoActionUsersByVideoId,
   getVideoById,
   likeOrStarVideoOrNot,
@@ -24,6 +25,8 @@ import CommentCard from '@/components/Cards/CommentCard.vue'
 import _ from 'lodash'
 import VideoCardSmall from '@/components/Cards/VideoCardSmall.vue'
 import { useMainStore } from '@/store/main'
+import { Message } from '@arco-design/web-vue'
+import useLoading from '@/hooks/loading'
 
 const userStore = useUserStore()
 const mainStore = useMainStore()
@@ -42,84 +45,71 @@ getVideoById(props.video_id).then((res: VideoMedia | undefined) => {
 })
 
 // const CommentCardRefs = ref()
-const focusComment = (
-  finder: CommentFinder,
-  root_comment: HTMLElement | undefined
-): HTMLElement | undefined => {
-  // if (finder === undefined) {
-  //   return
-  // }
-  // console.log(root_comment)
-  // console.log(finder)
-  if (root_comment === undefined) {
-    let firstElement: HTMLElement | null = document.querySelector('.comment-item')
-    // console.log(firstElement)
-    if (firstElement === null) {
-      return undefined
-    }
+// const focusComment = (
+//   finder: CommentFinder,
+//   root_comment: HTMLElement | undefined
+// ): HTMLElement | undefined => {
+//   // if (finder === undefined) {
+//   //   return
+//   // }
+//   // console.log(root_comment)
+//   // console.log(finder)
+//   if (root_comment === undefined) {
+//     let firstElement: HTMLElement | null = document.querySelector('.comment-item')
+//     // console.log(firstElement)
+//     if (firstElement === null) {
+//       return undefined
+//     }
+//
+//     let childNodes = (firstElement.parentNode as HTMLElement).children
+//     let siblingsArray = Array.from(childNodes) as HTMLElement[]
+//     let commentElements = siblingsArray.filter((sibling) => {
+//       return sibling.classList.contains('comment-item')
+//     })
+//     // .querySelectorAll('~ .comment-item')[finder.index]
+//     // console.log('commentElements', commentElements)
+//     return focusComment(finder.children as CommentFinder, commentElements[finder.index])
+//   }
+//   if (finder.children === undefined) {
+//     return root_comment.getElementsByClassName('comment-item')[finder.index] as HTMLElement
+//   }
+//   // nextTick(() => {
+//
+//   let childrenElements = root_comment.getElementsByClassName('comment-item')[finder.index]
+//   return focusComment(finder.children, childrenElements as HTMLElement)
+//
+//   // nextTick(() => {
+//   // })
+//   // let target = comments[i]
+//   // target.scrollIntoView({ behavior: 'smooth' })
+//   // .scrollIntoView({ behavior: 'smooth' })
+//   // console.log(comments[i])
+//   // target.classList.add('animated')
+//   // setTimeout(() => {
+//   // target.classList.remove('animated')
+//   // }, 1000)
+//   // })
+// }
 
-    let childNodes = (firstElement.parentNode as HTMLElement).children
-    let siblingsArray = Array.from(childNodes) as HTMLElement[]
-    let commentElements = siblingsArray.filter((sibling) => {
-      return sibling.classList.contains('comment-item')
-    })
-    // .querySelectorAll('~ .comment-item')[finder.index]
-    // console.log('commentElements', commentElements)
-    return focusComment(finder.children as CommentFinder, commentElements[finder.index])
-  }
-  if (finder.children === undefined) {
-    return root_comment.getElementsByClassName('comment-item')[finder.index] as HTMLElement
-  }
-  // nextTick(() => {
-
-  let childrenElements = root_comment.getElementsByClassName('comment-item')[finder.index]
-  return focusComment(finder.children, childrenElements as HTMLElement)
-
-  // nextTick(() => {
-  // })
-  // let target = comments[i]
-  // target.scrollIntoView({ behavior: 'smooth' })
-  // .scrollIntoView({ behavior: 'smooth' })
-  // console.log(comments[i])
-  // target.classList.add('animated')
-  // setTimeout(() => {
-  // target.classList.remove('animated')
-  // }, 1000)
-  // })
+const commentsNum = ref(0)
+const refreshCommentsNum = () => {
+  getCommentsByVideoIdOrParent(parseInt(props.video_id), undefined).then((res) => {
+    commentsNum.value = res.length
+  })
 }
 
 const refreshRootCommentList = (focusIndex?: CommentFinder) => {
   comments.splice(0)
   getCommentsByVideoIdOrParent(parseInt(props.video_id), undefined).then((res) => {
     comments.splice(0)
-    // setTimeout(() => {
+    commentsNum.value = res.length
     res.reverse().forEach((e) => {
-      comments.push(e)
-      // }, 1000)
+      if (e.parentId === undefined) {
+        comments.push(e)
+      }
     })
     if (focusIndex !== undefined) {
-      // console.log(commentElements[0])
       return
-      // setTimeout(() => {
-      //   let targetParent = focusComment(focusIndex, undefined)
-      //   if (targetParent !== undefined) {
-      //     let childNodes = targetParent.querySelectorAll('.comment-item')
-      //     // console.log('parent', targetParent)
-      //     // console.log('children', childNodes)
-      //     // let commentElements = childNodes.querySelector()
-      //     let target = childNodes[0]
-      //     // console.log(target)
-      //     target.scrollIntoView({ behavior: 'smooth' })
-      //     target.classList.add('animated')
-      //     setTimeout(() => {
-      //       if (target !== undefined) {
-      //         target.classList.remove('animated')
-      //       }
-      //     }, 1000)
-      //   }
-      //
-      //   // target.scrollIntoView({ behavior: 'smooth' })
-      // }, 5000)
     }
   })
 }
@@ -375,6 +365,39 @@ const handleClickStar = () => {
       mainStore.setLoginVisible(true)
     })
 }
+
+const deleteLoadingObject = useLoading()
+const deleteLoading = deleteLoadingObject.loading
+const setDeleteLoading = deleteLoadingObject.setLoading
+const handleClickDelete = () => {
+  if (deleteLoading.value === true) {
+    Message.info({
+      id: 'deleteVideo',
+      content: '点击频率太快'
+    })
+    return
+  }
+  setDeleteLoading(true)
+  deleteVideoById(props.video_id)
+    .then((msg) => {
+      Message.success({
+        id: 'deleteVideo',
+        content: msg
+      })
+      router.back()
+    })
+    .catch((e) => {
+      Message.error({
+        id: 'deleteVideo',
+        content: e
+      })
+    })
+    .finally(() => {
+      setDeleteLoading(false)
+    })
+}
+
+const router = useRouter()
 </script>
 
 <template>
@@ -398,7 +421,7 @@ const handleClickStar = () => {
               </a-list-item>
               <a-list-item>
                 <icon-message />
-                <span>323</span>
+                <span>{{ commentsNum }}</span>
               </a-list-item>
               <a-list-item @click="handleClickStar" class="star-action">
                 <span class="star-icon"><IconStarFill v-if="isStarred" /><IconStar v-else /></span>
@@ -406,13 +429,19 @@ const handleClickStar = () => {
               </a-list-item>
             </a-list>
             <div class="detail-video-actions-right">
-              <div class="report">
-                <icon-exclamation-circle />
-                <span>举报</span>
-              </div>
+              <a-button
+                class="delete-video"
+                v-if="userStore.isAdminOrCurUser(video?.authorId)"
+                :loading="deleteLoading"
+                @click="handleClickDelete"
+                :type="'text'"
+              >
+                <template #icon><icon-delete /></template>
+                <span>删除</span>
+              </a-button>
               <div class="publish-time">
                 <span>发布时间：</span>
-                <span>2023-12-03 01:07</span>
+                <span>{{ video?.publishTime }}</span>
               </div>
             </div>
           </div>
@@ -488,7 +517,7 @@ const handleClickStar = () => {
 
         <div class="new-comment">
           <a-row :wrap="false">
-            <a-avatar>
+            <a-avatar style="cursor: default">
               <img alt="avatar" :src="userStore.getUserAvatar" />
             </a-avatar>
 
@@ -525,9 +554,9 @@ const handleClickStar = () => {
             :key="index"
             :index="index"
             :video="video"
-            @delete="
-              (index) => {
-                delete comments[index]
+            @change="
+              () => {
+                refreshCommentsNum()
               }
             "
             @refresh="

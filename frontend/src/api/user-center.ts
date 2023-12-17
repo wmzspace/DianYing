@@ -40,12 +40,14 @@ export function saveUserInfo() {
 }
 
 export interface BasicInfoModel {
+  age: number
+  id: number | string
   email: string
   nickname: string
-  countryRegion: string
+  gender: string
   area: string
-  address: string
-  profile: string
+  password: string
+  signature: string
 }
 
 export interface EnterpriseCertificationModel {

@@ -19,6 +19,29 @@ export const getVideoById = (videoId: number | string) => {
   // return videos.filter((v) => v.id === id)[0]
 }
 
+export const deleteVideoById = (videoId: number | string) =>
+  new Promise<string>((resolve, reject) => {
+    fetch(prefix_url.concat(`video/delete?id=${videoId}`), {
+      method: 'POST'
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              resolve(ajaxData.ajax_msg)
+            } else {
+              reject(ajaxData.ajax_msg)
+            }
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+
 export const parseVideoMedia = (rawVideo: RawVideo): VideoMedia => {
   return {
     authorId: rawVideo.author_id,

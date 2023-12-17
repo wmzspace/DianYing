@@ -41,6 +41,7 @@ class Config:
         # 执行当前需要的环境的初始化
         CORS(app)
 
+
         def delete_due_registry(target):
             with app.app_context():
                 db.session.delete(target)

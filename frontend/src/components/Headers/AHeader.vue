@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@arco-design/web-vue'
-import { nextTick, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { guestUser, useUserStore } from '@/store/user'
 import { useMainStore } from '@/store/main'
 
 const userStore = useUserStore()
+const storedTokenValue = computed({
+  get: () => userStore.isStoredToken,
+  set: (value) => {
+    userStore.setStoreToken(value)
+  }
+})
 const mainStore = useMainStore()
 const searchButtonProps: ButtonProps = {
   // type: 'dashed',
@@ -117,7 +123,20 @@ const handleLogOut = () => {
         </a-menu-item>
         <a-menu-item disabled>
           <a-popover position="br" id="popover-a-avatar" :trigger="['focus', 'hover']">
-            <a-button class="button" v-if="userStore.userData !== undefined || userStore.isAdmin">
+            <a-button
+              class="button"
+              v-if="userStore.userData !== undefined || userStore.isAdmin"
+              @click="
+                () => {
+                  if (!userStore.isAdmin) {
+                    $router.push({
+                      name: 'userProfile',
+                      params: { user_id: userStore.getCurrentUserNotAdmin.id }
+                    })
+                  }
+                }
+              "
+            >
               <a-avatar>
                 <img alt="avatar" :src="userStore.getUserAvatar" />
               </a-avatar>
@@ -146,6 +165,7 @@ const handleLogOut = () => {
                     size="small"
                     unchecked-color="rgba(255,255,255,0.2)"
                     checked-color="rgb(254, 44, 85)"
+                    v-model:model-value="storedTokenValue"
                   />
                 </div>
                 <div v-else class="guest-replace-trust-login">登录后可查看喜欢收藏历史</div>
