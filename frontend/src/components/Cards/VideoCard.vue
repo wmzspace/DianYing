@@ -36,7 +36,7 @@
           :show-loader="true"
         >
         </a-image>
-        <div v-if="mouseOver" id="video-player" ref="videoRefHome"></div>
+        <div v-if="mouseOver" ref="videoRefHome"></div>
 
         <!--        <video-->
         <!--          v-if="showVideo || props.src.cover == undefined"-->
