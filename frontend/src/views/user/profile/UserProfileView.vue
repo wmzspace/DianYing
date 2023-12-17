@@ -3,7 +3,11 @@
     <div class="main-container">
       <!--      <div class="background"></div>-->
       <Breadcrumb :items="['menu.user']" :addition-items="[queryUser?.nickname]" />
-      <UserPanel :user-data="queryUser" v-model:is-edit-profile="isEditProfile" />
+      <UserPanel
+        :user-data="queryUser"
+        v-model:is-edit-profile="isEditProfile"
+        @change="refreshUserInfo"
+      />
       <div v-if="isEditProfile" class="form-container">
         <BasicInformation @update="refreshUserInfo" />
       </div>

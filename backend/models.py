@@ -7,10 +7,10 @@ import numpy
 from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import event
 
+from exts import PREFIX_URL
 from exts import db, scheduler
 
 # PREFIX_URL = 'http://192.168.1.104:5000/'
-PREFIX_URL = "http://127.0.0.1:5000/"
 
 
 # PREFIX_URL = "https://wmzspace.space/"

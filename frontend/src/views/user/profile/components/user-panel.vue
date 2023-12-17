@@ -98,8 +98,8 @@
           (userStore.isAdmin || userStore.getCurrentUserNotAdmin.id === props.userData?.id)
         "
         @click="emit('update:isEditProfile', !props.isEditProfile)"
-        >{{ props.isEditProfile ? '退出编辑' : '编辑资料' }}</a-button
-      >
+        >{{ props.isEditProfile ? '退出编辑' : '编辑资料' }}
+      </a-button>
     </div>
   </a-card>
 </template>
@@ -112,12 +112,14 @@ import { userUploadApi } from '@/api/user-center'
 import type { DescData } from '@arco-design/web-vue/es/descriptions/interface'
 import type { User } from '@/store/user'
 import { simplifyNumber } from '../../../../utils/tools'
+import { Message } from '@arco-design/web-vue'
+import type { AjaxResponse } from '@/api'
 
 const props = defineProps<{
   userData: User | undefined
   isEditProfile: boolean
 }>()
-const emit = defineEmits(['update:isEditProfile'])
+const emit = defineEmits(['update:isEditProfile', 'change'])
 const userStore = useUserStore()
 const storedTokenValue = computed({
   get: () => userStore.isStoredToken,
@@ -131,70 +133,11 @@ const file = ref({
   name: 'avatar.png',
   url: avatarUrl
 })
-// const file = computed({
-//   get: () => {
-//     return
-//   },
-//   set: () => {}
-// })
-const renderData = computed(() => {
-  return [
-    {
-      label: 'userSetting.label.name',
-      value: props.userData?.nickname
-    },
-    // {
-    //   label: 'userSetting.label.certification',
-    //   value: userStore.certification
-    // },
-    {
-      label: 'userSetting.label.accountId',
-      value: props.userData?.id
-    },
-    {
-      label: 'userSetting.label.email',
-      value: props.userData?.email
-    },
-    {
-      label: 'userSetting.label.registrationDate',
-      value: props.userData?.register_time
-    }
-  ] as DescData[]
-})
 
-// const renderData = reactive([
-//   {
-//     label: 'userSetting.label.name',
-//     value: props.userData?.nickname
-//   },
-//   // {
-//   //   label: 'userSetting.label.certification',
-//   //   value: userStore.certification
-//   // },
-//   {
-//     label: 'userSetting.label.accountId',
-//     value: props.userData?.id
-//   },
-//   {
-//     label: 'userSetting.label.email',
-//     value: props.userData?.email
-//   },
-//   {
-//     label: 'userSetting.label.registrationDate',
-//     value: props.userData?.register_time
-//   }
-// ] as DescData[])
 const fileList = ref<FileItem[]>([file.value])
-// const fileList = computed<FileItem[]>({
-//   get: () => {
-//     return [file.value]
-//   },
-//   set: () => {}
-// })
+
 const uploadChange = (fileItemList: FileItem[], fileItem: FileItem) => {
   fileList.value = [fileItem]
-  // fileList.value = [fileItem]
-  // file.value = fileItem
 }
 const customRequest = (options: RequestOption) => {
   // docs: https://axios-http.com/docs/cancellation
@@ -205,10 +148,18 @@ const customRequest = (options: RequestOption) => {
     onProgress(20)
     const formData = new FormData()
     formData.append(name as string, fileItem.file as Blob)
+    if (props.userData) {
+      formData.append('user_id', props.userData.id.toString())
+    }
     const onUploadProgress = (event: ProgressEvent) => {
       let percent
       if (event.total > 0) {
         percent = (event.loaded / event.total) * 100
+        // console.log(percent)
+        Message.info({
+          id: 'uploadAvatar',
+          content: `上传中... ${percent.toFixed(0)}%`
+        })
       }
       onProgress(parseInt(String(percent), 10), event)
     }
@@ -221,6 +172,34 @@ const customRequest = (options: RequestOption) => {
         controller,
         onUploadProgress
       })
+        .then((res) => {
+          if (res.statusText === 'OK') {
+            let ajaxData = res.data as AjaxResponse
+            if (ajaxData.ajax_ok) {
+              Message.success({
+                id: 'uploadAvatar',
+                content: ajaxData.ajax_msg
+              })
+              emit('change')
+            } else {
+              Message.error({
+                id: 'uploadAvatar',
+                content: ajaxData.ajax_msg
+              })
+            }
+          } else {
+            Message.error({
+              id: 'uploadAvatar',
+              content: res.statusText
+            })
+          }
+        })
+        .catch((e) => {
+          Message.error({
+            id: 'uploadAvatar',
+            content: e.message
+          })
+        })
       onSuccess(res)
     } catch (error) {
       onError(error)
@@ -240,6 +219,7 @@ const customRequest = (options: RequestOption) => {
   //border-radius: 4px;
   //background: transparent;
 }
+
 :deep(.arco-avatar-trigger-icon-button) {
   width: 32px;
   height: 32px;

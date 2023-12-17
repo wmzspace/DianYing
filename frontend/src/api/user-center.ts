@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { prefix_url } from '@/api/index'
 
 export interface MyProjectRecord {
   id: number
@@ -86,10 +87,11 @@ export function userUploadApi(
   }
 ) {
   // const controller = new AbortController();
-  // return axios.post('/api/user/upload', data, config);
-  return new Promise<{ data: string }>((resolve) => {
-    resolve({
-      data: 'ok'
-    })
-  })
+  return axios.post(prefix_url.concat('user/upload/avatar'), data, config)
+  // return new Promise<{ data: string }>((resolve) => {
+  //   fetch(prefix_url.concat("user/upload/avatar"),{})
+  //   resolve({
+  //     data: 'ok'
+  //   })
+  // })
 }

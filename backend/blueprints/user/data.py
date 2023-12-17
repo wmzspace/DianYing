@@ -1,5 +1,9 @@
-from flask import request
+import os
 
+from flask import request
+from flask import current_app as app
+
+from exts import PREFIX_URL
 from blueprints.user import user_bp
 from exts import AjaxResponse, db
 from models import User, model2dict
@@ -72,3 +76,28 @@ def update_user():
     # gender = request.args.get("gender")
     # area = request.args.get("area")
     # signature = request.args.get("signature")
+
+
+@user_bp.route('/upload/avatar', methods=['POST', 'GET'])
+def upload():
+    user_id = request.form.get("user_id")
+    if user_id is None:
+        return AjaxResponse.error("参数缺失: user_id")
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        return AjaxResponse.error("用户不存在")
+    f = request.files['file']
+    base_path = app.root_path
+    extension = f.filename.rsplit(".", 1)[1].lower()
+    if extension not in ["png", "jpg", "jpeg", "gif"]:
+        return AjaxResponse.error("文件类型不支持")
+    relative_path = f'static/user/avatars/{user_id}.{extension}'
+
+    # upload_path = os.path.join(base_path, )
+    upload_path = os.path.join(
+        base_path, relative_path
+    )
+    f.save(upload_path)
+    user.avatar = os.path.join(PREFIX_URL, relative_path)
+    db.session.commit()
+    return AjaxResponse.success(None, "上传成功")
