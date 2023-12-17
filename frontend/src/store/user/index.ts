@@ -92,7 +92,8 @@ export const useUserStore = defineStore('user', {
         this.getUserById(userId).then((user) => {
           this.isAdmin = false
           this.userData = user
-          localStorage.setItem('currentUser', userId.toString())
+          // localStorage.setItem('currentUser', userId.toString())
+          this.setStoreToken(true)
           const mainStore = useMainStore()
           mainStore.setLoginVisible(false)
         })
@@ -140,7 +141,7 @@ export const useUserStore = defineStore('user', {
     adminLogin() {
       this.isAdmin = true
       this.userData = undefined
-      localStorage.setItem('currentUser', adminUser.nickname)
+      this.setStoreToken(true)
       const mainStore = useMainStore()
       mainStore.setLoginVisible(false)
     },

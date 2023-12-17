@@ -69,6 +69,17 @@
             </div>
           </a-tab-pane>
         </a-tabs>
+        <div
+          style="
+            color: var(--color-text-t4);
+            text-align: center;
+            white-space: break-spaces;
+            font-size: 12px;
+            line-height: 20px;
+          "
+        >
+          暂时没有更多了
+        </div>
       </div>
     </div>
     <!--    <Breadcrumb :items="['menu.user', 'menu.user.setting']" />-->

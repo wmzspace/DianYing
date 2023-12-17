@@ -13,7 +13,6 @@ from exts import db, scheduler
 # PREFIX_URL = 'http://192.168.1.104:5000/'
 
 
-# PREFIX_URL = "https://wmzspace.space/"
 
 
 def model2dict(models: list[Any] | None) -> list[Any]:

@@ -9,14 +9,19 @@
           :show-upload-button="true"
           :show-file-list="false"
           @change="uploadChange"
+          :style="{ cursor: hasPermission ? 'cursor' : 'default' }"
+          :disabled="!hasPermission"
         >
           <template #upload-button>
-            <a-avatar :size="100" class="info-avatar">
+            <a-avatar :size="100" class="info-avatar" v-if="hasPermission">
               <template #trigger-icon>
                 <icon-camera />
               </template>
               <img v-if="fileList.length" :src="fileList[0].url" />
               <!--            <img v-if="fileList.length" :src="fileList[0].url" />-->
+            </a-avatar>
+            <a-avatar :size="100" class="info-avatar" v-else>
+              <img v-if="fileList.length" :src="fileList[0].url" />
             </a-avatar>
           </template>
         </a-upload>
@@ -90,14 +95,10 @@
         v-model:model-value="storedTokenValue"
       />
     </div>
-
+    <!--    userStore.getCurrentUser &&-->
+    <!--    (userStore.isAdmin || userStore.getCurrentUserNotAdmin.id === props.userData?.id)-->
     <div class="user-panel-actions">
-      <a-button
-        v-if="
-          userStore.getCurrentUser &&
-          (userStore.isAdmin || userStore.getCurrentUserNotAdmin.id === props.userData?.id)
-        "
-        @click="emit('update:isEditProfile', !props.isEditProfile)"
+      <a-button v-if="hasPermission" @click="emit('update:isEditProfile', !props.isEditProfile)"
         >{{ props.isEditProfile ? '退出编辑' : '编辑资料' }}
       </a-button>
     </div>
@@ -127,6 +128,7 @@ const storedTokenValue = computed({
     userStore.setStoreToken(value)
   }
 })
+const hasPermission = computed(() => userStore.isAdminOrCurUser(props.userData?.id))
 const avatarUrl = computed(() => props.userData?.avatar)
 const file = ref({
   uid: '-2',

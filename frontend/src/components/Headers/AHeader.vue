@@ -158,7 +158,10 @@ const handleLogOut = () => {
                 <!--                    <span> 关注 <span>10</span></span>-->
                 <!--                    <span> 粉丝 <span>8000</span></span>-->
                 <!--                  </div>-->
-                <div class="trust-login-switch" v-if="userStore.userData !== undefined">
+                <div
+                  class="trust-login-switch"
+                  v-if="userStore.isAdmin || userStore.userData !== undefined"
+                >
                   <span class="trust-login-switch-title">保存登录信息</span>
                   <a-switch
                     class="trust-login-switch-button"
