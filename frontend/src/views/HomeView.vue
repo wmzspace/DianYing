@@ -24,7 +24,6 @@ const onScroll = () => {
 const onLoadMore = () => {
   if (isLoadedAll.value) {
     isLoadedAll.value = false
-    console.log('loading more...')
     pullVideo({ num: 20 }).then((res: VideoMedia[]) => {
       res.forEach((e) => {
         videoList.value.push(e)
@@ -41,8 +40,6 @@ const onLoadedAll = () => {
   nextTick(() => {
     calculateVideoPositions()
     if (videoListHeight.value < window.innerHeight * 1.5) {
-      console.log('加载完毕，但数量不够')
-      console.log('loading more...')
       isLoadedAll.value = false
       pullVideo({ num: 20 }).then((res: VideoMedia[]) => {
         res.forEach((e) => {
@@ -61,7 +58,6 @@ const videoListHeight = ref(0)
 // let timer
 const calculateVideoPositions = () => {
   if (!isLoadedAll.value) {
-    console.log('loading... exit')
     return
   }
   const container = document.getElementById('waterfall-scroll-container') as HTMLElement
@@ -128,11 +124,12 @@ onUnmounted(() => {
         :key="index"
         @loadeddata="
           (element: HTMLElement) => {
-            video.loaded = true
+            // video.loaded = true
 
             if (++loadedNum === videoList.length) {
               onLoadedAll()
             }
+            // console.log(loadedNum, videoList.length)
           }
         "
       />

@@ -103,11 +103,11 @@ watch(mouseOver, (value, oldValue, onCleanup) => {
     <div class="media-container">
       <a-image
         v-if="showCover"
+        :preview-visible="false"
         :src="props.src.cover"
         width="100%"
         height="100%"
         :fit="'cover'"
-        :preview-visible="false"
       >
         <template #extra>
           <div class="like-statistic">

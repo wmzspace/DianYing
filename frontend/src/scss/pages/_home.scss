@@ -64,7 +64,9 @@
 
         .arco-image {
           height: 100%;
-
+          .arco-image-loader{
+            background-color: transparent;
+          }
 
           &.animated {
             //height:100%;

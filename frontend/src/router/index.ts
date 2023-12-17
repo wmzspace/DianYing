@@ -157,7 +157,6 @@ router.beforeEach((to, from, next) => {
 
   // const isAuthenticated = userStore.isAdmin
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
-  console.log('!')
 
   if (requiresAuth) {
     if (

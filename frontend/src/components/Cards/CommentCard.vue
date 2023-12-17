@@ -255,7 +255,6 @@ const isDeleted = ref(false)
         :image-url="author?.avatar"
         @load="
           () => {
-            console.log('!')
             isLoadingUser = false
           }
         "

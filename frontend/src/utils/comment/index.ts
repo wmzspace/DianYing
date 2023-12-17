@@ -25,7 +25,7 @@ export const getCommentsByVideoIdOrParent = (
   const parentString = parentId === undefined ? '' : `&parent_id=${parentId}`
   return new Promise<Comment[]>((resolve, reject) => {
     fetch(prefix_url.concat(`comment/get?`).concat(videoString).concat(parentString), {
-      method: 'POST'
+      method: 'GET'
     })
       .then((res) => {
         if (res.ok) {
