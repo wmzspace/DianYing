@@ -7,7 +7,12 @@
           {{ $t('stepForm.step.title') }}
         </template>
         <div class="wrapper">
-          <a-steps v-model:current="step" style="min-width: 580px" line-less class="steps">
+          <a-steps
+            v-model:current="step"
+            style="max-width: 580px; width: 100%"
+            line-less
+            class="steps"
+          >
             <a-step :description="$t('stepForm.step.subTitle.baseInfo')">
               {{ $t('stepForm.step.title.baseInfo') }}
             </a-step>

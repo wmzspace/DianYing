@@ -183,14 +183,14 @@ def post_video():
         return AjaxResponse.error("参数缺失: title")
     if 'tags' not in data or len(data['tags']) == 0:
         return AjaxResponse.error("参数缺失: tags")
-
+    tags_string = ' '.join(['#' + tag for tag in data['tags']])
     new_video = Video({
         'url': data['url'],
         'author_id': data['authorId'],
         'height': data['height'],
         'width': data['width'],
         'cover': data['cover'],
-        'title': data['title'],
+        'title': data['title'] + ' ' + tags_string,
         'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     })
     db.session.add(new_video)

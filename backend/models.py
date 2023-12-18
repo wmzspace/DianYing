@@ -428,7 +428,6 @@ def load_init_data():
         'cover': PREFIX_URL + 'static/videos/covers/3.jpeg',
         'width': 1280,
         'height': 720,
-        'likes': 985,
     }
     video2 = {
         'title': '亿万富翁找回儿子',
@@ -437,7 +436,6 @@ def load_init_data():
         'cover': PREFIX_URL + 'static/videos/covers/1.png',
         'width': 1080,
         'height': 1920,
-        'likes': 324401,
 
     }
     video3 = {
@@ -447,7 +445,6 @@ def load_init_data():
         'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
         'width': 1024,
         'height': 576,
-        'likes': 14904,
     }
     video4 = {
         'title': '19岁带饭冲锋🌈的作品',
@@ -456,15 +453,23 @@ def load_init_data():
         'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
         'width': 1024,
         'height': 576,
-        'likes': 14904,
+    }
+    video5 = {
+        'title': '带东北同学第一次逛成都犀浦夜市！！ 好多没见过的美食！ #美食 #vlog日常 #成都夜市 #犀浦夜市',
+        'author_id': 1,
+        'url': PREFIX_URL + 'static/videos/4.mp4',
+        'cover': PREFIX_URL + 'static/videos/covers/4.jpg',
+        'width': 1024,
+        'height': 576,
     }
 
     videos = []
     for i in range(1):
         videos.append(copy.deepcopy(Video(video1)))
         videos.append(copy.deepcopy(Video(video2)))
-        videos.append(copy.deepcopy(Video(video3)))
-        videos.append(copy.deepcopy(Video(video4)))
+        # videos.append(copy.deepcopy(Video(video3)))
+        # videos.append(copy.deepcopy(Video(video4)))
+        videos.append(copy.deepcopy(Video(video5)))
     db.session.add_all(videos)
 
     db.session.add_all(
@@ -479,10 +484,10 @@ def load_init_data():
 
     db.session.add_all([Comment({'video_id': 1,
                                  'author_id': 1,
-                                 'content': '别太荒谬了哥们，别太荒谬了哥们'}),
+                                 'content': '加油加油，争取保研！'}),
                         Comment({'video_id': 1,
                                  'author_id': 2,
-                                 'content': '跟我谈😍',
+                                 'content': '加油！😍',
                                  'parent_id': 1}),
                         Comment({'video_id': 1,
                                  'author_id': 3,
@@ -491,12 +496,13 @@ def load_init_data():
                                  'author_id': 1,
                                  'content': '我也好喜欢',
                                  'parent_id': 3,
-                                 'publish_time': datetime.datetime(2023,
-                                                                   10,
-                                                                   2,
-                                                                   21,
-                                                                   50,
-                                                                   16).strftime('%Y-%m-%d %H:%M:%S')}),
+                                 # 'publish_time': datetime.datetime(2023,
+                                 #                                   10,
+                                 #                                   2,
+                                 #                                   21,
+                                 #                                   50,
+                                 #                                   16).strftime('%Y-%m-%d %H:%M:%S')
+                                 }),
                         ])
 
     db.session.commit()

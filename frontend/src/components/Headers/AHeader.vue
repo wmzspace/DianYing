@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@arco-design/web-vue'
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { guestUser, useUserStore } from '@/store/user'
 import { useMainStore } from '@/store/main'
+import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
+import type { VideoMedia } from '@/types'
 
 const userStore = useUserStore()
 const storedTokenValue = computed({
@@ -38,6 +40,44 @@ const handleLogOut = () => {
   // mainStore.setLoginVisible(true)
   // location.reload()
 }
+
+const videoLikeNum = computed(() => videosLiked.length)
+const videoStarNum = computed(() => videosStarred.length)
+const videoOwnNum = computed(() => videoListByAuthor.value.length)
+
+let videoList: VideoMedia[] = reactive([])
+const videosLiked: VideoMedia[] = reactive([])
+const videosStarred: VideoMedia[] = reactive([])
+const videoListByAuthor = computed(() =>
+  userStore.isUserNotAdmin()
+    ? videoList.filter(
+        (v) =>
+          userStore.getCurrentUserNotAdmin.id && v.authorId === userStore.getCurrentUserNotAdmin.id
+      )
+    : []
+)
+
+onMounted(() => {
+  if (userStore.isUserNotAdmin()) {
+    getVideosByUserLikeOrStar(userStore.getCurrentUserNotAdmin.id, 'star').then((videos) => {
+      videosStarred.slice(0)
+      videos.forEach((v) => {
+        videosStarred.push(v)
+      })
+    })
+    getVideosByUserLikeOrStar(userStore.getCurrentUserNotAdmin.id, 'like').then((videos) => {
+      videosLiked.slice(0)
+      videos.forEach((v) => {
+        videosLiked.push(v)
+      })
+    })
+  }
+  pullVideo().then((videos) => {
+    videos.forEach((video) => {
+      videoList.push(video)
+    })
+  })
+})
 </script>
 
 <template>
@@ -77,7 +117,7 @@ const handleLogOut = () => {
         class="nav-menu"
         align="right"
       >
-        <a-menu-item disabled>
+        <a-menu-item disabled v-show="false">
           <a-trigger :trigger="['click']" :unmount-on-close="false">
             <a-button
               ><p class="nav-text">通知</p>
@@ -92,7 +132,7 @@ const handleLogOut = () => {
             </template>
           </a-trigger>
         </a-menu-item>
-        <a-menu-item disabled>
+        <a-menu-item disabled v-show="false">
           <a-trigger :trigger="['click']" :unmount-on-close="false">
             <a-button
               ><p class="nav-text">私信</p>
@@ -128,7 +168,7 @@ const handleLogOut = () => {
           </a-trigger>
         </a-menu-item>
         <a-menu-item disabled>
-          <a-popover position="br" id="popover-a-avatar" :trigger="['focus', 'hover']">
+          <a-popover position="br" id="popover-a-avatar" :trigger="['click', 'hover']">
             <a-button
               class="button"
               v-if="userStore.userData !== undefined || userStore.isAdmin"
@@ -156,7 +196,20 @@ const handleLogOut = () => {
                 <!--                  <a-avatar>-->
                 <!--                    <img alt="avatar" src="/images/avatar.jpeg" />-->
                 <!--                  </a-avatar>-->
-                <div class="name">
+                <div
+                  class="name"
+                  @click="
+                    () => {
+                      if (!userStore.isAdmin) {
+                        $router.push({
+                          name: 'userProfile',
+                          params: { user_id: userStore.getCurrentUserNotAdmin.id }
+                        })
+                      }
+                    }
+                  "
+                  style="cursor: pointer"
+                >
                   {{ userStore.getUserNickname }}
                   <icon-right />
                 </div>
@@ -182,9 +235,22 @@ const handleLogOut = () => {
               </div>
             </template>
             <template #content>
-              <a-list :bordered="false">
+              <a-list
+                :bordered="false"
+                @click="
+                  () => {
+                    if (!userStore.isAdmin) {
+                      $router.push({
+                        name: 'userProfile',
+                        params: { user_id: userStore.getCurrentUserNotAdmin.id }
+                      })
+                    }
+                  }
+                "
+                style="cursor: pointer"
+              >
                 <a-list-item>
-                  <a-statistic :value="9" :precision="0">
+                  <a-statistic :value="videoOwnNum" :precision="0">
                     <template #title>
                       <a-image src="/images/my_works.svg" style="margin: 0 auto" />
                     </template>
@@ -194,7 +260,7 @@ const handleLogOut = () => {
                   </a-statistic>
                 </a-list-item>
                 <a-list-item>
-                  <a-statistic :value="1699" :precision="0">
+                  <a-statistic :value="videoLikeNum" :precision="0">
                     <template #title>
                       <a-image src="/images/my_likes.svg" style="margin: 0 auto" />
                     </template>
@@ -204,7 +270,7 @@ const handleLogOut = () => {
                   </a-statistic>
                 </a-list-item>
                 <a-list-item>
-                  <a-statistic :value="163" :precision="0">
+                  <a-statistic :value="videoStarNum" :precision="0">
                     <template #title>
                       <a-image src="/images/my_favorites.svg" style="margin: 0 auto" />
                     </template>

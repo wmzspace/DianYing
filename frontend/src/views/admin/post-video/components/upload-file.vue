@@ -1,5 +1,5 @@
 <template>
-  <div id="upload-preview"></div>
+  <div id="upload-preview" style="max-width: 100%"></div>
   <p v-if="isUploaded" style="margin: 10px 0 0 0">
     <span v-if="uploadVideoFormData.width >= uploadVideoFormData.height">
       <span>横版 </span>
