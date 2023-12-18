@@ -22,7 +22,7 @@
           }"
           :heading="5"
         >
-          后台管理平台
+          {{ userStore.isAdmin ? '后台管理平台' : '创作者中心' }}
         </a-typography-title>
       </a-space>
     </div>
@@ -76,7 +76,13 @@
         <a-tooltip :content="$t('settings.navbar.alerts')">
           <div class="message-box-trigger">
             <a-badge :count="9" dot>
-              <a-button class="nav-btn" type="outline" :shape="'circle'" @click="setPopoverVisible">
+              <a-button
+                class="nav-btn"
+                type="outline"
+                :shape="'circle'"
+                @click="setPopoverVisible"
+                disabled
+              >
                 <icon-notification />
               </a-button>
             </a-badge>

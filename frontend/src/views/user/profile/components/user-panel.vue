@@ -170,10 +170,14 @@ const customRequest = (options: RequestOption) => {
       // https://github.com/axios/axios/issues/1630
       // https://github.com/nuysoft/Mock/issues/127
 
-      const res = await userUploadApi(formData, {
-        controller,
-        onUploadProgress
-      })
+      const res = await userUploadApi(
+        formData,
+        {
+          controller,
+          onUploadProgress
+        },
+        'avatar'
+      )
         .then((res) => {
           if (res.statusText === 'OK') {
             let ajaxData = res.data as AjaxResponse

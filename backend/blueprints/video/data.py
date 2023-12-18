@@ -1,13 +1,16 @@
+import datetime
+
 from flask import request
 from sqlalchemy import func
 
 from blueprints.video import video_bp
 from exts import db, AjaxResponse
-from models import Video, model2dict, User, VideoLike, VideoStar, VTRelation
+from models import Video, model2dict, User, VideoLike, VideoStar, VTRelation, VTag
 
 
+# 根据推流逻辑发放视频
 @video_bp.route('/get', methods=['GET'])
-def get_all_users():
+def get_all_videos():
     all_videos = Video.query.order_by(func.random())
 
     # 从表中抽取指定数量的记录
@@ -53,6 +56,7 @@ def get_all_users():
     return model2dict(results)
 
 
+# 根据id查询
 @video_bp.route('/query', methods=['GET'])
 def query_video():
     video_id = request.args.get("id")
@@ -125,6 +129,7 @@ def like_or_dislike_video():
             return AjaxResponse.error("点击太频繁")
 
 
+# 删除视频
 @video_bp.route('/delete', methods=['POST'])
 def delete_video_by_id():
     id = request.args.get('id')
@@ -136,3 +141,62 @@ def delete_video_by_id():
     db.session.delete(video)
     db.session.commit()
     return AjaxResponse.success(None, "视频已删除")
+
+
+def add_tags(tags, video_id):
+    for tag in tags:
+        query_tag = VTag.query.filter_by(name=tag).first()
+
+        if query_tag is None:
+            # 如果 Tag 不存在，创建 Tag
+            new_tag = VTag({'name': tag})
+            db.session.add(new_tag)
+            db.session.flush()
+            tag_id = new_tag.id
+            db.session.commit()
+        else:
+            tag_id = query_tag.id
+
+        # 添加 VTRelation
+        new_vt_relation = VTRelation({'video_id': video_id, 'tag_id': tag_id})
+        db.session.add(new_vt_relation)
+        db.session.commit()
+
+
+@video_bp.route('/post', methods=['POST'])
+def post_video():
+    data = request.json['data']
+    if 'url' not in data or len(data['url']) == 0:
+        return AjaxResponse.error("参数缺失: url")
+    if 'authorId' not in data or data['authorId'] == -1:
+        return AjaxResponse.error("参数缺失: authorId")
+    author = User.query.filter_by(id=data['authorId']).first()
+    if author is None:
+        return AjaxResponse.error("用户不存在")
+    if 'height' not in data or data['height'] == -1:
+        return AjaxResponse.error("参数缺失: height")
+    if 'width' not in data or data['width'] == 0:
+        return AjaxResponse.error("参数缺失: width")
+    if 'cover' not in data or len(data['url']) == 0:
+        return AjaxResponse.error("参数缺失: cover")
+    if 'title' not in data or len(data['title']) == 0:
+        return AjaxResponse.error("参数缺失: title")
+    if 'tags' not in data or len(data['tags']) == 0:
+        return AjaxResponse.error("参数缺失: tags")
+
+    new_video = Video({
+        'url': data['url'],
+        'author_id': data['authorId'],
+        'height': data['height'],
+        'width': data['width'],
+        'cover': data['cover'],
+        'title': data['title'],
+        'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    })
+    db.session.add(new_video)
+    db.session.flush()
+    new_video_id = new_video.id
+    add_tags(data['tags'], new_video.id)
+    db.session.commit()
+
+    return AjaxResponse.success(new_video_id, "视频上传成功")

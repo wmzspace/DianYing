@@ -160,7 +160,7 @@ const userStore = useUserStore()
             <div class="nav-text"><span>业务合作</span></div>
           </template>
           <a-menu-item key="17_1">规则中心</a-menu-item>
-          <a-menu-item key="17_2">关于抖音</a-menu-item>
+          <a-menu-item key="17_2">关于点映</a-menu-item>
         </a-sub-menu>
         <a-menu-item disabled>
           <a-divider class="divider" />

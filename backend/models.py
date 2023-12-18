@@ -10,9 +10,8 @@ from sqlalchemy import event
 from exts import PREFIX_URL
 from exts import db, scheduler
 
+
 # PREFIX_URL = 'http://192.168.1.104:5000/'
-
-
 
 
 def model2dict(models: list[Any] | None) -> list[Any]:
@@ -54,7 +53,7 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(100))
     nickname = db.Column(db.String(100), default="未命名用户")
-    age = db.Column(db.Integer, default=0,nullable=False)
+    age = db.Column(db.Integer, default=0, nullable=False)
     avatar = db.Column(
         db.String(100),
         default=PREFIX_URL + "static/user/avatars/default.jpeg")
@@ -213,8 +212,8 @@ class Video(db.Model):
             self.width = args['width']
         if 'height' in args:
             self.height = args['height']
-        if 'likes' in args:
-            self.likes = args['likes']
+        # if 'likes' in args:
+        #     self.likes = args['likes']
         if 'publish_time' in args:
             self.publish_time = args['publish_time']
 

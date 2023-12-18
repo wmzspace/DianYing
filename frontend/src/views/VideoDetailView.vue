@@ -230,7 +230,7 @@ onBeforeRouteUpdate((to, from, next) => {
     video.value = _.cloneDeep(res)
   })
   next((vm) => {
-    console.log(vm)
+    // console.log(vm)
     // vm.$
   })
 })

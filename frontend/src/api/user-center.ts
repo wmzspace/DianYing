@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type CancelToken } from 'axios'
 import { prefix_url } from '@/api/index'
 
 export interface MyProjectRecord {
@@ -84,10 +84,12 @@ export function userUploadApi(
   config: {
     controller: AbortController
     onUploadProgress?: (progressEvent: any) => void
-  }
+    cancelToken?: CancelToken
+  },
+  type: 'avatar' | 'video'
 ) {
   // const controller = new AbortController();
-  return axios.post(prefix_url.concat('user/upload/avatar'), data, config)
+  return axios.post(prefix_url.concat(`user/upload/${type}`), data, config)
   // return new Promise<{ data: string }>((resolve) => {
   //   fetch(prefix_url.concat("user/upload/avatar"),{})
   //   resolve({

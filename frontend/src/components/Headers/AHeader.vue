@@ -55,6 +55,7 @@ const handleLogOut = () => {
         "
       >
         <a-input-search
+          disabled
           class="search-bar"
           placeholder="搜索您感兴趣的内容"
           search-button
@@ -106,9 +107,14 @@ const handleLogOut = () => {
             </template>
           </a-trigger>
         </a-menu-item>
-        <a-menu-item disabled>
+        <a-menu-item v-if="userStore.isUserNotAdmin">
           <a-trigger :trigger="['click']" :unmount-on-close="false">
             <a-button
+              @click="
+                $router.push({
+                  name: 'postVideo'
+                })
+              "
               ><p class="nav-text">投稿</p>
               <template #icon>
                 <icon-share-external style="color: white; width: 100%; margin: 0" />

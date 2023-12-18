@@ -5,15 +5,19 @@
   <!--  </div>-->
   <!--  <a-menu :defaultOpenKeys="['1']" :defaultSelectedKeys="['0_1']" @menuItemClick="onClickMenuItem">-->
   <a-menu :selected-keys="[$route.meta.key]" @menuItemClick="onClickMenuItem">
-    <a-menu-item key="dashboard" @click="$router.push({ name: 'dashboard' })">
+    <a-menu-item
+      key="dashboard"
+      @click="$router.push({ name: 'dashboard' })"
+      v-if="userStore.isAdmin"
+    >
       <IconHome />
       首页
     </a-menu-item>
-    <a-menu-item key="postVideo" @click="$router.push({ name: 'postVideo' })">
+    <a-menu-item key="postVideo" @click="handleClickPost">
       <IconCalendar />
       发布视频
     </a-menu-item>
-    <a-sub-menu key="search">
+    <a-sub-menu key="search" v-if="userStore.isAdmin">
       <template #title>
         <span><IconCalendar />查询</span>
       </template>
@@ -26,8 +30,22 @@
 </template>
 <script setup lang="ts">
 import { Message } from '@arco-design/web-vue'
+import { useUserStore } from '@/store'
+import { useRouter } from 'vue-router'
+import { useMainStore } from '@/store/main'
+const userStore = useUserStore()
+const mainStore = useMainStore()
 
 const onClickMenuItem = (key: string) => {
   // Message.info({ content: `You select ${key}`, showIcon: true })
+}
+const router = useRouter()
+
+const handleClickPost = () => {
+  if (userStore.isAdmin) {
+    mainStore.setLoginVisible(true)
+  } else {
+    router.push({ name: 'postVideo' })
+  }
 }
 </script>

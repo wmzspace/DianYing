@@ -9,6 +9,7 @@ from flask_mail import Mail, Message
 import models
 from blueprints.comment import comment_bp
 from blueprints.email import email_bp
+from blueprints.tag import tag_bp
 from blueprints.video import video_bp
 from models import *
 from blueprints.user import user_bp
@@ -25,6 +26,7 @@ app.register_blueprint(user_bp)
 app.register_blueprint(video_bp)
 app.register_blueprint(comment_bp)
 app.register_blueprint(email_bp)
+app.register_blueprint(tag_bp)
 # app.register_blueprint(api.get)
 # app.register_blueprint(api.delete)
 # app.register_blueprint(api.update)

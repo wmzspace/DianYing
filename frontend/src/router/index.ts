@@ -78,7 +78,7 @@ let routes: Array<RouteRecordRaw> = [
           layout: 'b',
           key: 'postVideo',
           requiresAuth: true,
-          roles: ['admin', 'user']
+          roles: ['user']
         },
         component: PostVideo
       },
@@ -208,7 +208,9 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth) {
     if (
       ((to.meta.roles as string[]).includes('admin') && userStore.isAdmin) ||
-      ((to.meta.roles as string[]).includes('user') && !userStore.isAdmin)
+      ((to.meta.roles as string[]).includes('user') &&
+        !userStore.isAdmin &&
+        userStore.getCurrentUser)
     ) {
       next() //允许访问
     } else {
