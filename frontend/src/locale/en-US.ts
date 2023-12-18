@@ -5,10 +5,11 @@ import localeDashboard from '@/views/admin/dashboard/locale/en-US'
 
 // import localeMonitor from '@/views/dashboard/monitor/locale/en-US'
 //
-// import localeSearchTable from '@/views/list/search-table/locale/en-US'
+import localeSearchUserTable from '@/views/admin/search/search-user/locale/zh-CN'
+import localeSearchVideoTable from '@/views/admin/search/search-video/locale/zh-CN'
 // import localeCardList from '@/views/list/card/locale/en-US'
 //
-// import localeStepForm from '@/views/form/step/locale/en-US'
+import localePostVideo from '@/views/admin/post-video/locale/en-US'
 // import localeGroupForm from '@/views/form/group/locale/en-US'
 //
 // import localeBasicProfile from '@/views/profile/basic/locale/en-US'
@@ -50,9 +51,10 @@ export default {
   ...localeDashboard,
   //
   // ...localeMonitor,
-  // ...localeSearchTable,
+  ...localeSearchUserTable,
+  ...localeSearchVideoTable,
   // ...localeCardList,
-  // ...localeStepForm,
+  ...localePostVideo,
   // ...localeGroupForm,
   // ...localeBasicProfile,
   // ...localeDataAnalysis,
