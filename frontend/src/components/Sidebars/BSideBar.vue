@@ -3,30 +3,24 @@
   <!--    &lt;!&ndash;    <div><a class="logo-img"></a></div>&ndash;&gt;-->
   <!--    后台管理系统-->
   <!--  </div>-->
-  <a-menu :defaultOpenKeys="['1']" :defaultSelectedKeys="['0_1']" @menuItemClick="onClickMenuItem">
-    <a-menu-item key="0_1">
+  <!--  <a-menu :defaultOpenKeys="['1']" :defaultSelectedKeys="['0_1']" @menuItemClick="onClickMenuItem">-->
+  <a-menu :selected-keys="[$route.meta.key]" @menuItemClick="onClickMenuItem">
+    <a-menu-item key="dashboard" @click="$router.push({ name: 'dashboard' })">
       <IconHome />
       首页
     </a-menu-item>
-    <a-menu-item key="0_2">
+    <a-menu-item key="postVideo" @click="$router.push({ name: 'postVideo' })">
       <IconCalendar />
-      Menu 2
+      发布视频
     </a-menu-item>
-    <a-sub-menu key="1">
+    <a-sub-menu key="search">
       <template #title>
-        <span><IconCalendar />Navigation 1</span>
+        <span><IconCalendar />查询</span>
       </template>
-      <a-menu-item key="1_1">Menu 1</a-menu-item>
-      <a-menu-item key="1_2">Menu 2</a-menu-item>
-      <a-sub-menu key="2" title="Navigation 2">
-        <a-menu-item key="2_1">Menu 1</a-menu-item>
-        <a-menu-item key="2_2">Menu 2</a-menu-item>
-      </a-sub-menu>
-      <a-sub-menu key="3" title="Navigation 3">
-        <a-menu-item key="3_1">Menu 1</a-menu-item>
-        <a-menu-item key="3_2">Menu 2</a-menu-item>
-        <a-menu-item key="3_3">Menu 3</a-menu-item>
-      </a-sub-menu>
+      <a-menu-item key="searchVideo" @click="$router.push({ name: 'searchVideo' })"
+        >视频</a-menu-item
+      >
+      <a-menu-item key="searchUser" @click="$router.push({ name: 'searchUser' })">用户</a-menu-item>
     </a-sub-menu>
   </a-menu>
 </template>
@@ -34,6 +28,6 @@
 import { Message } from '@arco-design/web-vue'
 
 const onClickMenuItem = (key: string) => {
-  Message.info({ content: `You select ${key}`, showIcon: true })
+  // Message.info({ content: `You select ${key}`, showIcon: true })
 }
 </script>

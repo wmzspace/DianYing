@@ -4,6 +4,9 @@ import VideoDetailView from '@/views/VideoDetailView.vue'
 import DashboardView from '@/views/admin/dashboard/DashboardView.vue'
 import EXCEPTION from '@/router/exception'
 import { useUserStore } from '@/store'
+import SearchVideo from '@/views/admin/search/search-video/index.vue'
+import SearchUser from '@/views/admin/search/search-user/index.vue'
+import PostVideo from '@/views/admin/post-video/index.vue'
 
 let routes: Array<RouteRecordRaw> = [
   {
@@ -53,7 +56,7 @@ let routes: Array<RouteRecordRaw> = [
     meta: {
       layout: 'b',
       requiresAuth: true,
-      roles: ['admin']
+      roles: ['user', 'admin']
     },
     redirect: '/admin/dashboard',
     children: [
@@ -62,10 +65,54 @@ let routes: Array<RouteRecordRaw> = [
         name: 'dashboard',
         meta: {
           layout: 'b',
+          key: 'dashboard',
           requiresAuth: true,
           roles: ['admin']
         },
         component: DashboardView
+      },
+      {
+        path: 'post-video',
+        name: 'postVideo',
+        meta: {
+          layout: 'b',
+          key: 'postVideo',
+          requiresAuth: true,
+          roles: ['admin', 'user']
+        },
+        component: PostVideo
+      },
+      {
+        path: 'search',
+        meta: {
+          layout: 'b',
+          requiresAuth: true,
+          roles: ['admin']
+        },
+        children: [
+          {
+            path: 'video',
+            name: 'searchVideo',
+            meta: {
+              layout: 'b',
+              key: 'searchVideo',
+              requiresAuth: true,
+              roles: ['admin']
+            },
+            component: SearchVideo
+          },
+          {
+            path: 'user',
+            name: 'searchUser',
+            meta: {
+              layout: 'b',
+              key: 'searchUser',
+              requiresAuth: true,
+              roles: ['admin']
+            },
+            component: SearchUser
+          }
+        ]
       }
     ]
     // component: () => import('@/views/DashboardView.vue')
