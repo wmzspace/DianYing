@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <Breadcrumb :items="['menu.list', 'menu.list.searchTable']" />
-    <a-card class="general-card" :title="$t('menu.list.searchTable')">
+    <Breadcrumb :items="['menu.list', 'menu.list.video.searchTable']" />
+    <a-card class="general-card" :title="$t('menu.list.video.searchTable')">
       <a-row>
         <a-col :flex="1">
           <a-form

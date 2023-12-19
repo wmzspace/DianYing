@@ -1,5 +1,5 @@
 export default {
-  'menu.list.searchTable': '查询表格',
+  'menu.list.user.searchTable': '用户管理',
   'searchTable.form.number': '集合编号',
   'searchTable.form.number.placeholder': '请输入集合编号',
   'searchTable.form.name': '集合名称',
@@ -41,5 +41,5 @@ export default {
   // actions
   'searchTable.actions.refresh': '刷新',
   'searchTable.actions.density': '密度',
-  'searchTable.actions.columnSetting': '列设置',
-};
+  'searchTable.actions.columnSetting': '列设置'
+}

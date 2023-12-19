@@ -21,10 +21,12 @@
       <template #title>
         <span><IconCalendar />查询</span>
       </template>
-      <a-menu-item key="searchVideo" @click="$router.push({ name: 'searchVideo' })"
-        >视频</a-menu-item
+      <a-menu-item key="searchUser" @click="$router.push({ name: 'searchUser' })"
+        >用户管理</a-menu-item
       >
-      <a-menu-item key="searchUser" @click="$router.push({ name: 'searchUser' })">用户</a-menu-item>
+      <a-menu-item key="searchVideo" @click="$router.push({ name: 'searchVideo' })"
+        >视频管理</a-menu-item
+      >
     </a-sub-menu>
   </a-menu>
 </template>
