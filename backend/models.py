@@ -79,7 +79,10 @@ class User(db.Model):
 
     # 定义与视频的关联关系
     # videos = db.relationship("Video", backref="user", cascade="all, delete-orphan")
-
+    video_play = db.relationship(
+        "VideoPlay",
+        back_populates="user",
+        cascade="all, delete")
     video_liked = db.relationship(
         "VideoLike",
         back_populates="user",
@@ -192,6 +195,10 @@ class Video(db.Model):
         nullable=False,
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     author = db.relationship("User", back_populates="videos")
+    video_played= db.relationship(
+        "VideoPlay",
+        back_populates="video",
+        cascade="all, delete")
     video_liked = db.relationship(
         "VideoLike",
         back_populates="video",
@@ -323,7 +330,24 @@ class Comment(db.Model):
             self.publish_time = args['publish_time']
 
 
-# 定义视频点赞模型
+# 定义视频播放统计模型
+class VideoPlay(db.Model):
+    __tablename__ = 'video_plays'
+    id = db.Column(db.Integer, primary_key=True)
+    video_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            'videos.id',
+            ondelete="cascade"))
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            'users.id',
+            ondelete="cascade"))
+    user = db.relationship("User", back_populates="video_play")
+    video = db.relationship("Video", back_populates="video_played")
+
+# 定义视频点赞统计模型
 class VideoLike(db.Model):
     __tablename__ = 'video_likes'
     id = db.Column(db.Integer, primary_key=True)
@@ -341,7 +365,7 @@ class VideoLike(db.Model):
     video = db.relationship("Video", back_populates="video_liked")
 
 
-# 定义视频收藏模型
+# 定义视频收藏统计模型
 class VideoStar(db.Model):
     __tablename__ = 'video_stars'
     id = db.Column(db.Integer, primary_key=True)
@@ -359,7 +383,7 @@ class VideoStar(db.Model):
     video = db.relationship("Video", back_populates="video_starred")
 
 
-# 定义评论点赞模型
+# 定义评论点赞统计模型
 class CommentLike(db.Model):
     __tablename__ = 'comment_likes'
     id = db.Column(db.Integer, primary_key=True)

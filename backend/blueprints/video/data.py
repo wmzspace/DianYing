@@ -5,7 +5,7 @@ from sqlalchemy import func
 
 from blueprints.video import video_bp
 from exts import db, AjaxResponse
-from models import Video, model2dict, User, VideoLike, VideoStar, VTRelation, VTag
+from models import Video, model2dict, User, VideoLike, VideoStar, VTRelation, VTag, VideoPlay
 
 
 # 根据推流逻辑发放视频
@@ -96,12 +96,38 @@ def get_video_liked_users():
     return AjaxResponse.success(model2dict(target))
 
 
+@video_bp.route('/action/play', methods=['POST'])
+def action_play_video():
+    # 检查用户和视频是否存在
+    user_id = request.args.get("user_id")
+    video_id = request.args.get("video_id")
+    if not user_id or not video_id:
+        return AjaxResponse.error("参数缺失")
+    user = User.query.get(user_id)
+    video = Video.query.get(video_id)
+    if not user or not video:
+        return AjaxResponse.error("用户或视频不存在")
+
+    exist_played = VideoPlay.query.filter_by(
+        user_id=user_id, video_id=video_id).all()
+
+    if not exist_played:
+        new_play = VideoPlay(user_id=user_id, video_id=video_id)
+        db.session.add(new_play)
+        db.session.commit()
+        return AjaxResponse.success(None, "视频播放记录已存在")
+    else:
+        return AjaxResponse.success(None, "视频播放记录已存在")
+
+
 # 点赞或收藏
 @video_bp.route('/action', methods=['POST'])
 def like_or_dislike_video():
     # 检查用户和视频是否存在
     user_id = request.args.get("user_id")
     video_id = request.args.get("video_id")
+    if not user_id or not video_id:
+        return AjaxResponse.error("参数缺失")
     action = request.args.get("action")
     to_status = request.args.get("to_status") == "true"
     user = User.query.get(user_id)

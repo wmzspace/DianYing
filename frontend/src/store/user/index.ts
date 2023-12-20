@@ -8,6 +8,8 @@ import { Message } from '@arco-design/web-vue'
 import { useMainStore } from '@/store/main'
 import { useRouter } from 'vue-router'
 import router from '@/router'
+import type { UserRecord } from '@/api/list'
+import { reject } from 'lodash-es'
 
 export interface User {
   avatar: string
@@ -59,7 +61,7 @@ export const useUserStore = defineStore('user', {
       return state.userData as User
     },
     getUserById: (state) => {
-      return (userId: number | string) =>
+      return (userId: number | string | undefined) =>
         new Promise<User>((resolve, reject) => {
           fetch(prefix_url + `/user/get?id=${userId}`, {
             method: 'GET'
@@ -72,6 +74,11 @@ export const useUserStore = defineStore('user', {
           })
         })
     },
+    // getUserInfo: ()=>
+    //   (userId:number|string)=>
+    //     new Promise<UserRecord>((resolve,reject)=>{
+    //       fetch(prefix_url.concat("user/info"))
+    //     })
     getUserAvatar: (state) =>
       state.userData !== undefined
         ? state.userData.avatar

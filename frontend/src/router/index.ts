@@ -4,8 +4,8 @@ import VideoDetailView from '@/views/VideoDetailView.vue'
 import DashboardView from '@/views/admin/dashboard/DashboardView.vue'
 import EXCEPTION from '@/router/exception'
 import { useUserStore } from '@/store'
-import SearchVideo from '@/views/admin/search/search-video/index.vue'
-import SearchUser from '@/views/admin/search/search-user/index.vue'
+import SearchTableVideo from '@/views/admin/search/search-video/index.vue'
+import SearchTableUser from '@/views/admin/search/search-user/index.vue'
 import PostVideo from '@/views/admin/post-video/index.vue'
 import { useMainStore } from '@/store/main'
 
@@ -100,7 +100,7 @@ let routes: Array<RouteRecordRaw> = [
               requiresAuth: true,
               roles: ['admin']
             },
-            component: SearchVideo
+            component: SearchTableVideo
           },
           {
             path: 'user',
@@ -111,7 +111,7 @@ let routes: Array<RouteRecordRaw> = [
               requiresAuth: true,
               roles: ['admin']
             },
-            component: SearchUser
+            component: SearchTableUser
           }
         ]
       }

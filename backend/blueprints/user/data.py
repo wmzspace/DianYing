@@ -154,3 +154,49 @@ def upload_cover():
 def upload_avatar():
     user_id = request.form.get("user_id")
     return upload(user_id, 'avatar')
+
+
+class UserRecord:
+    nickName: str
+    id: int | str
+    email: str
+    avatar: str
+    password: str
+    age: int
+    gender: str
+    videoNum: int
+    likedNum: int
+    playedNum: int
+    signature: str
+    registerTime: str
+    area: str
+
+    def __init__(self, user: User):
+        self.id = user.id
+        self.nick_name = user.nickname
+        self.email = user.email
+        self.avatar = user.avatar
+        self.password = user.password
+        self.age = user.age
+        self.gender = user.gender
+        self.signature = user.signature
+        self.register_time = user.register_time
+        self.area = user.area
+        self.liked_num = len(user.video_liked)
+        self.video_num = len(user.videos)
+        self.played_num = len(user.video_play)
+
+
+@user_bp.route('/info/<param>', methods=['GET'])
+def get_user_info(param):
+    if param == "all":
+        users = User.query.all()
+        result = []
+        for user in users:
+            record = UserRecord(user)
+            result.append(record)
+        return model2dict(result)
+    else:
+        if not str(param).isdigit():
+            return "param应为user_id", 404
+        return UserRecord(User.query.get(int(param))).__dict__

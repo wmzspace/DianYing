@@ -5,8 +5,8 @@ import localeDashboard from '@/views/admin/dashboard/locale/en-US'
 
 // import localeMonitor from '@/views/dashboard/monitor/locale/en-US'
 //
-import localeSearchUserTable from '@/views/admin/search/search-user/locale/zh-CN'
-import localeSearchVideoTable from '@/views/admin/search/search-video/locale/zh-CN'
+import localeSearchUserTable from '@/views/admin/search/search-user/locale/en-US'
+import localeSearchVideoTable from '@/views/admin/search/search-video/locale/en-US'
 // import localeCardList from '@/views/list/card/locale/en-US'
 //
 import localePostVideo from '@/views/admin/post-video/locale/en-US'

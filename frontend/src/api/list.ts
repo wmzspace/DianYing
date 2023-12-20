@@ -17,6 +17,22 @@ export interface VideoRecord {
   tags: string[]
 }
 
+export interface UserRecord {
+  nickName: string
+  id: number | string
+  email: string
+  password: string
+  age: number
+  gender: 'male' | 'female'
+  videoNum: number
+  likedNum: number
+  playedNum: number
+  signature: string
+  registerTime: string
+  area: string
+  avatar: string
+}
+
 export interface VideoRecordCanEdit extends VideoRecord {
   isEditing: boolean
 }
@@ -30,6 +46,15 @@ export interface VideoQueryForm {
   status: 'online' | 'offline' | 'awaitApproval' | undefined
   publishTime: string[] | undefined
   tags: string[] | undefined
+}
+
+export interface UserQueryForm {
+  nickName: string | undefined
+  email: string | undefined
+  age: number | undefined
+  gender: 'male' | 'female' | undefined
+  registerTime: string[] | undefined
+  area: string | undefined
 }
 
 export interface PolicyParams extends Partial<VideoQueryForm> {
