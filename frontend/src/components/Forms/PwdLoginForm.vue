@@ -126,7 +126,7 @@ const handleLogin = () => {
           .pwdLogin(form.email, form.pwd)
           .then((user) => {
             console.log('success:', user)
-            userStore.userLogin(user.id)
+            userStore.userLogin(user.id, true)
           })
           .catch((msg) => {
             Message.error({

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <Breadcrumb :items="['menu.list', 'menu.list.user.searchTable']" />
-    <a-card class="general-card" :title="$t('menu.list.searchTable')">
+    <a-card class="general-card" :title="$t('menu.list.user.searchTable')">
       <a-row>
         <a-col :flex="1">
           <a-form
@@ -212,12 +212,7 @@
 import { computed, ref, reactive, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/loading'
-import {
-  queryPolicyList,
-  type PolicyRecord,
-  type PolicyParams,
-  type PolicyListRes
-} from '@/api/list'
+import { queryPolicyList, type VideoRecord, type PolicyParams, type VideoListRes } from '@/api/list'
 import type { Pagination } from '@/types/global'
 import type { SelectOptionData } from '@arco-design/web-vue/es/select/interface'
 import type { TableColumnData } from '@arco-design/web-vue/es/table/interface'
@@ -239,7 +234,7 @@ const generateFormModel = () => {
 }
 const { loading, setLoading } = useLoading(true)
 const { t } = useI18n()
-const renderData = ref<PolicyRecord[]>([])
+const renderData = ref<VideoRecord[]>([])
 const formModel = ref(generateFormModel())
 const cloneColumns = ref<Column[]>([])
 const showColumns = ref<Column[]>([])
@@ -351,7 +346,7 @@ const fetchData = async (params: PolicyParams = { current: 1, pageSize: 20 }) =>
   setLoading(true)
   try {
     // const { data } = await queryPolicyList(params)
-    const records: PolicyRecord[] = [
+    const records: VideoRecord[] = [
       {
         contentType: 'horizontalVideo',
         count: 0,
@@ -362,7 +357,7 @@ const fetchData = async (params: PolicyParams = { current: 1, pageSize: 20 }) =>
         status: 'online'
       }
     ]
-    const data: PolicyListRes = { list: records, total: 0 }
+    const data: VideoListRes = { list: records, total: 0 }
     renderData.value = data.list
     pagination.current = params.current
     pagination.total = data.total

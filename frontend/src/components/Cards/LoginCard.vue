@@ -8,7 +8,12 @@ const mainStore = useMainStore()
 </script>
 
 <template>
-  <a-modal id="login-panel" v-model:visible="mainStore.loginModalVisible" :footer="false">
+  <a-modal
+    id="login-panel"
+    v-model:visible="mainStore.loginModalVisible"
+    :footer="false"
+    @close="mainStore.setGoToPost(false)"
+  >
     <template #title>
       <div class="arco-modal-title-text">登录后免费畅享更多功能</div>
       <a-list class="arco-modal-title-desc" action-layout="vertical" :bordered="false">

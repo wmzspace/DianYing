@@ -4,7 +4,12 @@
   <!--    后台管理系统-->
   <!--  </div>-->
   <!--  <a-menu :defaultOpenKeys="['1']" :defaultSelectedKeys="['0_1']" @menuItemClick="onClickMenuItem">-->
-  <a-menu :selected-keys="[$route.meta.key]" @menuItemClick="onClickMenuItem">
+  <a-menu
+    :selected-keys="[$route.meta.key]"
+    @menuItemClick="onClickMenuItem"
+    :auto-open-selected="true"
+    :default-open-keys="['search']"
+  >
     <a-menu-item
       key="dashboard"
       @click="$router.push({ name: 'dashboard' })"
@@ -13,10 +18,7 @@
       <IconHome />
       首页
     </a-menu-item>
-    <a-menu-item key="postVideo" @click="handleClickPost">
-      <IconCalendar />
-      发布视频
-    </a-menu-item>
+
     <a-sub-menu key="search" v-if="userStore.isAdmin">
       <template #title>
         <span><IconCalendar />查询</span>
@@ -28,6 +30,11 @@
         >视频管理</a-menu-item
       >
     </a-sub-menu>
+
+    <a-menu-item key="postVideo" @click="handleClickPost">
+      <IconCalendar />
+      发布视频
+    </a-menu-item>
   </a-menu>
 </template>
 <script setup lang="ts">
@@ -45,7 +52,7 @@ const router = useRouter()
 
 const handleClickPost = () => {
   if (userStore.isAdmin) {
-    mainStore.setLoginVisible(true)
+    mainStore.setGoToPost(true)
   } else {
     router.push({ name: 'postVideo' })
   }

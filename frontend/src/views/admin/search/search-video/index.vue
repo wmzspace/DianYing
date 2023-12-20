@@ -12,18 +12,33 @@
           >
             <a-row :gutter="16">
               <a-col :span="8">
-                <a-form-item field="number" :label="$t('searchTable.form.number')">
+                <a-form-item field="videoTitle" :label="$t('searchTable.form.videoTitle')">
                   <a-input
-                    v-model="formModel.number"
-                    :placeholder="$t('searchTable.form.number.placeholder')"
+                    v-model="formModel.videoTitle"
+                    :placeholder="$t('searchTable.form.videoTitle.placeholder')"
                   />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
-                <a-form-item field="name" :label="$t('searchTable.form.name')">
+                <a-form-item field="authorName" :label="$t('searchTable.form.authorName')">
                   <a-input
-                    v-model="formModel.name"
-                    :placeholder="$t('searchTable.form.name.placeholder')"
+                    v-model="formModel.authorName"
+                    :placeholder="$t('searchTable.form.authorName.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item field="videoId" :label="$t('searchTable.form.videoTags')">
+                  <a-select
+                    v-model="formModel.tags"
+                    v-model:input-value="inputValue"
+                    :options="options"
+                    :placeholder="$t('searchTable.form.videoTags.placeholder')"
+                    multiple
+                    @search="handleSearch"
+                    @inputValueChange="handleInputValueChange"
+                    @change="handleTagsChange"
+                    :allow-clear="true"
                   />
                 </a-form-item>
               </a-col>
@@ -36,18 +51,9 @@
                   />
                 </a-form-item>
               </a-col>
-              <!--              <a-col :span="8">-->
-              <!--                <a-form-item field="filterType" :label="$t('searchTable.form.filterType')">-->
-              <!--                  <a-select-->
-              <!--                    v-model="formModel.filterType"-->
-              <!--                    :options="filterTypeOptions"-->
-              <!--                    :placeholder="$t('searchTable.form.selectDefault')"-->
-              <!--                  />-->
-              <!--                </a-form-item>-->
-              <!--              </a-col>-->
               <a-col :span="8">
-                <a-form-item field="createdTime" :label="$t('searchTable.form.createdTime')">
-                  <a-range-picker v-model="formModel.createdTime" style="width: 100%" />
+                <a-form-item field="publishTime" :label="$t('searchTable.form.publishTime')">
+                  <a-range-picker v-model="formModel.publishTime" style="width: 100%" />
                 </a-form-item>
               </a-col>
               <a-col :span="8">
@@ -84,19 +90,28 @@
       <a-row style="margin-bottom: 16px">
         <a-col :span="12">
           <a-space>
-            <a-button type="primary">
+            <a-button type="primary" @click="mainStore.setGoToPost(true)">
               <template #icon>
                 <icon-plus />
               </template>
               {{ $t('searchTable.operation.create') }}
             </a-button>
-            <a-upload action="/">
-              <template #upload-button>
-                <a-button>
-                  {{ $t('searchTable.operation.import') }}
-                </a-button>
-              </template>
-            </a-upload>
+            <a-tooltip :content="$t('searchTable.actions.refresh')">
+              <!--            <div class="action-icon" @click="search"><icon-refresh size="18" /></div>-->
+              <a-button @click="search">
+                <template #icon>
+                  <icon-refresh />
+                </template>
+                {{ $t('searchTable.actions.refresh') }}
+              </a-button>
+            </a-tooltip>
+            <!--            <a-upload action="/">-->
+            <!--              <template #upload-button>-->
+            <!--                <a-button>-->
+            <!--                  {{ $t('searchTable.operation.import') }}-->
+            <!--                </a-button>-->
+            <!--              </template>-->
+            <!--            </a-upload>-->
           </a-space>
         </a-col>
         <a-col :span="12" style="display: flex; align-items: center; justify-content: end">
@@ -106,9 +121,9 @@
             </template>
             {{ $t('searchTable.operation.download') }}
           </a-button>
-          <a-tooltip :content="$t('searchTable.actions.refresh')">
-            <div class="action-icon" @click="search"><icon-refresh size="18" /></div>
-          </a-tooltip>
+          <!--          <a-tooltip :content="$t('searchTable.actions.refresh')">-->
+          <!--            <div class="action-icon" @click="search"><icon-refresh size="18" /></div>-->
+          <!--          </a-tooltip>-->
           <a-dropdown @select="handleSelectDensity">
             <a-tooltip :content="$t('searchTable.actions.density')">
               <div class="action-icon"><icon-line-height size="18" /></div>
@@ -124,30 +139,30 @@
               </a-doption>
             </template>
           </a-dropdown>
-          <a-tooltip :content="$t('searchTable.actions.columnSetting')">
-            <a-popover trigger="click" position="bl" @popup-visible-change="popupVisibleChange">
-              <div class="action-icon"><icon-settings size="18" /></div>
-              <template #content>
-                <div id="tableSetting">
-                  <div v-for="(item, index) in showColumns" :key="item.dataIndex" class="setting">
-                    <div style="margin-right: 4px; cursor: move">
-                      <icon-drag-arrow />
-                    </div>
-                    <div>
-                      <a-checkbox
-                        v-model="item.checked"
-                        @change="handleChange($event, item as TableColumnData, index)"
-                      >
-                      </a-checkbox>
-                    </div>
-                    <div class="title">
-                      {{ item.title === '#' ? '序列号' : item.title }}
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </a-popover>
-          </a-tooltip>
+          <!--          <a-tooltip :content="$t('searchTable.actions.columnSetting')">-->
+          <!--            <a-popover trigger="click" position="bl" @popup-visible-change="popupVisibleChange">-->
+          <!--              <div class="action-icon"><icon-settings size="18" /></div>-->
+          <!--              <template #content>-->
+          <!--                <div id="tableSetting">-->
+          <!--                  <div v-for="(item, index) in showColumns" :key="item.dataIndex" class="setting">-->
+          <!--                    <div style="margin-right: 4px; cursor: move">-->
+          <!--                      <icon-drag-arrow />-->
+          <!--                    </div>-->
+          <!--                    <div>-->
+          <!--                      <a-checkbox-->
+          <!--                        v-model="item.checked"-->
+          <!--                        @change="handleChange($event, item as TableColumnData, index)"-->
+          <!--                      >-->
+          <!--                      </a-checkbox>-->
+          <!--                    </div>-->
+          <!--                    <div class="title">-->
+          <!--                      {{ item.title === '#' ? '序列号' : item.title }}-->
+          <!--                    </div>-->
+          <!--                  </div>-->
+          <!--                </div>-->
+          <!--              </template>-->
+          <!--            </a-popover>-->
+          <!--          </a-tooltip>-->
         </a-col>
       </a-row>
       <a-table
@@ -158,10 +173,47 @@
         :data="renderData"
         :bordered="false"
         :size="size"
+        :scroll="{
+          x: 1000,
+          y: '100%'
+        }"
+        :scrollbar="true"
+        column-resizable
         @page-change="onPageChange"
       >
         <template #index="{ rowIndex }">
           {{ rowIndex + 1 + (pagination.current - 1) * pagination.pageSize }}
+        </template>
+        <template #videoTitle="{ record }">
+          <a-tooltip>
+            <div class="one-line">{{ record.videoTitle }}</div>
+            <template #content>{{ record.videoTitle }}</template>
+          </a-tooltip>
+        </template>
+        <template #videoTags="{ record }">
+          <a-tooltip>
+            <div class="one-line">
+              <a-link v-for="(tag, index) in record.tags" :key="index" :hoverable="false">
+                #{{ tag }}</a-link
+              >
+            </div>
+            <template #content
+              ><a-link
+                v-for="(tag, index) in record.tags"
+                :key="index"
+                :hoverable="false"
+                style="color: white"
+              >
+                #{{ tag }}</a-link
+              ></template
+            >
+          </a-tooltip>
+        </template>
+        <template #authorName="{ record }">
+          <a-tooltip>
+            <div class="one-line">{{ record.authorName }}</div>
+            <template #content>{{ record.authorName }}</template>
+          </a-tooltip>
         </template>
         <template #contentType="{ record }">
           <a-space>
@@ -176,16 +228,10 @@
               :size="16"
               shape="square"
             >
-              <img
-                alt="avatar"
-                src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/77721e365eb2ab786c889682cbc721c1.svg~tplv-49unhts6dw-image.image"
-              />
+              <img alt="avatar" src="/images/admin/upload/horizontal.png" />
             </a-avatar>
             <a-avatar v-else :size="16" shape="square">
-              <img
-                alt="avatar"
-                src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/ea8b09190046da0ea7e070d83c5d1731.svg~tplv-49unhts6dw-image.image"
-              />
+              <img alt="avatar" src="/images/admin/upload/vertical.png" />
             </a-avatar>
             {{ $t(`searchTable.form.contentType.${record.contentType}`) }}
           </a-space>
@@ -194,14 +240,57 @@
           {{ $t(`searchTable.form.filterType.${record.filterType}`) }}
         </template>
         <template #status="{ record }">
-          <span v-if="record.status === 'offline'" class="circle"></span>
-          <span v-else class="circle pass"></span>
-          {{ $t(`searchTable.form.status.${record.status}`) }}
+          <!--          <span v-if="record.status === 'offline'" class="circle"></span>-->
+          <!--          <span v-else class="circle pass"></span>-->
+          <span
+            :style="{
+              color: (() => {
+                switch (record.status) {
+                  case 'online':
+                    return '#52C41A'
+                  case 'awaitApproval':
+                    return '#B37FEB'
+                  case 'offline':
+                    return '#F5222D'
+                }
+              })()
+            }"
+            >{{ $t(`searchTable.form.status.${record.status}`) }}</span
+          >
         </template>
-        <template #operations>
-          <a-button type="text" size="small">
-            {{ $t('searchTable.columns.operations.view') }}
-          </a-button>
+        <template #operations="{ record }">
+          <div style="display: flex; align-items: center; justify-content: center">
+            <a-button
+              v-if="record.status === 'awaitApproval'"
+              type="text"
+              size="small"
+              style="padding: 8px"
+              @click="record.status = 'online'"
+            >
+              过审
+            </a-button>
+            <a-button
+              v-else-if="record.status === 'online'"
+              type="text"
+              size="small"
+              style="padding: 8px"
+              @click="record.status = 'offline'"
+            >
+              下线
+            </a-button>
+            <a-button
+              v-else-if="record.status === 'offline'"
+              type="text"
+              size="small"
+              style="padding: 8px"
+              @click="record.status = 'online'"
+            >
+              上线
+            </a-button>
+            <a-button type="text" size="small" :status="'danger'" style="padding: 6px">
+              删除
+            </a-button>
+          </div>
         </template>
       </a-table>
     </a-card>
@@ -209,37 +298,53 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, reactive, watch, nextTick } from 'vue'
+import { computed, ref, reactive, watch, nextTick, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/loading'
 import {
-  queryPolicyList,
-  type PolicyRecord,
+  type VideoRecord,
   type PolicyParams,
-  type PolicyListRes
+  type VideoListRes,
+  type VideoQueryForm
 } from '@/api/list'
 import type { Pagination } from '@/types/global'
 import type { SelectOptionData } from '@arco-design/web-vue/es/select/interface'
 import type { TableColumnData } from '@arco-design/web-vue/es/table/interface'
 import cloneDeep from 'lodash/cloneDeep'
 import Sortable from 'sortablejs'
+import { prefix_url } from '@/api'
+import { getVideoActionUsersByVideoId, getVideoInfoById, pullVideo } from '@/utils/video'
+import { reject } from 'lodash-es'
+import { Message } from '@arco-design/web-vue'
+import { useUserStore } from '@/store'
+import { getAllTags, tagSuffixes } from '@/utils/tag'
+import { isTimeInRange } from '@/utils/tools'
+import { useMainStore } from '@/store/main'
 
 type SizeProps = 'mini' | 'small' | 'medium' | 'large'
 type Column = TableColumnData & { checked?: true }
 
+const mainStore = useMainStore()
+
 const generateFormModel = () => {
-  return {
-    number: '',
-    name: '',
-    contentType: '',
+  let record: VideoQueryForm = {
+    videoId: undefined,
+    videoTitle: undefined,
+    contentType: undefined,
     // filterType: '',
-    createdTime: [],
-    status: ''
+    authorName: undefined,
+    publishTime: [],
+    status: undefined,
+    tags: undefined
   }
+  return record
 }
+
+const userStore = useUserStore()
 const { loading, setLoading } = useLoading(true)
 const { t } = useI18n()
-const renderData = ref<PolicyRecord[]>([])
+
+const renderData = ref<VideoRecord[]>([])
 const formModel = ref(generateFormModel())
 const cloneColumns = ref<Column[]>([])
 const showColumns = ref<Column[]>([])
@@ -271,53 +376,86 @@ const densityList = computed(() => [
     value: 'large'
   }
 ])
+
 const columns = computed<TableColumnData[]>(() => [
   {
     title: t('searchTable.columns.index'),
     dataIndex: 'index',
-    slotName: 'index'
+    slotName: 'index',
+    width: 40,
+    fixed: 'left'
   },
   {
-    title: t('searchTable.columns.number'),
-    dataIndex: 'number'
+    title: t('searchTable.columns.videoTitle'),
+    dataIndex: 'videoTitle',
+    slotName: 'videoTitle',
+    width: 200
   },
   {
-    title: t('searchTable.columns.name'),
-    dataIndex: 'name'
+    title: t('searchTable.columns.videoTags'),
+    dataIndex: 'tags',
+    slotName: 'videoTags',
+    width: 150
   },
+  {
+    title: t('searchTable.columns.authorName'),
+    dataIndex: 'authorName',
+    slotName: 'authorName',
+    width: 140
+  },
+
   {
     title: t('searchTable.columns.contentType'),
     dataIndex: 'contentType',
-    slotName: 'contentType'
-  },
-  // {
-  //   title: t('searchTable.columns.filterType'),
-  //   dataIndex: 'filterType'
-  // },
-  {
-    title: t('searchTable.columns.count'),
-    dataIndex: 'count'
+    slotName: 'contentType',
+    width: 130
   },
   {
-    title: t('searchTable.columns.createdTime'),
-    dataIndex: 'createdTime'
+    title: t('searchTable.columns.likeCount'),
+    dataIndex: 'likeCount',
+    slotName: 'likeCount',
+    align: 'center',
+    width: 80
+  },
+  {
+    title: t('searchTable.columns.starCount'),
+    dataIndex: 'starCount',
+    slotName: 'starCount',
+    align: 'center',
+    width: 80
+  },
+  {
+    title: t('searchTable.columns.commentCount'),
+    dataIndex: 'commentCount',
+    slotName: 'commentCount',
+    align: 'center',
+    width: 80
+  },
+  {
+    title: t('searchTable.columns.publishTime'),
+    dataIndex: 'publishTime',
+    width: 180
   },
   {
     title: t('searchTable.columns.status'),
     dataIndex: 'status',
-    slotName: 'status'
+    slotName: 'status',
+    width: 80
   },
   {
     title: t('searchTable.columns.operations'),
     dataIndex: 'operations',
-    slotName: 'operations'
+    slotName: 'operations',
+    fixed: 'right',
+    align: 'center',
+    width: 100
   }
 ])
 const contentTypeOptions = computed<SelectOptionData[]>(() => [
-  {
-    label: t('searchTable.form.contentType.img'),
-    value: 'img'
-  },
+  // {
+  //   label: t('searchTable.form.contentType.img'),
+  //   value: 'img'
+  // },
   {
     label: t('searchTable.form.contentType.horizontalVideo'),
     value: 'horizontalVideo'
@@ -339,38 +477,112 @@ const filterTypeOptions = computed<SelectOptionData[]>(() => [
 ])
 const statusOptions = computed<SelectOptionData[]>(() => [
   {
+    label: t('searchTable.form.selectDefault'),
+    value: undefined
+  },
+  {
     label: t('searchTable.form.status.online'),
     value: 'online'
   },
   {
     label: t('searchTable.form.status.offline'),
     value: 'offline'
+  },
+  {
+    label: t('searchTable.form.status.awaitApproval'),
+    value: 'awaitApproval'
   }
 ])
+
+const inputValue = ref('')
+// const options = computed(() => showTags.value.map((tag) => tag.name))
+const options = ref<string[]>([])
+const allTags = ref<string[]>([])
+onMounted(() => {
+  getAllTags().then((tags) => {
+    allTags.value = tags
+    options.value = tags
+  })
+})
+
+const handleTagsChange = () => {
+  if (inputValue.value.length <= 0) {
+    options.value = allTags.value
+  }
+}
+
+const handleSearch = (value: string) => {
+  value = value.trim()
+  options.value = allTags.value
+  if (!options.value.includes(value) && value.length > 0) {
+    options.value = tagSuffixes().map((suffix) => value.concat(suffix))
+  }
+}
+const handleInputValueChange = (value: string) => {
+  inputValue.value = inputValue.value.trim()
+}
+
 const fetchData = async (params: PolicyParams = { current: 1, pageSize: 20 }) => {
   setLoading(true)
-  try {
-    // const { data } = await queryPolicyList(params)
-    const records: PolicyRecord[] = [
-      {
-        contentType: 'horizontalVideo',
-        count: 0,
-        createdTime: '',
-        id: '',
-        name: '',
-        number: 0,
-        status: 'online'
-      }
-    ]
-    const data: PolicyListRes = { list: records, total: 0 }
-    renderData.value = data.list
-    pagination.current = params.current
-    pagination.total = data.total
-  } catch (err) {
-    // you can report use errorHandler or other
-  } finally {
-    setLoading(false)
-  }
+  pullVideo({
+    tagsName: params.tags,
+    tagFilterMode: 'filterAll'
+  })
+    .then((videos) => {
+      const promises = videos.map(
+        async (video): Promise<VideoRecord> =>
+          getVideoInfoById(video.id)
+            .then((record) => record)
+            .catch((e) => {
+              // 处理错误
+              Message.error({
+                id: 'videoList',
+                content: e.message
+              })
+              // 返回一个标记错误的值或者抛出一个新的错误，具体取决于你的需求
+              throw e.message
+            })
+      )
+      Promise.all(promises).then((records) => {
+        let results = records
+        if (params.authorName) {
+          results = results.filter((record) =>
+            record.authorName.includes(params.authorName as string)
+          )
+        }
+        if (params.videoTitle) {
+          results = results.filter((record) =>
+            record.videoTitle.includes(params.videoTitle as string)
+          )
+        }
+        if (params.contentType) {
+          results = results.filter((record) => record.contentType === params.contentType)
+        }
+        if (params.status) {
+          results = results.filter((record) => record.status === params.status)
+        }
+        if (params.publishTime && params.publishTime.length === 2) {
+          results = results.filter((record) =>
+            isTimeInRange(params.publishTime as unknown as string[], record.publishTime)
+          )
+        }
+
+        const data: VideoListRes = {
+          list: results,
+          total: 0
+        }
+        renderData.value = data.list
+        pagination.current = params.current
+        pagination.total = data.total
+        setLoading(false)
+      })
+    })
+    .catch((e) => {
+      Message.error({
+        id: 'videoList',
+        content: e.message
+      })
+    })
 }
 
 const search = () => {
@@ -386,6 +598,7 @@ const onPageChange = (current: number) => {
 fetchData()
 const reset = () => {
   formModel.value = generateFormModel()
+  search()
 }
 
 const handleSelectDensity = (val: string | number | Record<string, any> | undefined, e: Event) => {
@@ -455,6 +668,7 @@ export default {
 <style scoped lang="less">
 .container {
   padding: 0 20px 20px 20px;
+  overflow-y: scroll;
 }
 :deep(.arco-table-th) {
   &:last-child {

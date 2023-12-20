@@ -2,29 +2,43 @@ import axios from 'axios'
 import qs from 'query-string'
 import type { DescData } from '@arco-design/web-vue/es/descriptions/interface'
 
-export interface PolicyRecord {
-  id: string
-  number: number
-  name: string
-  contentType: 'img' | 'horizontalVideo' | 'verticalVideo'
+export interface VideoRecord {
+  authorName: string
+  videoId: number | string
+  videoTitle: string
+  contentType: 'horizontalVideo' | 'verticalVideo'
   // filterType: 'artificial' | 'rules';
-  count: number
-  status: 'online' | 'offline'
-  createdTime: string
+  likeCount: number
+  starCount: number
+  commentCount: number
+  status: 'online' | 'offline' | 'awaitApproval'
+  publishTime: string
+  tags: string[]
 }
 
-export interface PolicyParams extends Partial<PolicyRecord> {
+export interface VideoQueryForm {
+  authorName: string | undefined
+  videoId: string | undefined
+  videoTitle: string | undefined
+  contentType: 'horizontalVideo' | 'verticalVideo' | undefined
+  // filterType: 'artificial' | 'rules';
+  status: 'online' | 'offline' | 'awaitApproval' | undefined
+  publishTime: string[] | undefined
+  tags: string[] | undefined
+}
+
+export interface PolicyParams extends Partial<VideoQueryForm> {
   current: number
   pageSize: number
 }
 
-export interface PolicyListRes {
-  list: PolicyRecord[]
+export interface VideoListRes {
+  list: VideoRecord[]
   total: number
 }
 
 export function queryPolicyList(params: PolicyParams) {
-  return axios.get<PolicyListRes>('/api/list/policy', {
+  return axios.get<VideoListRes>('/api/list/policy', {
     params,
     paramsSerializer: (obj) => {
       return qs.stringify(obj)

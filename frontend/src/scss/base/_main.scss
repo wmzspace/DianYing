@@ -17,6 +17,16 @@ html {
 
 }
 
+.one-line{
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  overflow: hidden; /*必须结合的属性,当内容溢出元素框时发生的事情*/
+  display: -webkit-box; /*必须结合的属性 ，将对象作为弹性伸缩盒子模型显示 。*/
+  -webkit-line-clamp: 1; /*用来限制在一个块元素显示的文本的行数。*/
+  -webkit-box-orient: vertical;
+  cursor: pointer;
+}
+
 //html,body,body > div:first-child{
 //  height: 100%;
 //}

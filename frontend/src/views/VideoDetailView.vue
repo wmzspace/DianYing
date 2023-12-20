@@ -3,6 +3,7 @@ import {
   deleteVideoById,
   getVideoActionUsersByVideoId,
   getVideoById,
+  getVideoInfoById,
   likeOrStarVideoOrNot,
   pullVideo
 } from '@/utils/video'
@@ -27,6 +28,7 @@ import VideoCardSmall from '@/components/Cards/VideoCardSmall.vue'
 import { useMainStore } from '@/store/main'
 import { Message } from '@arco-design/web-vue'
 import useLoading from '@/hooks/loading'
+import type { VideoRecord } from '@/api/list'
 
 const userStore = useUserStore()
 const mainStore = useMainStore()
@@ -114,21 +116,31 @@ const refreshRootCommentList = (focusIndex?: CommentFinder) => {
   })
 }
 
+const videoRecord = ref<VideoRecord | undefined>(undefined)
+const refreshVideoRecord = () => {
+  getVideoInfoById(props.video_id).then((record) => {
+    videoRecord.value = record
+  })
+}
+
 watch(video, (value) => {
   if (value !== undefined) {
-    userStore.getUserById(value.authorId).then((user) => {
-      author.value = user
-    })
+    videoRecord.value = undefined
     videoLikeShowNum.value = 0
     isLiked.value = false
     videoStarShowNum.value = 0
     isStarred.value = false
+    author.value = undefined
+    relatedList.splice(0)
+    commentsNum.value = 0
+    userStore.getUserById(value.authorId).then((user) => {
+      author.value = user
+    })
+    refreshVideoRecord()
     refreshVideoLikeAndStar()
     isProcessStar.value = false
     isProcessLike.value = false
     refreshRootCommentList()
-    relatedList.splice(0)
-
     pullVideo({ num: 10 }).then((res) => {
       relatedList.splice(0)
       res.forEach((e) => {
@@ -412,6 +424,14 @@ const router = useRouter()
         <div class="detail-video-info">
           <div class="detail-video-title">
             {{ video?.title }}
+            <a-link
+              v-for="(tag, index) in videoRecord?.tags"
+              :key="index"
+              :hoverable="false"
+              style="color: white"
+            >
+              #{{ tag }}</a-link
+            >
           </div>
           <div class="detail-video-actions">
             <a-list class="detail-video-actions-left" :bordered="false">

@@ -97,6 +97,8 @@ class User(db.Model):
         return '<User %r>' % self.nickname
 
     def __init__(self, args):
+        if 'id' in args:
+            self.id = args['id']
         if 'email' in args:
             self.email = args['email']
         if 'nickname' in args:
@@ -129,6 +131,9 @@ class VTag(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
+
+    def __repr__(self):
+        return self.name
 
     def __init__(self, args):
         """
@@ -181,6 +186,7 @@ class Video(db.Model):
     width = db.Column(db.Integer, nullable=False)
     height = db.Column(db.Integer, nullable=False)
     tags = db.relationship("VTag", secondary="video_tag_relation")
+    status = db.Column(db.String(100), nullable=False, default="awaitApproval")
     publish_time = db.Column(
         db.String(50),
         nullable=False,
@@ -200,6 +206,8 @@ class Video(db.Model):
         cascade="all, delete-orphan")
 
     def __init__(self, args):
+        if 'id' in args:
+            self.id = args['id']
         if 'title' in args:
             self.title = args['title']
         if 'author_id' in args:
@@ -212,12 +220,10 @@ class Video(db.Model):
             self.width = args['width']
         if 'height' in args:
             self.height = args['height']
-        # if 'likes' in args:
-        #     self.likes = args['likes']
+        if 'status' in args:
+            self.status = args['status']
         if 'publish_time' in args:
             self.publish_time = args['publish_time']
-
-    pass
 
 
 class VTRelation(db.Model):
@@ -303,6 +309,8 @@ class Comment(db.Model):
             args.video_id (int): 视频ID
             args.user_id (int): 用户ID
         """
+        if 'id' in args:
+            self.id = args['id']
         if 'content' in args:
             self.content = args['content']
         if 'parent_id' in args:
@@ -391,6 +399,7 @@ def load_init_data():
     #     default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     db.session.add_all([
         User({
+            'id': 1,
             'nickname': '19岁带饭冲锋🌈',
             'area': '四川',
             'email': "1@test.com",
@@ -401,18 +410,21 @@ def load_init_data():
             'signature': "心之所向，便是阳光 🌈\n喜欢摄影、唱歌，@向阳花木👈\n谢谢你长得这么好看还关注我❤️"
 
         }), User({
+            'id': 2,
             'nickname': '鹿非🌈',
             'area': '重庆',
             'email': "2@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/2.jpeg',
             'gender': 'male'
         }), User({
+            'id': 3,
             'nickname': '活着就不算坏',
             'area': '重庆',
             'email': "3@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/3.jpeg',
             'gender': 'male'
         }), User({
+            'id': 4,
             'nickname': '浅梦',
             'area': '浙江',
             'email': "4@test.com",
@@ -422,7 +434,8 @@ def load_init_data():
     ])
 
     video1 = {
-        'title': '电子科技大学，4个计算机男生，毕业4年后现状 #电子科技大学 #计算机 #程序员 #求职 #职业规划',
+        'id': 1,
+        'title': '电子科技大学，4个计算机男生，毕业4年后现状',
         'author_id': 1,
         'url': PREFIX_URL + 'static/videos/3.mp4',
         'cover': PREFIX_URL + 'static/videos/covers/3.jpeg',
@@ -430,6 +443,7 @@ def load_init_data():
         'height': 720,
     }
     video2 = {
+        'id': 2,
         'title': '亿万富翁找回儿子',
         'author_id': 4,
         'url': PREFIX_URL + 'static/videos/1.mp4',
@@ -439,6 +453,7 @@ def load_init_data():
 
     }
     video3 = {
+        'id': 3,
         'title': '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
         'author_id': 2,
         'url': PREFIX_URL + 'static/videos/2.mp4',
@@ -447,6 +462,7 @@ def load_init_data():
         'height': 576,
     }
     video4 = {
+        'id': 4,
         'title': '19岁带饭冲锋🌈的作品',
         'author_id': 1,
         'url': PREFIX_URL + 'static/videos/2.mp4',
@@ -455,7 +471,8 @@ def load_init_data():
         'height': 576,
     }
     video5 = {
-        'title': '带东北同学第一次逛成都犀浦夜市！！ 好多没见过的美食！ #美食 #vlog日常 #成都夜市 #犀浦夜市',
+        'id': 5,
+        'title': '带东北同学第一次逛成都犀浦夜市！！ 好多没见过的美食！',
         'author_id': 1,
         'url': PREFIX_URL + 'static/videos/4.mp4',
         'cover': PREFIX_URL + 'static/videos/covers/4.jpg',
@@ -474,11 +491,15 @@ def load_init_data():
 
     db.session.add_all(
         [
-            VTag({'name': '计算机'}),
-            VTag({'name': '电子科技大学'}),
-            VTag({'name': '程序员'}),
-            VTag({'name': '求职'}),
-            VTag({'name': '职业规划'}),
+            VTag({'id': 1, 'name': '计算机'}),
+            VTag({'id': 2, 'name': '电子科技大学'}),
+            VTag({'id': 3, 'name': '程序员'}),
+            VTag({'id': 4, 'name': '求职'}),
+            VTag({'id': 5, 'name': '职业规划'}),
+            VTag({'id': 6, 'name': '美食'}),
+            VTag({'id': 7, 'name': 'vlog日常'}),
+            VTag({'id': 8, 'name': '成都夜市'}),
+            VTag({'id': 9, 'name': '犀浦夜市'}),
         ]
     )
 
@@ -513,6 +534,10 @@ def load_init_data():
             VTRelation({'video_id': 1, 'tag_id': 3}),
             VTRelation({'video_id': 1, 'tag_id': 4}),
             VTRelation({'video_id': 1, 'tag_id': 5}),
+            VTRelation({'video_id': 5, 'tag_id': 6}),
+            VTRelation({'video_id': 5, 'tag_id': 7}),
+            VTRelation({'video_id': 5, 'tag_id': 8}),
+            VTRelation({'video_id': 5, 'tag_id': 9}),
         ]
 
     )

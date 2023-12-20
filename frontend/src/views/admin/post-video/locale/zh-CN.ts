@@ -9,7 +9,7 @@ export default {
   'stepForm.step.title.finish': '完成发布',
   'stepForm.step.subTitle.finish': '成功发布',
   'stepForm.success.title': '提交成功',
-  'stepForm.success.subTitle': '表单提交成功！',
+  'stepForm.success.subTitle': '正在加速审核中,通过后将自动发布',
   'stepForm.button.next': '下一步',
   'stepForm.button.prev': '上一步',
   'stepForm.button.submit': '提交',

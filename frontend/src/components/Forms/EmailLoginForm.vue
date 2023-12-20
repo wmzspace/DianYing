@@ -169,7 +169,7 @@ const handleClick = () => {
         validateCaptchaCode(form.email, form.code)
           .then((userId) => {
             // 登录成功
-            userStore.userLogin(userId)
+            userStore.userLogin(userId, true)
           })
           .catch((msg) => {
             Message.error({

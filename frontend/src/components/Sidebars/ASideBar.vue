@@ -40,13 +40,13 @@ const userStore = useUserStore()
             <div class="nav-text"><span>推荐</span></div>
           </a>
         </a-menu-item>
-        <a-menu-item key="3" v-if="!userStore.isAdmin" v-show="false">
+        <a-menu-item key="3" v-show="!userStore.isAdmin">
           <a class="nav-a">
             <div class="nav-icon"></div>
             <div class="nav-text"><span>关注</span></div>
           </a></a-menu-item
         >
-        <a-menu-item key="4" v-if="!userStore.isAdmin" v-show="false">
+        <a-menu-item key="4" v-show="!userStore.isAdmin">
           <a class="nav-a">
             <div class="nav-icon"></div>
             <div class="nav-text">
@@ -65,7 +65,7 @@ const userStore = useUserStore()
             </div>
           </a>
         </a-menu-item>
-        <a-menu-item key="5" v-if="!userStore.isAdmin && userStore.getCurrentUser">
+        <a-menu-item key="5" v-show="!userStore.isAdmin && userStore.getCurrentUser">
           <a
             class="nav-a"
             @click="
@@ -83,72 +83,72 @@ const userStore = useUserStore()
           <a-divider class="divider" />
         </a-menu-item>
 
-        <!--        <a-menu-item key="6">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>直播</span></div>-->
-        <!--          </a></a-menu-item-->
-        <!--        >-->
-        <!--        <a-menu-item key="7">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>放映厅</span></div>-->
-        <!--          </a></a-menu-item-->
-        <!--        >-->
-        <!--        <a-menu-item key="8">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>知识</span></div>-->
-        <!--          </a></a-menu-item-->
-        <!--        >-->
-        <!--        <a-menu-item key="9">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>热点</span></div>-->
-        <!--          </a></a-menu-item-->
-        <!--        >-->
-        <!--        <a-menu-item key="10">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>游戏</span></div>-->
-        <!--          </a></a-menu-item-->
-        <!--        >-->
-        <!--        <a-menu-item key="11">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>娱乐</span></div>-->
-        <!--          </a>-->
-        <!--        </a-menu-item>-->
-        <!--        <a-menu-item key="12">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>二次元</span></div>-->
-        <!--          </a>-->
-        <!--        </a-menu-item>-->
-        <!--        <a-menu-item key="13">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>音乐</span></div>-->
-        <!--          </a>-->
-        <!--        </a-menu-item>-->
-        <!--        <a-menu-item key="14">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>美食</span></div>-->
-        <!--          </a>-->
-        <!--        </a-menu-item>-->
-        <!--        <a-menu-item key="15">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>体育</span></div>-->
-        <!--          </a>-->
-        <!--        </a-menu-item>-->
-        <!--        <a-menu-item key="16">-->
-        <!--          <a class="nav-a">-->
-        <!--            <div class="nav-icon"></div>-->
-        <!--            <div class="nav-text"><span>时尚</span></div>-->
-        <!--          </a>-->
-        <!--        </a-menu-item>-->
+        <a-menu-item key="6">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>直播</span></div>
+          </a></a-menu-item
+        >
+        <a-menu-item key="7">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>放映厅</span></div>
+          </a></a-menu-item
+        >
+        <a-menu-item key="8">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>知识</span></div>
+          </a></a-menu-item
+        >
+        <a-menu-item key="9">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>热点</span></div>
+          </a></a-menu-item
+        >
+        <a-menu-item key="10">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>游戏</span></div>
+          </a></a-menu-item
+        >
+        <a-menu-item key="11">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>娱乐</span></div>
+          </a>
+        </a-menu-item>
+        <a-menu-item key="12">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>二次元</span></div>
+          </a>
+        </a-menu-item>
+        <a-menu-item key="13">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>音乐</span></div>
+          </a>
+        </a-menu-item>
+        <a-menu-item key="14">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>美食</span></div>
+          </a>
+        </a-menu-item>
+        <a-menu-item key="15">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>体育</span></div>
+          </a>
+        </a-menu-item>
+        <a-menu-item key="16">
+          <a class="nav-a">
+            <div class="nav-icon"></div>
+            <div class="nav-text"><span>时尚</span></div>
+          </a>
+        </a-menu-item>
         <a-menu-item disabled>
           <a-divider class="divider" />
         </a-menu-item>

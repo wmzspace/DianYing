@@ -7,6 +7,7 @@ import { useUserStore } from '@/store'
 import SearchVideo from '@/views/admin/search/search-video/index.vue'
 import SearchUser from '@/views/admin/search/search-user/index.vue'
 import PostVideo from '@/views/admin/post-video/index.vue'
+import { useMainStore } from '@/store/main'
 
 let routes: Array<RouteRecordRaw> = [
   {
@@ -201,7 +202,7 @@ const router = createRouter({
 // router/index.js
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-
+  const mainStore = useMainStore()
   // const isAuthenticated = userStore.isAdmin
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
@@ -214,7 +215,17 @@ router.beforeEach((to, from, next) => {
     ) {
       next() //允许访问
     } else {
-      next('/')
+      if (userStore.isAdmin) {
+        next('/admin')
+      } else {
+        if (mainStore.goToPost) {
+          mainStore.goToPost = false
+          alert('!')
+          next('/admin/post-video')
+        } else {
+          next('/')
+        }
+      }
     }
   } else {
     next() //允许访问

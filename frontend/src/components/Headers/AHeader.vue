@@ -147,25 +147,36 @@ onMounted(() => {
             </template>
           </a-trigger>
         </a-menu-item>
-        <a-menu-item v-if="userStore.isUserNotAdmin">
-          <a-trigger :trigger="['click']" :unmount-on-close="false">
-            <a-button
-              @click="
-                $router.push({
-                  name: 'postVideo'
-                })
-              "
-              ><p class="nav-text">投稿</p>
-              <template #icon>
-                <icon-share-external style="color: white; width: 100%; margin: 0" />
-              </template>
-            </a-button>
-            <template #content>
-              <div>
-                <a-empty />
-              </div>
+        <a-menu-item v-if="userStore.isUserNotAdmin" disabled>
+          <a-button
+            @click="
+              $router.push({
+                name: 'postVideo'
+              })
+            "
+            ><p class="nav-text">投稿</p>
+            <template #icon>
+              <icon-share-external style="color: white; width: 100%; margin: 0" />
             </template>
-          </a-trigger>
+          </a-button>
+          <!--          <a-trigger :trigger="['click']" :unmount-on-close="false">-->
+          <!--            <a-button-->
+          <!--              @click="-->
+          <!--                $router.push({-->
+          <!--                  name: 'postVideo'-->
+          <!--                })-->
+          <!--              "-->
+          <!--              ><p class="nav-text">投稿</p>-->
+          <!--              <template #icon>-->
+          <!--                <icon-share-external style="color: white; width: 100%; margin: 0" />-->
+          <!--              </template>-->
+          <!--            </a-button>-->
+          <!--            <template #content>-->
+          <!--              <div>-->
+          <!--                <a-empty />-->
+          <!--              </div>-->
+          <!--            </template>-->
+          <!--          </a-trigger>-->
         </a-menu-item>
         <a-menu-item disabled>
           <a-popover position="br" id="popover-a-avatar" :trigger="['click', 'hover']">

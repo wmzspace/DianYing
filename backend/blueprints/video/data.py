@@ -20,33 +20,40 @@ def get_all_videos():
     author_id = request.args.get("author_id")
 
     # 从表中抽取指定标签的记录
-    tags_id_raw = request.args.get("tags_id")
-    tags_id = []
-    if tags_id_raw is not None:
+    tags_name_raw = request.args.get("tags_name")
+    tag_filter_mode = request.args.get("tag_filter_mode")
 
-        def filter_numbers(string_array):
-            return [s for s in string_array if s.isdigit()]
-
-        parsed_tags = filter_numbers(tags_id_raw.split(','))
-
-        def map_to_int(ch):
-            return int(ch)
-
-        if len(parsed_tags) > 0:
-            tags_id = list(map(map_to_int, parsed_tags))
+    # 待筛选的标签列表
+    query_tags_name = []
+    if tags_name_raw is not None:
+        query_tags_name = tags_name_raw.split(',')
 
     results = []
     for video in all_videos:
         if author_id is not None and video.author_id != author_id:
             continue
-
-        if len(tags_id) > 0:
+        if len(query_tags_name) > 0:
             tags = VTRelation.query.filter_by(video_id=video.id).all()
-            find = False
-            for tag in tags:
-                if tag.id in tags_id:
-                    find = True
-                    break
+            if tag_filter_mode == "filterAll":
+                # 返回包含所有标签的视频
+                find = True
+
+                def get_tags_name(v_tag_relation_model):
+                    return VTag.query.filter_by(id=v_tag_relation_model.tag_id).first().name
+
+                tags_name = list(map(get_tags_name, tags))
+                for query_tag_name in query_tags_name:
+                    if query_tag_name not in tags_name:
+                        find = False
+                        break
+            else:
+                # 返回包含任意一个标签的视频
+                find = False
+                for tag in tags:
+                    tag_record = VTag.query.get(tag.tag_id)
+                    if tag_record.name in query_tags_name:
+                        find = True
+                        break
             if not find:
                 continue
 
@@ -190,7 +197,8 @@ def post_video():
         'height': data['height'],
         'width': data['width'],
         'cover': data['cover'],
-        'title': data['title'] + ' ' + tags_string,
+        'title': data['title'],
+        # 'title': data['title'] + ' ' + tags_string,
         'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     })
     db.session.add(new_video)
@@ -200,3 +208,59 @@ def post_video():
     db.session.commit()
 
     return AjaxResponse.success(new_video_id, "视频上传成功")
+
+
+class VideoRecord:
+    videoId: int | str
+    videoTitle: str
+    authorName: str
+    status: str
+    contentType: str
+    likeCount: int
+    starCount: int
+    commentCount: int
+    publishTime: str
+    tags: list[str]
+
+    def __init__(self, video_id, video_title, author_name,
+                 status, content_type, like_count, star_count, comment_count, publish_time, tags):
+        self.videoId = video_id
+        self.videoTitle = video_title
+        self.authorName = author_name
+        self.status = status
+        self.contentType = content_type
+        self.likeCount = like_count
+        self.starCount = star_count
+        self.commentCount = comment_count
+        self.publishTime = publish_time
+        self.tags = tags
+
+
+@video_bp.route('/info/<int:video_id>', methods=['GET'])
+def get_video_info(video_id):
+    if video_id is None:
+        return AjaxResponse.error("参数缺失: video_id")
+    video = Video.query.get(video_id)
+    if video is None:
+        return AjaxResponse.error("视频不存在")
+    author_name = User.query.get(video.author_id).nickname
+    content_type = "horizontalVideo" if video.width >= video.height else "verticalVideo"
+    tags = video.tags
+
+    def get_tag_name(tag):
+        return tag.name
+
+    tags_name = list(map(get_tag_name, tags))
+    record = VideoRecord(
+        video_id=video_id,
+        video_title=video.title,
+        author_name=author_name,
+        status=video.status,
+        content_type=content_type,
+        like_count=len(video.video_liked),
+        star_count=len(video.video_starred),
+        comment_count=len(video.comments),
+        publish_time=video.publish_time,
+        tags=tags_name)
+
+    return AjaxResponse.success(model2dict([record])[0])

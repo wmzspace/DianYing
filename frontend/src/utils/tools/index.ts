@@ -167,3 +167,11 @@ export const disabledDateTime = (dates: Dayjs) => {
     }
   }
 }
+
+export const isTimeInRange = (range: string[], time: string) => {
+  const startDate = new Date(range[0])
+  const endDate = new Date(range[1])
+  const checkTime = new Date(time)
+
+  return checkTime >= startDate && checkTime <= endDate
+}

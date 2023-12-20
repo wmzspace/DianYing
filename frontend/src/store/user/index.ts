@@ -86,7 +86,7 @@ export const useUserStore = defineStore('user', {
           : guestUser.nickname
   },
   actions: {
-    async userLogin(userId: number | string) {
+    async userLogin(userId: number | string, needRefresh?: boolean) {
       if (typeof userId === 'string') {
         userId = parseInt(userId)
       }
@@ -99,6 +99,13 @@ export const useUserStore = defineStore('user', {
           this.setStoreToken(true)
           const mainStore = useMainStore()
           mainStore.setLoginVisible(false)
+          if (needRefresh) {
+            // location.reload()
+          }
+          if (mainStore.goToPost) {
+            router.push({ name: 'postVideo' })
+            mainStore.setGoToPost(false)
+          }
         })
 
         // this.userData = await api.post({ login, password })
