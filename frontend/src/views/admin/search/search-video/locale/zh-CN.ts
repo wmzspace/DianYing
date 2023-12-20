@@ -33,6 +33,10 @@ export default {
   'searchTable.operation.create': '发布',
   'searchTable.operation.import': '批量导入',
   'searchTable.operation.download': '下载',
+
+  'searchTable.edit.authorId.placeholder': '请输入作者编号',
+  'searchTable.edit.videoTitle.placeholder': '请输入视频标题',
+
   // columns
   'searchTable.columns.index': '#',
   'searchTable.columns.videoTitle': '视频标题',

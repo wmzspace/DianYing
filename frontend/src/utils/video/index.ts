@@ -64,6 +64,7 @@ export interface pullVideoRequest {
   authorId?: number
   tagsName?: string[]
   tagFilterMode?: 'filterAll' | undefined
+  sort?: 'sort' | undefined
 }
 export const pullVideo = (request?: pullVideoRequest) =>
   new Promise<VideoMedia[]>((resolve, reject) => {
@@ -71,11 +72,14 @@ export const pullVideo = (request?: pullVideoRequest) =>
     const authorString =
       request && typeof request.authorId !== 'undefined' ? `&author_id=${request.authorId}` : ''
     const tagString =
-      request && typeof request.tagsName !== 'undefined' ? `&tags_name=${request.tagsName}` : ''
+      request && typeof request.tagsName !== 'undefined' && request.tagsName.length > 0
+        ? `&tags_name=${request.tagsName}`
+        : ''
     const tagFilterModeString =
       request && typeof request.tagFilterMode !== 'undefined'
         ? `&tag_filter_mode=${request.tagFilterMode}`
         : ''
+    const sortString = request && typeof request.sort !== 'undefined' ? `&sort=${request.sort}` : ''
 
     fetch(
       prefix_url
@@ -83,7 +87,8 @@ export const pullVideo = (request?: pullVideoRequest) =>
         .concat(numString)
         .concat(authorString)
         .concat(tagString)
-        .concat(tagFilterModeString),
+        .concat(tagFilterModeString)
+        .concat(sortString),
       {
         method: 'GET'
       }
@@ -228,6 +233,48 @@ export const getVideoInfoById = (videoId: number | string) =>
           res.json().then((ajaxData: AjaxResponse) => {
             if (ajaxData.ajax_ok) {
               resolve(ajaxData.ajax_data as VideoRecord)
+            } else {
+              reject(ajaxData.ajax_msg)
+            }
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+
+export interface EditVideoForm {
+  videoId: number | string
+  title: string
+  authorId: number | string
+  status: 'online' | 'offline' | 'awaitApproval'
+}
+
+export const editVideoById = (formData: EditVideoForm) =>
+  new Promise<void>((resolve, reject) => {
+    fetch(
+      prefix_url
+        .concat('video/edit?')
+        .concat(`&videoId=${formData.videoId}`)
+        .concat(`&title=${formData.title}`)
+        .concat(`&authorId=${formData.authorId}`)
+        .concat(`&status=${formData.status}`),
+      {
+        method: 'POST'
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              Message.success({
+                id: 'videoEdit',
+                content: ajaxData.ajax_msg
+              })
+              resolve()
             } else {
               reject(ajaxData.ajax_msg)
             }

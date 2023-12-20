@@ -4,6 +4,7 @@ import type { DescData } from '@arco-design/web-vue/es/descriptions/interface'
 
 export interface VideoRecord {
   authorName: string
+  authorId: number
   videoId: number | string
   videoTitle: string
   contentType: 'horizontalVideo' | 'verticalVideo'
@@ -14,6 +15,10 @@ export interface VideoRecord {
   status: 'online' | 'offline' | 'awaitApproval'
   publishTime: string
   tags: string[]
+}
+
+export interface VideoRecordCanEdit extends VideoRecord {
+  isEditing: boolean
 }
 
 export interface VideoQueryForm {

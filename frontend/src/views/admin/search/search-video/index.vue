@@ -167,7 +167,7 @@
       </a-row>
       <a-table
         row-key="id"
-        :loading="loading"
+        :loading="loading || editLoading"
         :pagination="pagination"
         :columns="cloneColumns as TableColumnData[]"
         :data="renderData"
@@ -180,12 +180,45 @@
         :scrollbar="true"
         column-resizable
         @page-change="onPageChange"
+        @sorterChange="onSortChange"
       >
         <template #index="{ rowIndex }">
           {{ rowIndex + 1 + (pagination.current - 1) * pagination.pageSize }}
         </template>
-        <template #videoTitle="{ record }">
-          <a-tooltip>
+        <template #status="{ record, rowIndex }">
+          <!--          <span v-if="record.status === 'offline'" class="circle"></span>-->
+          <!--          <span v-else class="circle pass"></span>-->
+          <a-select
+            v-model="editingData[rowIndex].status"
+            :options="statusOptions"
+            :placeholder="$t('searchTable.form.selectDefault')"
+            v-if="editingData[rowIndex].isEditing"
+          />
+          <span
+            v-else
+            :style="{
+              color: (() => {
+                switch (record.status) {
+                  case 'online':
+                    return '#52C41A'
+                  case 'awaitApproval':
+                    return '#B37FEB'
+                  case 'offline':
+                    return '#F5222D'
+                }
+              })()
+            }"
+            >{{ $t(`searchTable.form.status.${record.status}`) }}</span
+          >
+        </template>
+        <template #videoTitle="{ record, rowIndex }">
+          <a-input
+            v-model.trim="editingData[rowIndex].videoTitle"
+            :placeholder="$t('searchTable.edit.videoTitle.placeholder')"
+            v-if="editingData[rowIndex].isEditing"
+            :max-length="100"
+          />
+          <a-tooltip v-else>
             <div class="one-line">{{ record.videoTitle }}</div>
             <template #content>{{ record.videoTitle }}</template>
           </a-tooltip>
@@ -209,8 +242,13 @@
             >
           </a-tooltip>
         </template>
-        <template #authorName="{ record }">
-          <a-tooltip>
+        <template #authorName="{ record, rowIndex }">
+          <a-input-number
+            v-model="editingData[rowIndex].authorId"
+            v-if="editingData[rowIndex].isEditing"
+            :placeholder="$t('searchTable.edit.authorId.placeholder')"
+          />
+          <a-tooltip v-else>
             <div class="one-line">{{ record.authorName }}</div>
             <template #content>{{ record.authorName }}</template>
           </a-tooltip>
@@ -239,55 +277,33 @@
         <template #filterType="{ record }">
           {{ $t(`searchTable.form.filterType.${record.filterType}`) }}
         </template>
-        <template #status="{ record }">
-          <!--          <span v-if="record.status === 'offline'" class="circle"></span>-->
-          <!--          <span v-else class="circle pass"></span>-->
-          <span
-            :style="{
-              color: (() => {
-                switch (record.status) {
-                  case 'online':
-                    return '#52C41A'
-                  case 'awaitApproval':
-                    return '#B37FEB'
-                  case 'offline':
-                    return '#F5222D'
-                }
-              })()
-            }"
-            >{{ $t(`searchTable.form.status.${record.status}`) }}</span
-          >
-        </template>
-        <template #operations="{ record }">
+        <template #operations="{ record, rowIndex }">
           <div style="display: flex; align-items: center; justify-content: center">
             <a-button
-              v-if="record.status === 'awaitApproval'"
               type="text"
               size="small"
               style="padding: 8px"
-              @click="record.status = 'online'"
+              @click="handleSwitchEdit(record, rowIndex)"
+              >{{ editingData[rowIndex].isEditing ? '取消' : '编辑' }}</a-button
             >
-              过审
+            <a-button
+              type="text"
+              size="small"
+              :status="'success'"
+              style="padding: 6px"
+              v-if="editingData[rowIndex].isEditing"
+              @click="handleSaveEdit(record, rowIndex)"
+            >
+              保存
             </a-button>
             <a-button
-              v-else-if="record.status === 'online'"
               type="text"
               size="small"
-              style="padding: 8px"
-              @click="record.status = 'offline'"
+              :status="'danger'"
+              style="padding: 6px"
+              v-if="!editingData[rowIndex].isEditing"
+              @click="handleDeleteVideo(record, rowIndex)"
             >
-              下线
-            </a-button>
-            <a-button
-              v-else-if="record.status === 'offline'"
-              type="text"
-              size="small"
-              style="padding: 8px"
-              @click="record.status = 'online'"
-            >
-              上线
-            </a-button>
-            <a-button type="text" size="small" :status="'danger'" style="padding: 6px">
               删除
             </a-button>
           </div>
@@ -305,7 +321,8 @@ import {
   type VideoRecord,
   type PolicyParams,
   type VideoListRes,
-  type VideoQueryForm
+  type VideoQueryForm,
+  type VideoRecordCanEdit
 } from '@/api/list'
 import type { Pagination } from '@/types/global'
 import type { SelectOptionData } from '@arco-design/web-vue/es/select/interface'
@@ -313,18 +330,91 @@ import type { TableColumnData } from '@arco-design/web-vue/es/table/interface'
 import cloneDeep from 'lodash/cloneDeep'
 import Sortable from 'sortablejs'
 import { prefix_url } from '@/api'
-import { getVideoActionUsersByVideoId, getVideoInfoById, pullVideo } from '@/utils/video'
+import {
+  deleteVideoById,
+  editVideoById,
+  type EditVideoForm,
+  getVideoActionUsersByVideoId,
+  getVideoInfoById,
+  pullVideo
+} from '@/utils/video'
 import { reject } from 'lodash-es'
 import { Message } from '@arco-design/web-vue'
 import { useUserStore } from '@/store'
 import { getAllTags, tagSuffixes } from '@/utils/tag'
 import { isTimeInRange } from '@/utils/tools'
 import { useMainStore } from '@/store/main'
+import _ from 'lodash'
 
 type SizeProps = 'mini' | 'small' | 'medium' | 'large'
 type Column = TableColumnData & { checked?: true }
 
 const mainStore = useMainStore()
+
+const handleSwitchEdit = (record: VideoRecordCanEdit, rowIndex: number) => {
+  // editingData.value = _.cloneDeep(renderData.value)
+  if (!editingData.value[rowIndex].isEditing) {
+    isEditingTable.value = false
+  }
+  editingData.value[rowIndex].isEditing = !editingData.value[rowIndex].isEditing
+}
+
+const editLoadObject = useLoading()
+const editLoading = editLoadObject.loading
+const setEditLoading = editLoadObject.setLoading
+const handleSaveEdit = (record: VideoRecordCanEdit, rowIndex: number) => {
+  setEditLoading(true)
+  if (record.videoId !== editingData.value[rowIndex].videoId) {
+    Message.error({
+      id: 'videoEdit',
+      content: '保存失败：数据异常'
+    })
+    location.reload()
+  }
+  const rowEditData = editingData.value[rowIndex]
+  const editForm: EditVideoForm = {
+    authorId: rowEditData.authorId,
+    status: rowEditData.status,
+    title: rowEditData.videoTitle,
+    videoId: rowEditData.videoId
+  }
+  editVideoById(editForm)
+    .then(() => {
+      search()
+    })
+    .finally(() => {
+      setEditLoading(false)
+    })
+}
+
+const handleDeleteVideo = (record: VideoRecordCanEdit, rowIndex: number) => {
+  setEditLoading(true)
+  if (record.videoId !== editingData.value[rowIndex].videoId) {
+    Message.error({
+      id: 'videoEdit',
+      content: '删除失败：数据异常'
+    })
+    location.reload()
+  }
+
+  deleteVideoById(record.videoId)
+    .then((msg) => {
+      Message.success({
+        id: 'videoEdit',
+        content: msg
+      })
+      search()
+    })
+    .catch((e) => {
+      Message.success({
+        id: 'videoEdit',
+        content: e
+      })
+    })
+    .finally(() => {
+      setEditLoading(false)
+    })
+}
 
 const generateFormModel = () => {
   let record: VideoQueryForm = {
@@ -344,7 +434,8 @@ const userStore = useUserStore()
 const { loading, setLoading } = useLoading(true)
 const { t } = useI18n()
 
-const renderData = ref<VideoRecord[]>([])
+const editingData = ref<VideoRecordCanEdit[]>([])
+const renderData = ref<VideoRecordCanEdit[]>([])
 const formModel = ref(generateFormModel())
 const cloneColumns = ref<Column[]>([])
 const showColumns = ref<Column[]>([])
@@ -377,6 +468,23 @@ const densityList = computed(() => [
   }
 ])
 
+const isEditingTable = computed<boolean>({
+  get: () => {
+    for (let i = 0; i < editingData.value.length; i++) {
+      if (editingData.value[i].isEditing) {
+        return true
+      }
+    }
+    return false
+  },
+  set: (value) => {
+    if (!value) {
+      // editingData.value = _.cloneDeep(renderData.value)
+      editingData.value.filter((data) => data.isEditing).forEach((data) => (data.isEditing = false))
+    }
+  }
+})
+
 const columns = computed<TableColumnData[]>(() => [
   {
     title: t('searchTable.columns.index'),
@@ -384,6 +492,15 @@ const columns = computed<TableColumnData[]>(() => [
     slotName: 'index',
     width: 40,
     fixed: 'left'
+  },
+  {
+    title: t('searchTable.columns.status'),
+    dataIndex: 'status',
+    slotName: 'status',
+    width: isEditingTable.value ? 140 : 85,
+    sortable: {
+      sortDirections: ['ascend', 'descend']
+    }
   },
   {
     title: t('searchTable.columns.videoTitle'),
@@ -398,50 +515,63 @@ const columns = computed<TableColumnData[]>(() => [
     width: 150
   },
   {
-    title: t('searchTable.columns.authorName'),
+    title: isEditingTable.value ? '作者编号/名称' : '作者名称',
     dataIndex: 'authorName',
     slotName: 'authorName',
-    width: 140
+    width: 140,
+    sortable: {
+      sortDirections: ['ascend', 'descend']
+    }
   },
 
   {
     title: t('searchTable.columns.contentType'),
     dataIndex: 'contentType',
     slotName: 'contentType',
-    width: 130
+    width: 130,
+    sortable: {
+      sortDirections: ['ascend', 'descend']
+    }
   },
   {
     title: t('searchTable.columns.likeCount'),
     dataIndex: 'likeCount',
     slotName: 'likeCount',
     align: 'center',
-    width: 80
+    width: 100,
+    sortable: {
+      sortDirections: ['descend', 'ascend']
+    }
   },
   {
     title: t('searchTable.columns.starCount'),
     dataIndex: 'starCount',
     slotName: 'starCount',
     align: 'center',
-    width: 80
+    width: 100,
+    sortable: {
+      sortDirections: ['descend', 'ascend']
+    }
   },
   {
     title: t('searchTable.columns.commentCount'),
     dataIndex: 'commentCount',
     slotName: 'commentCount',
     align: 'center',
-    width: 80
+    width: 100,
+    sortable: {
+      sortDirections: ['descend', 'ascend']
+    }
   },
   {
     title: t('searchTable.columns.publishTime'),
     dataIndex: 'publishTime',
-    width: 180
+    width: 180,
+    sortable: {
+      sortDirections: ['descend', 'ascend']
+    }
   },
-  {
-    title: t('searchTable.columns.status'),
-    dataIndex: 'status',
-    slotName: 'status',
-    width: 80
-  },
+
   {
     title: t('searchTable.columns.operations'),
     dataIndex: 'operations',
@@ -476,10 +606,10 @@ const filterTypeOptions = computed<SelectOptionData[]>(() => [
   }
 ])
 const statusOptions = computed<SelectOptionData[]>(() => [
-  {
-    label: t('searchTable.form.selectDefault'),
-    value: undefined
-  },
+  // {
+  //   label: t('searchTable.form.selectDefault'),
+  //   value: undefined
+  // },
   {
     label: t('searchTable.form.status.online'),
     value: 'online'
@@ -505,6 +635,11 @@ onMounted(() => {
   })
 })
 
+const onSortChange = () => {
+  isEditingTable.value = false
+  // console.log('!')
+  // editingData.value = _.cloneDeep(renderData.value)
+}
 const handleTagsChange = () => {
   if (inputValue.value.length <= 0) {
     options.value = allTags.value
@@ -526,7 +661,8 @@ const fetchData = async (params: PolicyParams = { current: 1, pageSize: 20 }) =>
   setLoading(true)
   pullVideo({
     tagsName: params.tags,
-    tagFilterMode: 'filterAll'
+    tagFilterMode: 'filterAll',
+    sort: 'sort'
   })
     .then((videos) => {
       const promises = videos.map(
@@ -571,7 +707,10 @@ const fetchData = async (params: PolicyParams = { current: 1, pageSize: 20 }) =>
           list: results,
           total: 0
         }
-        renderData.value = data.list
+        const editableList = data.list as VideoRecordCanEdit[]
+        editableList.forEach((item) => (item.isEditing = false))
+        renderData.value = editableList
+        editingData.value = _.cloneDeep(renderData.value)
         pagination.current = params.current
         pagination.total = data.total
         setLoading(false)
@@ -649,6 +788,8 @@ const popupVisibleChange = (val: boolean) => {
 watch(
   () => columns.value,
   (val) => {
+    // isEditingTable.value = false
+    // editingData.value = _.cloneDeep(renderData.value)
     cloneColumns.value = cloneDeep(val)
     cloneColumns.value.forEach((item, index) => {
       item.checked = true

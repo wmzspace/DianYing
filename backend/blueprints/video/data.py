@@ -11,8 +11,6 @@ from models import Video, model2dict, User, VideoLike, VideoStar, VTRelation, VT
 # 根据推流逻辑发放视频
 @video_bp.route('/get', methods=['GET'])
 def get_all_videos():
-    all_videos = Video.query.order_by(func.random())
-
     # 从表中抽取指定数量的记录
     num_records = request.args.get("num")
 
@@ -23,11 +21,17 @@ def get_all_videos():
     tags_name_raw = request.args.get("tags_name")
     tag_filter_mode = request.args.get("tag_filter_mode")
 
+    # 是否按id降序
+    sort = request.args.get("sort")
+
     # 待筛选的标签列表
     query_tags_name = []
     if tags_name_raw is not None:
         query_tags_name = tags_name_raw.split(',')
-
+    if sort == "sort":
+        all_videos = Video.query.order_by(db.desc(Video.id)).all()
+    else:
+        all_videos = Video.query.order_by(func.random())
     results = []
     for video in all_videos:
         if author_id is not None and video.author_id != author_id:
@@ -60,6 +64,7 @@ def get_all_videos():
         results.append(video)
         if num_records is not None and len(results) >= int(num_records):
             break
+
     return model2dict(results)
 
 
@@ -214,6 +219,7 @@ class VideoRecord:
     videoId: int | str
     videoTitle: str
     authorName: str
+    authorId: int
     status: str
     contentType: str
     likeCount: int
@@ -222,11 +228,12 @@ class VideoRecord:
     publishTime: str
     tags: list[str]
 
-    def __init__(self, video_id, video_title, author_name,
+    def __init__(self, video_id, video_title, author_name, author_id,
                  status, content_type, like_count, star_count, comment_count, publish_time, tags):
         self.videoId = video_id
         self.videoTitle = video_title
         self.authorName = author_name
+        self.authorId = author_id
         self.status = status
         self.contentType = content_type
         self.likeCount = like_count
@@ -255,6 +262,7 @@ def get_video_info(video_id):
         video_id=video_id,
         video_title=video.title,
         author_name=author_name,
+        author_id=video.author_id,
         status=video.status,
         content_type=content_type,
         like_count=len(video.video_liked),
@@ -264,3 +272,29 @@ def get_video_info(video_id):
         tags=tags_name)
 
     return AjaxResponse.success(model2dict([record])[0])
+
+
+@video_bp.route('/edit', methods=['POST'])
+def edit_video_by_id():
+    video_id = request.args.get('videoId')
+    status = request.args.get('status')
+    video_title = request.args.get('title')
+    author_id = request.args.get('authorId')
+
+    if status is None or video_title is None or author_id is None or video_id is None:
+        return AjaxResponse.error("参数缺失")
+    video = Video.query.filter_by(id=video_id).first()
+    if video is None:
+        return AjaxResponse.error("视频不存在")
+    author = User.query.filter_by(id=author_id).first()
+    if author is None:
+        return AjaxResponse.error("用户不存在")
+    if status not in ["online", "offline", "awaitApproval"]:
+        return AjaxResponse.error("参数错误: status")
+
+    video.title = video_title
+    video.author_id = author_id
+    video.status = status
+
+    db.session.commit()
+    return AjaxResponse.success(None, "视频信息编辑成功")
