@@ -17,24 +17,25 @@ def user_pwd_login():
     if target is None:
         return AjaxResponse.error("用户不存在")
     password = target.password
-    if password is None:
+    if password is None or len(password) == 0:
         return AjaxResponse.error("账号未设置密码登录方式")
     if password != pwd:
         return AjaxResponse.error("密码错误，请重新输入")
 
-    return AjaxResponse.success(model2dict([target])[0], f"登录成功: {target.nickname}")
+    return AjaxResponse.success(model2dict(
+        [target])[0], f"登录成功: {target.nickname}")
 
 
 # API: 用户注销
 @user_bp.route('/delete', methods=['POST'])
 def user_delete():
-    id = request.args.get("id")
-    if id is None:
+    user_id = request.args.get("id")
+    if user_id is None:
         return AjaxResponse.error("参数缺失: id")
-    target = User.query.filter_by(id=id).first()
+    target = User.query.filter_by(id=user_id).first()
     if target is None:
         return AjaxResponse.error("用户不存在")
     nickname = target.nickname
     db.session.delete(target)
     db.session.commit()
-    return AjaxResponse.success(None, f" 用户{nickname}({id})已注销")
+    return AjaxResponse.success(None, f" 用户{nickname}({user_id})已注销")

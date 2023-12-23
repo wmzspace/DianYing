@@ -6,16 +6,29 @@
     :body-style="{ padding: '24px 20px 0 20px' }"
   >
     <template #extra>
-      <a-link>{{ $t('workplace.quickOperation.setup') }}</a-link>
+      <a-link disabled style="cursor: default">{{ $t('workplace.quickOperation.setup') }}</a-link>
     </template>
     <a-row :gutter="8">
-      <a-col v-for="link in links" :key="link.text" :span="8" class="wrapper">
-        <div class="icon">
-          <component :is="link.icon" />
-        </div>
-        <a-typography-paragraph class="text">
-          {{ $t(link.text) }}
-        </a-typography-paragraph>
+      <a-col
+        v-for="link in links"
+        :key="link.text"
+        :span="8"
+        class="wrapper"
+        :class="{ disabled: link.disabled }"
+      >
+        <a-link
+          style="text-decoration: none; color: unset"
+          :hoverable="false"
+          :disabled="link.disabled"
+          @click="$router.push({ name: link.routeName })"
+        >
+          <div class="icon" :class="{ disabled: link.disabled }">
+            <component :is="link.icon" />
+          </div>
+          <a-typography-paragraph class="text" :class="{ disabled: link.disabled }">
+            {{ $t(link.text) }}
+          </a-typography-paragraph>
+        </a-link>
       </a-col>
     </a-row>
     <a-divider class="split-line" style="margin: 0" />
@@ -23,13 +36,13 @@
 </template>
 
 <script lang="ts" setup>
-  const links = [
-    { text: 'workplace.contentManagement', icon: 'icon-file' },
-    { text: 'workplace.contentStatistical', icon: 'icon-storage' },
-    { text: 'workplace.advanced', icon: 'icon-settings' },
-    { text: 'workplace.onlinePromotion', icon: 'icon-mobile' },
-    { text: 'workplace.contentPutIn', icon: 'icon-fire' },
-  ];
+const links = [
+  { text: 'workplace.contentManagement', icon: 'icon-file', routeName: 'searchVideo' },
+  { text: 'workplace.userManagement', icon: 'icon-user', routeName: 'searchUser' },
+  { text: 'workplace.advanced', icon: 'icon-settings', routeName: 'dashboard' },
+  { text: 'workplace.onlinePromotion', icon: 'icon-mobile', disabled: true },
+  { text: 'workplace.contentPutIn', icon: 'icon-fire', disabled: true }
+]
 </script>
 
 <style scoped lang="less"></style>

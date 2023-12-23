@@ -2,11 +2,12 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import VideoDetailView from '@/views/VideoDetailView.vue'
 import DashboardView from '@/views/admin/dashboard/DashboardView.vue'
-import EXCEPTION from '@/router/exception'
 import { useUserStore } from '@/store'
 import SearchTableVideo from '@/views/admin/search/search-video/index.vue'
 import SearchTableUser from '@/views/admin/search/search-user/index.vue'
+import adminSetting from '@/views/admin/settings/index.vue'
 import PostVideo from '@/views/admin/post-video/index.vue'
+import logView from '@/views/admin/log/index.vue'
 import { useMainStore } from '@/store/main'
 
 let routes: Array<RouteRecordRaw> = [
@@ -114,6 +115,28 @@ let routes: Array<RouteRecordRaw> = [
             component: SearchTableUser
           }
         ]
+      },
+      {
+        path: 'settings',
+        name: 'adminSetting',
+        meta: {
+          layout: 'b',
+          key: 'adminSetting',
+          requiresAuth: true,
+          roles: ['admin']
+        },
+        component: adminSetting
+      },
+      {
+        path: 'log',
+        name: 'logView',
+        meta: {
+          layout: 'b',
+          key: 'logView',
+          requiresAuth: true,
+          roles: ['admin']
+        },
+        component: logView
       }
     ]
     // component: () => import('@/views/DashboardView.vue')

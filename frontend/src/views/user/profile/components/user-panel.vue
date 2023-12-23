@@ -57,7 +57,13 @@
         </span>
         <a-tag color="blue" class="tag">
           <template #icon>
-            <a-image :src="'/images/male.svg'" alt="male"></a-image>
+            <a-image
+              v-if="userData?.gender === 'female'"
+              :src="'/images/female.svg'"
+              alt="male"
+              :preview-visible="false"
+            ></a-image>
+            <a-image v-else :src="'/images/male.svg'" alt="male" :preview-visible="false"></a-image>
           </template>
           <span></span>
           {{ userData && userData.age ? `${userData.age}岁` : '未知' }}

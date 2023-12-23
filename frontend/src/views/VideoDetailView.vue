@@ -5,7 +5,8 @@ import {
   getVideoById,
   getVideoInfoById,
   likeOrStarVideoOrNot,
-  pullVideo
+  pullVideo,
+  recordVideoPlay
 } from '@/utils/video'
 import type { Comment } from '@/utils/comment'
 import {
@@ -151,7 +152,11 @@ watch(video, (value) => {
     player.value = createPlayer(value)
     player.value.on(Events.LOADED_DATA, calculateContainerPositions)
     player.value.on(Events.AUTOPLAY_STARTED, () => {
-      console.log('autoplay success!!')
+      if (userStore.isUserNotAdmin()) {
+        recordVideoPlay(props.video_id, userStore.getCurrentUserNotAdmin.id).catch((msg) => {
+          Message.error('历史记录添加失败: ' + msg)
+        })
+      }
     })
   }
 })

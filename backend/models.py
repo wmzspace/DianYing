@@ -43,8 +43,7 @@ class Register(db.Model):
     email = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(6), nullable=True)
     code_timestamp = db.Column(
-        db.DateTime,
-        default=datetime.datetime.now)
+        db.DateTime)
 
 
 class User(db.Model):
@@ -62,8 +61,7 @@ class User(db.Model):
     signature = db.Column(db.String(120))
     register_time = db.Column(
         db.String(50),
-        nullable=False,
-        default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        nullable=False)
 
     # videos = db.relationship("Video", backref="author")
     videos = db.relationship(
@@ -118,6 +116,8 @@ class User(db.Model):
             self.signature = args['signature']
         if 'password' in args:
             self.password = args['password']
+        if 'register_time' in args:
+            self.register_time = args['register_time']
 
 
 class VTag(db.Model):
@@ -134,6 +134,10 @@ class VTag(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
+    vt_relations = db.relationship(
+        "VTRelation",
+        back_populates="tag",
+        cascade="all, delete")
 
     def __repr__(self):
         return self.name
@@ -188,14 +192,13 @@ class Video(db.Model):
     cover = db.Column(db.String(100), nullable=False)
     width = db.Column(db.Integer, nullable=False)
     height = db.Column(db.Integer, nullable=False)
-    tags = db.relationship("VTag", secondary="video_tag_relation")
+    # tags = db.relationship("VTag", secondary="video_tag_relation")
     status = db.Column(db.String(100), nullable=False, default="awaitApproval")
     publish_time = db.Column(
         db.String(50),
-        nullable=False,
-        default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        nullable=False)
     author = db.relationship("User", back_populates="videos")
-    video_played= db.relationship(
+    video_played = db.relationship(
         "VideoPlay",
         back_populates="video",
         cascade="all, delete")
@@ -207,10 +210,15 @@ class Video(db.Model):
         "VideoStar",
         back_populates="video",
         cascade="all, delete")
+    vt_relations = db.relationship(
+        "VTRelation",
+        back_populates="video",
+        cascade="all, delete")
     comments = db.relationship(
         "Comment",
         backref="video",
         cascade="all, delete-orphan")
+
 
     def __init__(self, args):
         if 'id' in args:
@@ -262,8 +270,12 @@ class VTRelation(db.Model):
         db.ForeignKey(
             'tags.id',
             ondelete="cascade"))
-
-    pass
+    tag = db.relationship(
+        "VTag",
+        back_populates="vt_relations")
+    video = db.relationship(
+        "Video",
+        back_populates="vt_relations")
 
 
 # 定义评论模型
@@ -287,8 +299,7 @@ class Comment(db.Model):
         nullable=False)
     publish_time = db.Column(
         db.String(50),
-        nullable=False,
-        default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        nullable=False)
     author = db.relationship("User", back_populates="comments")
     # comment_likes = db.relationship("CommentLike", back_populates="comment")  # TODO: delete?
     # users_liked = db.relationship("User", secondary="comment_likes", backref="liked_comments")
@@ -344,8 +355,13 @@ class VideoPlay(db.Model):
         db.ForeignKey(
             'users.id',
             ondelete="cascade"))
+
+    time = db.Column(
+        db.String(50),
+        nullable=False)
     user = db.relationship("User", back_populates="video_play")
     video = db.relationship("Video", back_populates="video_played")
+
 
 # 定义视频点赞统计模型
 class VideoLike(db.Model):
@@ -361,6 +377,10 @@ class VideoLike(db.Model):
         db.ForeignKey(
             'users.id',
             ondelete="cascade"))
+    time = db.Column(
+        db.String(50),
+        nullable=False)
+
     user = db.relationship("User", back_populates="video_liked")
     video = db.relationship("Video", back_populates="video_liked")
 
@@ -379,6 +399,9 @@ class VideoStar(db.Model):
         db.ForeignKey(
             'users.id',
             ondelete="cascade"))
+    time = db.Column(
+        db.String(50),
+        nullable=False)
     user = db.relationship("User", back_populates="video_starred")
     video = db.relationship("Video", back_populates="video_starred")
 
@@ -397,6 +420,9 @@ class CommentLike(db.Model):
         db.ForeignKey(
             'users.id',
             ondelete="cascade"))
+    time = db.Column(
+        db.String(50),
+        nullable=False)
     user = db.relationship("User", back_populates="comment_likes")
     comment = db.relationship("Comment", back_populates="comment_liked")
     __table_args__ = (
@@ -431,7 +457,8 @@ def load_init_data():
             'gender': 'male',
             'age': 20,
             'password': '123456',
-            'signature': "心之所向，便是阳光 🌈\n喜欢摄影、唱歌，@向阳花木👈\n谢谢你长得这么好看还关注我❤️"
+            'signature': "心之所向，便是阳光 🌈\n喜欢摄影、唱歌，@向阳花木👈\n谢谢你长得这么好看还关注我❤️",
+            'register_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         }), User({
             'id': 2,
@@ -439,21 +466,26 @@ def load_init_data():
             'area': '重庆',
             'email': "2@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/2.jpeg',
-            'gender': 'male'
+            'gender': 'male',
+            'register_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
         }), User({
             'id': 3,
             'nickname': '活着就不算坏',
             'area': '重庆',
             'email': "3@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/3.jpeg',
-            'gender': 'male'
+            'gender': 'male',
+            'register_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
         }), User({
             'id': 4,
             'nickname': '浅梦',
             'area': '浙江',
             'email': "4@test.com",
             'avatar': PREFIX_URL + 'static/user/avatars/4.jpeg',
-            'gender': 'male'
+            'gender': 'male',
+            'register_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         })
     ])
 
@@ -465,6 +497,8 @@ def load_init_data():
         'cover': PREFIX_URL + 'static/videos/covers/3.jpeg',
         'width': 1280,
         'height': 720,
+        'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'status': "online"
     }
     video2 = {
         'id': 2,
@@ -473,8 +507,8 @@ def load_init_data():
         'url': PREFIX_URL + 'static/videos/1.mp4',
         'cover': PREFIX_URL + 'static/videos/covers/1.png',
         'width': 1080,
-        'height': 1920,
-
+        'height': 1920, 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'status': "online"
     }
     video3 = {
         'id': 3,
@@ -483,7 +517,8 @@ def load_init_data():
         'url': PREFIX_URL + 'static/videos/2.mp4',
         'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
         'width': 1024,
-        'height': 576,
+        'height': 576, 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'status': "awaitApproval"
     }
     video4 = {
         'id': 4,
@@ -492,7 +527,8 @@ def load_init_data():
         'url': PREFIX_URL + 'static/videos/2.mp4',
         'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
         'width': 1024,
-        'height': 576,
+        'height': 576, 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'status': "offline"
     }
     video5 = {
         'id': 5,
@@ -501,15 +537,16 @@ def load_init_data():
         'url': PREFIX_URL + 'static/videos/4.mp4',
         'cover': PREFIX_URL + 'static/videos/covers/4.jpg',
         'width': 1024,
-        'height': 576,
+        'height': 576, 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'status': "online"
     }
 
     videos = []
     for i in range(1):
         videos.append(copy.deepcopy(Video(video1)))
         videos.append(copy.deepcopy(Video(video2)))
-        # videos.append(copy.deepcopy(Video(video3)))
-        # videos.append(copy.deepcopy(Video(video4)))
+        videos.append(copy.deepcopy(Video(video3)))
+        videos.append(copy.deepcopy(Video(video4)))
         videos.append(copy.deepcopy(Video(video5)))
     db.session.add_all(videos)
 
@@ -524,29 +561,34 @@ def load_init_data():
             VTag({'id': 7, 'name': 'vlog日常'}),
             VTag({'id': 8, 'name': '成都夜市'}),
             VTag({'id': 9, 'name': '犀浦夜市'}),
+            VTag({'id': 10, 'name': '成都'}),
         ]
     )
 
     db.session.add_all([Comment({'video_id': 1,
                                  'author_id': 1,
-                                 'content': '加油加油，争取保研！'}),
+                                 'content': '加油加油，争取保研！',
+                                 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
                         Comment({'video_id': 1,
                                  'author_id': 2,
                                  'content': '加油！😍',
-                                 'parent_id': 1}),
+                                 'parent_id': 1,
+                                 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
                         Comment({'video_id': 1,
                                  'author_id': 3,
-                                 'content': '我好喜欢'}),
+                                 'content': '我好喜欢',
+                                 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
                         Comment({'video_id': 1,
                                  'author_id': 1,
                                  'content': '我也好喜欢',
                                  'parent_id': 3,
+                                 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                                  # 'publish_time': datetime.datetime(2023,
                                  #                                   10,
                                  #                                   2,
                                  #                                   21,
                                  #                                   50,
-                                 #                                   16).strftime('%Y-%m-%d %H:%M:%S')
+                                 # 16).strftime('%Y-%m-%d %H:%M:%S')
                                  }),
                         ])
 
@@ -562,12 +604,11 @@ def load_init_data():
             VTRelation({'video_id': 5, 'tag_id': 7}),
             VTRelation({'video_id': 5, 'tag_id': 8}),
             VTRelation({'video_id': 5, 'tag_id': 9}),
+            VTRelation({'video_id': 1, 'tag_id': 10}),
+            VTRelation({'video_id': 5, 'tag_id': 10}),
         ]
 
     )
-
-
-pass
 
 # class Income(Invoice, db.Model):
 #     """

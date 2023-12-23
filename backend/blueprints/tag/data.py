@@ -1,10 +1,6 @@
-from flask import request
-from sqlalchemy import func
-
 from blueprints.tag import tag_bp
-from blueprints.video import video_bp
-from exts import db, AjaxResponse
-from models import Video, model2dict, User, VideoLike, VideoStar, VTRelation, VTag
+
+from models import VTag
 
 
 @tag_bp.route('/get', methods=['GET'])
@@ -17,16 +13,12 @@ def get_all_tags():
     return list(map(get_tag_name, tags))
 
 
-
-
-
-# @tag_bp.route('/add', methods=['GET'])
-# def api_add_tags():
-#     video_id = request.args.get("video_id")
-#     tags = request.args.get("tags")
-#     if video_id is None or tags is None:
-#         return AjaxResponse.error("参数缺失: video_id, tags")
-#     if Video.query.filter_by(id=video_id).first() is None:
-
-    # print(tags)
-    # return AjaxResponse.success("成功")
+# API: 获取所有标签对应的视频数量
+@tag_bp.route('/statistic', methods=['GET'])
+def get_tag_statistic():
+    tags = VTag.query.all()
+    result = []
+    for tag in tags:
+        result.append({'name': tag.name, 'count': len(tag.vt_relations)})
+    result = sorted(result, key=lambda x: x['count'], reverse=True)
+    return result, 200

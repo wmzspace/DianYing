@@ -26,6 +26,7 @@ export function queryPopularList(params: { type: string }) {
     }
     if (params.type === 'video') {
       resolve({ data: [...videoList] })
+      // resolve({ data: [] })
     }
     resolve({ data: [...textList] })
   })

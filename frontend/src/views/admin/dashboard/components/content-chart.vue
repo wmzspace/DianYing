@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { graphic } from 'echarts'
 import useLoading from '@/hooks/loading'
 import { queryContentData } from '@/api/dashboard'
@@ -26,6 +26,9 @@ import useChartOption from '@/hooks/chart-option'
 import type { ToolTipFormatterParams } from '@/types/echarts'
 import type { AnyObject } from '@/types/global'
 import dayjs from 'dayjs'
+import { prefix_url } from '@/api'
+import { Message } from '@arco-design/web-vue'
+import { simplifyNumber } from '@/utils/tools'
 
 function graphicFactory(side: AnyObject) {
   return {
@@ -62,7 +65,8 @@ const { chartOption } = useChartOption(() => {
         formatter(value: number, idx: number) {
           if (idx === 0) return ''
           if (idx === xAxis.value.length - 1) return ''
-          return `${value}`
+          // return `${value}`
+          return value
         }
       },
       axisLine: {
@@ -98,7 +102,7 @@ const { chartOption } = useChartOption(() => {
       axisLabel: {
         formatter(value: any, idx: number) {
           if (idx === 0) return value
-          return `${value}k`
+          return simplifyNumber(value, 0, 'EN').string
         }
       },
       splitLine: {
@@ -115,8 +119,8 @@ const { chartOption } = useChartOption(() => {
         const [firstElement] = params as ToolTipFormatterParams[]
         return `<div>
             <p class="tooltip-title">${firstElement.axisValueLabel}</p>
-            <div class="content-panel"><span>总内容量</span><span class="tooltip-value">${(
-              Number(firstElement.value) * 10000
+            <div class="content-panel"><span>日增流量</span><span class="tooltip-value">${Number(
+              firstElement.value
             ).toLocaleString()}</span></div>
           </div>`
       },
@@ -173,36 +177,34 @@ const { chartOption } = useChartOption(() => {
     ]
   }
 })
+
 const fetchData = async () => {
   setLoading(true)
-  try {
-    // const { data: chartData } = await queryContentData()
-    const presetData = [58, 81, 53, 90, 64, 88, 49, 79]
-    const getLineData = () => {
-      const count = 8
-      return new Array(count).fill(0).map((el, idx) => ({
-        x: dayjs()
-          .day(idx - 2)
-          .format('YYYY-MM-DD'),
-        y: presetData[idx]
-      }))
-    }
-    const chartData = getLineData()
-    chartData.forEach((el: ContentDataRecord, idx: number) => {
-      xAxis.value.push(el.x)
-      chartsData.value.push(el.y)
-      if (idx === 0) {
-        graphicElements.value[0].style.text = el.x
-      }
-      if (idx === chartData.length - 1) {
-        graphicElements.value[1].style.text = el.x
+  fetch(prefix_url.concat('video/get/weekly'))
+    .then((res) => {
+      if (res.ok) {
+        res.json().then((chartData: ContentDataRecord[]) => {
+          chartData.forEach((el: ContentDataRecord, idx: number) => {
+            xAxis.value.push(el.x)
+            chartsData.value.push(el.y)
+            if (idx === 0) {
+              graphicElements.value[0].style.text = el.x
+            }
+            if (idx === chartData.length - 1) {
+              graphicElements.value[1].style.text = el.x
+            }
+          })
+        })
+      } else {
+        Message.error(res.statusText)
       }
     })
-  } catch (err) {
-    // you can report use errorHandler or other
-  } finally {
-    setLoading(false)
-  }
+    .catch((e) => {
+      Message.error(e.message)
+    })
+    .finally(() => {
+      setLoading(false)
+    })
 }
 fetchData()
 </script>

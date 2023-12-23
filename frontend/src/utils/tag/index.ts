@@ -20,7 +20,24 @@ export const getAllTags = () =>
         reject(e.message)
       })
   })
-// return
+
+export const getTagStatistic = () =>
+  new Promise<{ name: string; count: number }[]>((resolve, reject) => {
+    fetch(prefix_url.concat('tag/statistic'))
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((data) => {
+            resolve(data)
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+
 export const tagSuffixes = () => [
   '',
   ..._.sampleSize(

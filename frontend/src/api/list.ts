@@ -9,6 +9,7 @@ export interface VideoRecord {
   videoTitle: string
   contentType: 'horizontalVideo' | 'verticalVideo'
   // filterType: 'artificial' | 'rules';
+  playCount: number
   likeCount: number
   starCount: number
   commentCount: number

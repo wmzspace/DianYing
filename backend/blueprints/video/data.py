@@ -8,7 +8,7 @@ from exts import db, AjaxResponse
 from models import Video, model2dict, User, VideoLike, VideoStar, VTRelation, VTag, VideoPlay
 
 
-# 根据推流逻辑发放视频
+# API: 根据推流逻辑发放视频
 @video_bp.route('/get', methods=['GET'])
 def get_all_videos():
     # 从表中抽取指定数量的记录
@@ -43,7 +43,8 @@ def get_all_videos():
                 find = True
 
                 def get_tags_name(v_tag_relation_model):
-                    return VTag.query.filter_by(id=v_tag_relation_model.tag_id).first().name
+                    return VTag.query.filter_by(
+                        id=v_tag_relation_model.tag_id).first().name
 
                 tags_name = list(map(get_tags_name, tags))
                 for query_tag_name in query_tags_name:
@@ -68,7 +69,7 @@ def get_all_videos():
     return model2dict(results)
 
 
-# 根据id查询
+# API: 根据id查询
 @video_bp.route('/query', methods=['GET'])
 def query_video():
     video_id = request.args.get("id")
@@ -76,26 +77,37 @@ def query_video():
     return model2dict([target])
 
 
-# 获取视频被哪些用户点赞或者收藏
-@video_bp.route('/get_actions', methods=['GET'])
-def get_video_liked_users():
+# API: 获取视频被哪些用户点赞，收藏或者播放
+@video_bp.route('/get/actions', methods=['GET'])
+def get_video_actioned_users():
     action = request.args.get("action")
-
-    action_table = VideoLike if action == "like" else VideoStar
-
-    def get_user_by_video_action(video_action: action_table):
-        return video_action.user
-
     video_id = request.args.get("video_id")
     video = Video.query.get(video_id)
     if not video:
         return AjaxResponse.error("视频不存在")
-    video_actions_list = video.video_liked if action == "like" else video.video_starred
+
+    if action == "like":
+        action_table = VideoLike
+        video_actions_list = video.video_liked
+    elif action == "star":
+        action_table = VideoStar
+        video_actions_list = video.video_starred
+    elif action == "play":
+        action_table = VideoPlay
+        video_actions_list = video.video_played
+    else:
+        return AjaxResponse.error(f"参数错误: action={action}")
+
+    def get_user_by_video_action(video_action: action_table):
+        return video_action.user
+
+    # video_actions_list = video.video_liked if action == "like" else video.video_starred
     # video_actions_list = Video.query.get(video_id).video_liked
     target = list(map(get_user_by_video_action, video_actions_list))
     return AjaxResponse.success(model2dict(target))
 
 
+# API: 记录播放历史
 @video_bp.route('/action/play', methods=['POST'])
 def action_play_video():
     # 检查用户和视频是否存在
@@ -112,7 +124,10 @@ def action_play_video():
         user_id=user_id, video_id=video_id).all()
 
     if not exist_played:
-        new_play = VideoPlay(user_id=user_id, video_id=video_id)
+        new_play = VideoPlay(
+            user_id=user_id,
+            video_id=video_id,
+            time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         db.session.add(new_play)
         db.session.commit()
         return AjaxResponse.success(None, "视频播放记录已存在")
@@ -120,7 +135,7 @@ def action_play_video():
         return AjaxResponse.success(None, "视频播放记录已存在")
 
 
-# 点赞或收藏
+# API: 点赞或收藏
 @video_bp.route('/action', methods=['POST'])
 def like_or_dislike_video():
     # 检查用户和视频是否存在
@@ -158,7 +173,10 @@ def like_or_dislike_video():
     # 还不是点赞或收藏状态
     else:
         if to_status:
-            new_action = action_table(user_id=user_id, video_id=video_id)
+            new_action = action_table(
+                user_id=user_id,
+                video_id=video_id,
+                time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             db.session.add(new_action)
             db.session.commit()
             return AjaxResponse.success(
@@ -167,7 +185,7 @@ def like_or_dislike_video():
             return AjaxResponse.error("点击太频繁")
 
 
-# 删除视频
+# API: 删除视频
 @video_bp.route('/delete', methods=['POST'])
 def delete_video_by_id():
     id = request.args.get('id')
@@ -181,6 +199,7 @@ def delete_video_by_id():
     return AjaxResponse.success(None, "视频已删除")
 
 
+# API: 绑定/新增视频标签
 def add_tags(tags, video_id):
     for tag in tags:
         query_tag = VTag.query.filter_by(name=tag).first()
@@ -201,6 +220,7 @@ def add_tags(tags, video_id):
         db.session.commit()
 
 
+# API: 发布视频
 @video_bp.route('/post', methods=['POST'])
 def post_video():
     data = request.json['data']
@@ -221,7 +241,7 @@ def post_video():
         return AjaxResponse.error("参数缺失: title")
     if 'tags' not in data or len(data['tags']) == 0:
         return AjaxResponse.error("参数缺失: tags")
-    tags_string = ' '.join(['#' + tag for tag in data['tags']])
+    # tags_string = ' '.join(['#' + tag for tag in data['tags']])
     new_video = Video({
         'url': data['url'],
         'author_id': data['authorId'],
@@ -241,65 +261,27 @@ def post_video():
     return AjaxResponse.success(new_video_id, "视频上传成功")
 
 
-class VideoRecord:
-    videoId: int | str
-    videoTitle: str
-    authorName: str
-    authorId: int
-    status: str
-    contentType: str
-    likeCount: int
-    starCount: int
-    commentCount: int
-    publishTime: str
-    tags: list[str]
-
-    def __init__(self, video_id, video_title, author_name, author_id,
-                 status, content_type, like_count, star_count, comment_count, publish_time, tags):
-        self.videoId = video_id
-        self.videoTitle = video_title
-        self.authorName = author_name
-        self.authorId = author_id
-        self.status = status
-        self.contentType = content_type
-        self.likeCount = like_count
-        self.starCount = star_count
-        self.commentCount = comment_count
-        self.publishTime = publish_time
-        self.tags = tags
-
-
-@video_bp.route('/info/<int:video_id>', methods=['GET'])
+# API: 根据id查询视频/全部视频详细信息
+@video_bp.route('/info/<video_id>', methods=['GET'])
 def get_video_info(video_id):
     if video_id is None:
         return AjaxResponse.error("参数缺失: video_id")
-    video = Video.query.get(video_id)
-    if video is None:
-        return AjaxResponse.error("视频不存在")
-    author_name = User.query.get(video.author_id).nickname
-    content_type = "horizontalVideo" if video.width >= video.height else "verticalVideo"
-    tags = video.tags
 
-    def get_tag_name(tag):
-        return tag.name
-
-    tags_name = list(map(get_tag_name, tags))
-    record = VideoRecord(
-        video_id=video_id,
-        video_title=video.title,
-        author_name=author_name,
-        author_id=video.author_id,
-        status=video.status,
-        content_type=content_type,
-        like_count=len(video.video_liked),
-        star_count=len(video.video_starred),
-        comment_count=len(video.comments),
-        publish_time=video.publish_time,
-        tags=tags_name)
-
-    return AjaxResponse.success(model2dict([record])[0])
+    if video_id == "all":
+        videos = Video.query.all()
+        records = []
+        for video in videos:
+            records.append(VideoRecord(video))
+        return model2dict(records)
+    else:
+        video = Video.query.get(video_id)
+        if video is None:
+            return AjaxResponse.error("视频不存在")
+        record = VideoRecord(video)
+        return AjaxResponse.success(model2dict([record])[0])
 
 
+# API: 更新视频信息
 @video_bp.route('/edit', methods=['POST'])
 def edit_video_by_id():
     video_id = request.args.get('videoId')
@@ -324,3 +306,59 @@ def edit_video_by_id():
 
     db.session.commit()
     return AjaxResponse.success(None, "视频信息编辑成功")
+
+
+# API: 获取流量周期数据:
+@video_bp.route('/get/weekly', methods=['GET'])
+def get_video_play_weekly():
+    video_plays = VideoPlay.query.all()
+    # 计算最近7天每天对应的数据个数
+    current_date = datetime.datetime.now().date()
+    date_counts = {str(current_date - datetime.timedelta(days=i)): 0 for i in range(6, -1, -1)}
+
+    for entry in video_plays:
+        entry_date = datetime.datetime.strptime(entry.time, "%Y-%m-%d %H:%M:%S").date()
+        days_ago = (current_date - entry_date).days
+
+        if 0 <= days_ago < 7:
+            date_counts[str(entry_date)] += 1
+    formatted_data = [{"x": date, "y": value} for date, value in date_counts.items()]
+    # formatted_data = {"date": list(date_counts.keys()), "value": list(date_counts.values())}
+    return formatted_data, 200
+
+
+class VideoRecord:
+    videoId: int | str
+    videoTitle: str
+    authorName: str
+    authorId: int
+    status: str
+    contentType: str
+    likeCount: int
+    starCount: int
+    playCount:int
+    commentCount: int
+    publishTime: str
+    tags: list[str]
+
+    def __init__(self, video: Video):
+        self.videoId = video.id
+        self.videoTitle = video.title
+        self.authorName = User.query.get(video.author_id).nickname
+        self.authorId = video.author_id
+        self.status = video.status
+        self.contentType = "horizontalVideo" if video.width >= video.height else "verticalVideo"
+        self.likeCount = len(video.video_liked)
+        self.playCount = len(video.video_played)
+        self.starCount = len(video.video_starred)
+        self.commentCount = len(video.comments)
+        self.publishTime = video.publish_time
+        # tags = video.tags
+        tags = video.vt_relations
+        print(len(tags))
+
+        def get_tag_name(vtr):
+            return vtr.tag.name
+
+        tags_name = list(map(get_tag_name, tags))
+        self.tags = tags_name

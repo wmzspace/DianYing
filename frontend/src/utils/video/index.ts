@@ -55,7 +55,8 @@ export const parseVideoMedia = (rawVideo: RawVideo): VideoMedia => {
     top: rawVideo.top,
     url: rawVideo.url,
     width: rawVideo.width,
-    publishTime: rawVideo.publish_time
+    publishTime: rawVideo.publish_time,
+    status: rawVideo.status
   }
 }
 
@@ -151,7 +152,7 @@ export const pullVideo = (request?: pullVideoRequest) =>
 
 export const getVideoActionUsersByVideoId = (videoId: number, action: string) =>
   new Promise<User[]>((resolve, reject) => {
-    fetch(prefix_url.concat(`video/get_actions?video_id=${videoId}&action=${action}`))
+    fetch(prefix_url.concat(`video/get/actions?video_id=${videoId}&action=${action}`))
       .then((res) => {
         if (res.ok) {
           res.json().then((ajaxData: AjaxResponse) => {
@@ -168,11 +169,34 @@ export const getVideoActionUsersByVideoId = (videoId: number, action: string) =>
       })
   })
 
+export const recordVideoPlay = (videoId: number | string, userId: number | string) =>
+  new Promise<void>((resolve, reject) => {
+    fetch(prefix_url.concat(`video/action/play?user_id=${userId}&video_id=${videoId}`), {
+      method: 'POST'
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              resolve()
+            } else {
+              reject(ajaxData.ajax_msg)
+            }
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+
 export const likeOrStarVideoOrNot = (
   videoId: number,
   userId: number,
   toStatus: boolean,
-  action: string
+  action: 'like' | 'star'
 ) =>
   new Promise<void>((resolve, reject) => {
     fetch(
@@ -200,7 +224,10 @@ export const likeOrStarVideoOrNot = (
       })
   })
 
-export const getVideosByUserLikeOrStar = (userId: number | string, action: string) =>
+export const getVideosByUserLikeOrStar = (
+  userId: number | string,
+  action: 'like' | 'star' | 'play'
+) =>
   new Promise<VideoMedia[]>((resolve, reject) => {
     fetch(prefix_url.concat(`/user/get/actions?id=${userId}&action=${action}`), {
       method: 'GET'
@@ -213,6 +240,25 @@ export const getVideosByUserLikeOrStar = (userId: number | string, action: strin
             } else {
               reject(ajaxData.ajax_msg)
             }
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+
+export const getVideoInfoAll = () =>
+  new Promise<VideoRecord[]>((resolve, reject) => {
+    fetch(prefix_url.concat(`video/info/all`), {
+      method: 'GET'
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((records: VideoRecord[]) => {
+            resolve(records)
           })
         } else {
           reject(res.statusText)

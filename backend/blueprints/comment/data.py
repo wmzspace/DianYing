@@ -87,7 +87,8 @@ def like_or_dislike_comment():
     # 还未点过赞
     else:
         if to_like_or_not:
-            like = CommentLike(user_id=user_id, comment_id=comment_id)
+            like = CommentLike(user_id=user_id, comment_id=comment_id,
+                               time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             db.session.add(like)
             db.session.commit()
             return AjaxResponse.success(None, "点赞成功")

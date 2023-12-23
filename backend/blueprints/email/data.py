@@ -28,7 +28,8 @@ def send_mail():
                   sender="517941374@qq.com",
                   recipients=[email])
     random_code = random.randint(100000, 999999)
-    db.session.add(Register(email=email, code=random_code))
+    db.session.add(
+        Register(email=email, code=random_code, code_timestamp=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
     db.session.commit()
     target = User.query.filter_by(email=email).first()
     if target is None:
@@ -60,7 +61,7 @@ def validate_email():
             target = User.query.filter_by(email=email).first()
             if target is None:
                 # 用户注册
-                new_user = User({"email": email})
+                new_user = User({"email": email,"register_time":datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
                 db.session.add(new_user)
                 db.session.flush()
                 new_id = new_user.id

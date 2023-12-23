@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs'
 import type { NotificationData } from '@/types'
-import { range, rest } from 'lodash-es'
+import { range } from 'lodash-es'
 
 const THOUSAND = Math.pow(10, 3)
 const WAN = Math.pow(10, 4)
@@ -174,4 +174,12 @@ export const isTimeInRange = (range: string[], time: string) => {
   const checkTime = new Date(time)
 
   return checkTime >= startDate && checkTime <= endDate
+}
+
+export const getRankings = (arr: number[]) => {
+  const arrCopy = arr.slice()
+  // 返回结果
+  return arr.map(function (num) {
+    return 1 + arrCopy.sort((a, b) => b - a).indexOf(num)
+  })
 }

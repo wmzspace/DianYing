@@ -63,6 +63,7 @@ import Docs from './components/docs.vue'
   flex: 1;
   overflow: auto;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .right-side {
@@ -74,15 +75,18 @@ import Docs from './components/docs.vue'
 .panel {
   background-color: var(--color-bg-2);
   border-radius: 4px;
-  overflow: auto;
+  //overflow: auto;
 }
+
 :deep(.panel-border) {
   margin-bottom: 0;
   border-bottom: 1px solid rgb(var(--gray-2));
 }
+
 .moduler-wrap {
   border-radius: 4px;
   background-color: var(--color-bg-2);
+
   :deep(.text) {
     font-size: 12px;
     text-align: center;
@@ -94,16 +98,27 @@ import Docs from './components/docs.vue'
     text-align: center;
     cursor: pointer;
 
+    &.disabled {
+      opacity: 0.5;
+
+      &,
+      * {
+        cursor: default;
+      }
+    }
+
     &:last-child {
       .text {
         margin-bottom: 0;
       }
     }
-    &:hover {
+
+    &:hover:not(.disabled) {
       .icon {
         color: rgb(var(--arcoblue-6));
         background-color: #e8f3ff;
       }
+
       .text {
         color: rgb(var(--arcoblue-6));
       }
@@ -127,10 +142,13 @@ import Docs from './components/docs.vue'
 
 <style lang="less" scoped>
 // responsive
-.mobile {
+//.mobile {
+
+@media (max-width: 1080px) {
   .container {
     display: block;
   }
+
   .right-side {
     // display: none;
     width: 100%;
@@ -138,4 +156,6 @@ import Docs from './components/docs.vue'
     margin-top: 16px;
   }
 }
+
+//}
 </style>

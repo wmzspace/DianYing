@@ -68,6 +68,22 @@
               </div>
             </div>
           </a-tab-pane>
+          <a-tab-pane key="4" title="历史记录">
+            <div class="video-cards-container">
+              <div class="action-bar">观看历史 (最近30天)</div>
+              <div class="content">
+                <ul>
+                  <li
+                    class="list-item"
+                    v-for="(video, index) in querySearch(videosPlayed)"
+                    :key="index"
+                  >
+                    <video-card-sm :src="video" />
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </a-tab-pane>
         </a-tabs>
         <div
           style="
@@ -167,6 +183,14 @@ getVideosByUserLikeOrStar(props.user_id, 'star').then((videos) => {
   videosStarred.slice(0)
   videos.forEach((v) => {
     videosStarred.push(v)
+  })
+})
+
+const videosPlayed: VideoMedia[] = reactive([])
+getVideosByUserLikeOrStar(props.user_id, 'play').then((videos) => {
+  videosPlayed.slice(0)
+  videos.forEach((v) => {
+    videosPlayed.push(v)
   })
 })
 

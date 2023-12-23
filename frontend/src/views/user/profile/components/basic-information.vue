@@ -18,7 +18,7 @@
       ]"
     >
       <a-input
-        v-model="formData.email"
+        v-model.trim="formData.email"
         :placeholder="$t('userSetting.basicInfo.placeholder.email')"
       />
     </a-form-item>
@@ -37,7 +37,7 @@
       ]"
     >
       <a-input
-        v-model="formData.password"
+        v-model.trim="formData.password"
         :placeholder="$t('userSetting.basicInfo.placeholder.password')"
       />
     </a-form-item>
@@ -52,7 +52,7 @@
       ]"
     >
       <a-input
-        v-model="formData.nickname"
+        v-model.trim="formData.nickname"
         :placeholder="$t('userSetting.basicInfo.placeholder.nickname')"
       />
     </a-form-item>

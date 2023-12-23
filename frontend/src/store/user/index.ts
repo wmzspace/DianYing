@@ -49,8 +49,8 @@ export const useUserStore = defineStore('user', {
     isAdminOrCurUser: (state) => (userId?: number) => {
       return state.isAdmin || (state.userData && state.userData.id === userId)
     },
-    isUserNotAdmin: (state) => () => {
-      return state.userData && !state.isAdmin
+    isUserNotAdmin: (state) => (): boolean => {
+      return state.userData !== undefined && !state.isAdmin
     },
 
     // 表示已登录

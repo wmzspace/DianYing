@@ -26,7 +26,7 @@ def query_user():
     return model2dict([target])
 
 
-# API 获取用户喜欢/收藏了哪些视频
+# API 获取用户喜欢/收藏/播放了哪些视频
 @user_bp.route('/get/actions', methods=['GET'])
 def get_user_likes():
     user_id = request.args.get("id")
@@ -39,13 +39,15 @@ def get_user_likes():
         return i.video
 
     if action == "like":
-        video_liked = target.video_liked
         return AjaxResponse.success(model2dict(
-            list(map(get_video, video_liked))))
+            list(map(get_video, target.video_liked))))
     elif action == "star":
-        video_star = target.video_starred
         return AjaxResponse.success(
-            model2dict(list(map(get_video, video_star))))
+            model2dict(list(map(get_video, target.video_starred))))
+    elif action == "play":
+        return AjaxResponse.success(
+            model2dict(list(map(get_video, target.video_play)))
+        )
     else:
         return AjaxResponse.error("参数错误, action")
 

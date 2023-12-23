@@ -43,6 +43,7 @@ export interface RawVideo {
   top: number
   url: string
   width: number
+  status: 'online' | 'offline' | 'awaitApproval'
 }
 
 export interface VideoMedia {
@@ -53,6 +54,7 @@ export interface VideoMedia {
   cover: string
   height: number
   width: number
+  status: 'online' | 'offline' | 'awaitApproval'
   description?: string
   danmu?: DanMuProps[]
   actualHeight?: number

@@ -263,7 +263,11 @@ onMounted(() => {
                 <a-list-item>
                   <a-statistic :value="videoOwnNum" :precision="0">
                     <template #title>
-                      <a-image src="/images/my_works.svg" style="margin: 0 auto" />
+                      <a-image
+                        src="/images/my_works.svg"
+                        style="margin: 0 auto"
+                        :preview-visible="false"
+                      />
                     </template>
                     <template #extra>
                       <p>我的作品</p>
@@ -273,7 +277,11 @@ onMounted(() => {
                 <a-list-item>
                   <a-statistic :value="videoLikeNum" :precision="0">
                     <template #title>
-                      <a-image src="/images/my_likes.svg" style="margin: 0 auto" />
+                      <a-image
+                        src="/images/my_likes.svg"
+                        style="margin: 0 auto"
+                        :preview-visible="false"
+                      />
                     </template>
                     <template #extra>
                       <p>我的喜欢</p>
@@ -283,7 +291,11 @@ onMounted(() => {
                 <a-list-item>
                   <a-statistic :value="videoStarNum" :precision="0">
                     <template #title>
-                      <a-image src="/images/my_favorites.svg" style="margin: 0 auto" />
+                      <a-image
+                        src="/images/my_favorites.svg"
+                        style="margin: 0 auto"
+                        :preview-visible="false"
+                      />
                     </template>
                     <template #extra>
                       <p>我的收藏</p>
@@ -293,7 +305,11 @@ onMounted(() => {
                 <a-list-item>
                   <a-statistic :value="30" :precision="0">
                     <template #title>
-                      <a-image src="/images/my_histories.svg" style="margin: 0 auto" />
+                      <a-image
+                        src="/images/my_histories.svg"
+                        style="margin: 0 auto"
+                        :preview-visible="false"
+                      />
                     </template>
                     <template #suffix><span>天内</span></template>
                     <template #extra>
