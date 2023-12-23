@@ -10,11 +10,13 @@ from exts import AjaxResponse, db
 from models import User, model2dict
 
 
+# API 获取全部用户信息 Depressed
 @user_bp.route('/all', methods=['GET'])
 def get_all_users():
     return model2dict(User.query.all())
 
 
+# API 查询用户 Depressed
 @user_bp.route('/get', methods=['GET'])
 def query_user():
     user_id = request.args.get("id")
@@ -24,7 +26,7 @@ def query_user():
     return model2dict([target])
 
 
-# 获取用户喜欢/收藏了哪些视频
+# API 获取用户喜欢/收藏了哪些视频
 @user_bp.route('/get/actions', methods=['GET'])
 def get_user_likes():
     user_id = request.args.get("id")
@@ -48,6 +50,7 @@ def get_user_likes():
         return AjaxResponse.error("参数错误, action")
 
 
+# API: 更新用户资料
 @user_bp.route('/update', methods=['POST'])
 def update_user():
     user_id = request.json['id']
@@ -79,6 +82,7 @@ def update_user():
     # signature = request.args.get("signature")
 
 
+# 上传头像，视频或封面的封装函数
 def upload(user_id, file_type):
     if user_id is None and user_id != "ignore":
         return AjaxResponse.error("参数缺失: user_id")
@@ -138,18 +142,21 @@ def upload(user_id, file_type):
             }, "视频上传成功")
 
 
+# API: 上传视频
 @user_bp.route('/upload/video', methods=['POST'])
 def upload_video():
     user_id = request.form.get("user_id")
     return upload(user_id, 'video')
 
 
+# API: 上传封面
 @user_bp.route('/upload/cover', methods=['POST'])
 def upload_cover():
     user_id = request.form.get("user_id")
     return upload("ignore", 'cover')
 
 
+# API: 上传头像
 @user_bp.route('/upload/avatar', methods=['POST'])
 def upload_avatar():
     user_id = request.form.get("user_id")
@@ -173,20 +180,21 @@ class UserRecord:
 
     def __init__(self, user: User):
         self.id = user.id
-        self.nick_name = user.nickname
+        self.nickName = user.nickname
         self.email = user.email
         self.avatar = user.avatar
         self.password = user.password
         self.age = user.age
         self.gender = user.gender
         self.signature = user.signature
-        self.register_time = user.register_time
+        self.registerTime = user.register_time
         self.area = user.area
-        self.liked_num = len(user.video_liked)
-        self.video_num = len(user.videos)
-        self.played_num = len(user.video_play)
+        self.likedNum = len(user.video_liked)
+        self.videoNum = len(user.videos)
+        self.playedNum = len(user.video_play)
 
 
+# API: 全部/根据id查询用户
 @user_bp.route('/info/<param>', methods=['GET'])
 def get_user_info(param):
     if param == "all":

@@ -319,7 +319,7 @@ import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/loading'
 import {
   type VideoRecord,
-  type PolicyParams,
+  type PolicyParamsVideo,
   type VideoListRes,
   type VideoQueryForm,
   type VideoRecordCanEdit
@@ -657,7 +657,7 @@ const handleInputValueChange = (value: string) => {
   inputValue.value = inputValue.value.trim()
 }
 
-const fetchData = async (params: PolicyParams = { current: 1, pageSize: 20 }) => {
+const fetchData = async (params: PolicyParamsVideo = { current: 1, pageSize: 20 }) => {
   setLoading(true)
   pullVideo({
     tagsName: params.tags,
@@ -728,7 +728,7 @@ const search = () => {
   fetchData({
     ...basePagination,
     ...formModel.value
-  } as unknown as PolicyParams)
+  } as unknown as PolicyParamsVideo)
 }
 const onPageChange = (current: number) => {
   fetchData({ ...basePagination, current })

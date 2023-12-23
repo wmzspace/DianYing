@@ -57,9 +57,19 @@ export interface UserQueryForm {
   area: string | undefined
 }
 
-export interface PolicyParams extends Partial<VideoQueryForm> {
+export interface PolicyParamsVideo extends Partial<VideoQueryForm> {
   current: number
   pageSize: number
+}
+
+export interface PolicyParamsUser extends Partial<UserQueryForm> {
+  current: number
+  pageSize: number
+}
+
+export interface UserListRes {
+  list: UserRecord[]
+  total: number
 }
 
 export interface VideoListRes {
@@ -67,7 +77,7 @@ export interface VideoListRes {
   total: number
 }
 
-export function queryPolicyList(params: PolicyParams) {
+export function queryPolicyList(params: PolicyParamsVideo) {
   return axios.get<VideoListRes>('/api/list/policy', {
     params,
     paramsSerializer: (obj) => {

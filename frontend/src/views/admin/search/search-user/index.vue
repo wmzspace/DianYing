@@ -20,6 +20,16 @@
                 </a-form-item>
               </a-col>
               <a-col :span="8">
+                <a-form-item field="status" :label="$t('searchTable.user.form.age')">
+                  <a-input-number
+                    :precision="0"
+                    :min="0"
+                    v-model="formModel.age"
+                    :placeholder="$t('searchTable.user.form.age.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
                 <a-form-item field="gender" :label="$t('searchTable.user.form.gender')">
                   <a-select
                     v-model="formModel.gender"
@@ -51,16 +61,6 @@
                   <a-range-picker v-model="formModel.registerTime" style="width: 100%" />
                 </a-form-item>
               </a-col>
-              <a-col :span="8">
-                <a-form-item field="status" :label="$t('searchTable.user.form.age')">
-                  <a-input-number
-                    :precision="0"
-                    :min="0"
-                    v-model="formModel.age"
-                    :placeholder="$t('searchTable.user.form.age.placeholder')"
-                  />
-                </a-form-item>
-              </a-col>
             </a-row>
           </a-form>
         </a-col>
@@ -90,14 +90,14 @@
               <template #icon>
                 <icon-plus />
               </template>
-              {{ $t('searchTable.operation.create') }}
+              {{ $t('searchTable.user.operation.create') }}
             </a-button>
             <a-tooltip :content="$t('searchTable.actions.refresh')">
               <a-button @click="search">
                 <template #icon>
                   <icon-refresh />
                 </template>
-                {{ $t('searchTable.actions.refresh') }}
+                {{ $t('searchTable.user.actions.refresh') }}
               </a-button>
             </a-tooltip>
           </a-space>
@@ -107,7 +107,7 @@
             <template #icon>
               <icon-download />
             </template>
-            {{ $t('searchTable.operation.download') }}
+            {{ $t('searchTable.user.operation.download') }}
           </a-button>
           <!--          <a-tooltip :content="$t('searchTable.actions.refresh')">-->
           <!--            <div class="action-icon" @click="search"><icon-refresh size="18" /></div>-->
@@ -148,22 +148,51 @@
         <template #index="{ rowIndex }">
           {{ rowIndex + 1 + (pagination.current - 1) * pagination.pageSize }}
         </template>
-        <template #gender="{ record }">
-          <span>{{ $t(`searchTable.user.form.gender.${record.gender}`) }}</span>
-        </template>
-        <template #signature="{ record }">
-          <a-tooltip>
-            <div class="one-line">{{ record.signature }}</div>
-            <template #content>{{ record.signature }}</template>
-          </a-tooltip>
-        </template>
-
         <template #nickName="{ record }">
           <a-tooltip>
             <div class="one-line">{{ record.nickName }}</div>
             <template #content>{{ record.nickName }}</template>
           </a-tooltip>
         </template>
+        <template #signature="{ record }">
+          <div
+            class="one-line"
+            v-if="record.signature == undefined || record.signature.length === 0"
+          >
+            -
+          </div>
+          <a-tooltip v-else>
+            <div class="one-line">
+              {{ record.signature && record.signature.length > 0 ? record.signature : '-' }}
+            </div>
+            <template #content>{{ record.signature }}</template>
+          </a-tooltip>
+        </template>
+        <template #age="{ record }">
+          <div class="one-line" v-if="record.age == undefined || record.age === 0">-</div>
+          <a-tooltip v-else>
+            <div class="one-line">{{ record.age }}</div>
+            <template #content>{{ record.age }}</template>
+          </a-tooltip>
+        </template>
+        <template #email="{ record }">
+          <a-tooltip>
+            <div class="one-line">{{ record.email }}</div>
+            <template #content>{{ record.email }}</template>
+          </a-tooltip>
+        </template>
+        <template #password="{ record }">
+          <a-tooltip>
+            <div class="one-line">*****</div>
+            <template #content>{{
+              record.password && record.password.length > 0 ? record.password : '未设置'
+            }}</template>
+          </a-tooltip>
+        </template>
+        <template #gender="{ record }">
+          <span>{{ $t(`searchTable.user.form.gender.${record.gender}`) }}</span>
+        </template>
+
         <template #area="{ record }">
           {{ record.area }}
         </template>
@@ -175,7 +204,7 @@
               size="small"
               :status="'normal'"
               style="padding: 6px"
-              @click="$router.push({ name: 'userProfile', params: { user_id: 1 } })"
+              @click="$router.push({ name: 'userProfile', params: { user_id: record.id } })"
             >
               编辑
             </a-button>
@@ -184,8 +213,7 @@
               size="small"
               :status="'danger'"
               style="padding: 6px"
-              v-if="!editingData[rowIndex].isEditing"
-              @click="handleDeleteVideo(record, rowIndex)"
+              @click="handleDeleteUser(record, rowIndex)"
             >
               删除
             </a-button>
@@ -202,11 +230,14 @@ import { useI18n } from 'vue-i18n'
 import useLoading from '@/hooks/loading'
 import {
   type VideoRecord,
-  type PolicyParams,
+  type PolicyParamsVideo,
   type VideoListRes,
   type VideoQueryForm,
   type VideoRecordCanEdit,
-  type UserQueryForm
+  type UserQueryForm,
+  type UserListRes,
+  type UserRecord,
+  type PolicyParamsUser
 } from '@/api/list'
 import type { Pagination } from '@/types/global'
 import type { SelectOptionData } from '@arco-design/web-vue/es/select/interface'
@@ -240,33 +271,19 @@ const editLoadObject = useLoading()
 const editLoading = editLoadObject.loading
 const setEditLoading = editLoadObject.setLoading
 
-const handleDeleteVideo = (record: VideoRecordCanEdit, rowIndex: number) => {
+const handleDeleteUser = (record: UserRecord, rowIndex: number) => {
   setEditLoading(true)
-  if (record.videoId !== editingData.value[rowIndex].videoId) {
+  if (record.id !== renderData.value[rowIndex].id) {
     Message.error({
       id: 'videoEdit',
       content: '删除失败：数据异常'
     })
     location.reload()
   }
-
-  deleteVideoById(record.videoId)
-    .then((msg) => {
-      Message.success({
-        id: 'videoEdit',
-        content: msg
-      })
-      search()
-    })
-    .catch((e) => {
-      Message.success({
-        id: 'videoEdit',
-        content: e
-      })
-    })
-    .finally(() => {
-      setEditLoading(false)
-    })
+  userStore.deleteUser(record.id).finally(() => {
+    search()
+    setEditLoading(false)
+  })
 }
 
 const generateFormModel = () => {
@@ -285,8 +302,7 @@ const userStore = useUserStore()
 const { loading, setLoading } = useLoading(true)
 const { t } = useI18n()
 
-const editingData = ref<VideoRecordCanEdit[]>([])
-const renderData = ref<VideoRecordCanEdit[]>([])
+const renderData = ref<UserRecord[]>([])
 const formModel = ref(generateFormModel())
 const cloneColumns = ref<Column[]>([])
 const showColumns = ref<Column[]>([])
@@ -330,53 +346,93 @@ const columns = computed<TableColumnData[]>(() => [
   {
     title: t('searchTable.user.columns.nickName'),
     dataIndex: 'nickName',
-    slotName: 'nickName'
+    slotName: 'nickName',
+    align: 'center',
+    width: 140
+  },
+  {
+    title: t('searchTable.user.columns.gender'),
+    dataIndex: 'gender',
+    slotName: 'gender',
+    align: 'center',
+    width: 100,
+    sortable: {
+      sortDirections: ['ascend', 'descend']
+    }
+  },
+
+  {
+    title: t('searchTable.user.columns.area'),
+    dataIndex: 'area',
+    slotName: 'area',
+    align: 'center',
+    width: 100,
+    sortable: {
+      sortDirections: ['ascend', 'descend']
+    }
+  },
+  {
+    title: t('searchTable.user.columns.age'),
+    dataIndex: 'age',
+    slotName: 'age',
+    align: 'center',
+    width: 100,
+    sortable: {
+      sortDirections: ['ascend', 'descend']
+    }
+  },
+
+  {
+    title: t('searchTable.user.columns.signature'),
+    dataIndex: 'signature',
+    slotName: 'signature',
+    align: 'center',
+    width: 200
+  },
+
+  {
+    title: t('searchTable.user.columns.videoNum'),
+    dataIndex: 'videoNum',
+    slotName: 'videoNum',
+    align: 'center',
+    width: 100,
+    sortable: {
+      sortDirections: ['descend', 'ascend']
+    }
+  },
+  {
+    title: t('searchTable.user.columns.playedNum'),
+    dataIndex: 'playedNum',
+    slotName: 'playedNum',
+    align: 'center',
+    width: 100,
+    sortable: {
+      sortDirections: ['descend', 'ascend']
+    }
   },
   {
     title: t('searchTable.user.columns.email'),
     dataIndex: 'email',
     slotName: 'email',
-    width: 200
+    align: 'center',
+    width: 180
   },
   {
     title: t('searchTable.user.columns.password'),
     dataIndex: 'password',
-    slotName: 'password'
-  },
-  {
-    title: t('searchTable.user.columns.age'),
-    dataIndex: 'age',
-    slotName: 'age'
+    slotName: 'password',
+    align: 'center',
+    width: 100
   },
 
   {
-    title: t('searchTable.user.columns.gender'),
-    dataIndex: 'gender',
-    slotName: 'gender'
-  },
-  {
-    title: t('searchTable.user.columns.area'),
-    dataIndex: 'area',
-    slotName: 'area'
-  },
-  {
-    title: t('searchTable.user.columns.signature'),
-    dataIndex: 'signature',
-    slotName: 'signature'
-  },
-  {
-    title: t('searchTable.user.columns.videoNum'),
-    dataIndex: 'videoNum',
-    slotName: 'videoNum'
-  },
-  {
-    title: t('searchTable.user.columns.playedNum'),
-    dataIndex: 'playedNum',
-    slotName: 'playedNum'
-  },
-  {
     title: t('searchTable.user.columns.registerTime'),
-    dataIndex: 'registerTime'
+    dataIndex: 'registerTime',
+    align: 'center',
+    width: 180,
+    sortable: {
+      sortDirections: ['descend', 'ascend']
+    }
   },
 
   {
@@ -409,79 +465,113 @@ onMounted(() => {
   })
 })
 
-const fetchData = async (params: PolicyParams = { current: 1, pageSize: 20 }) => {
+const fetchData = async (params: PolicyParamsUser = { current: 1, pageSize: 20 }) => {
   setLoading(true)
+  userStore
+    .getUserInfoAll()
+    .then((users) => {
+      let results = users
+      if (params.nickName !== undefined && params.nickName.length > 0) {
+        results = results.filter((record) => record.nickName.includes(params.nickName as string))
+      }
+      if (params.email !== undefined && params.email.length > 0) {
+        results = results.filter((record) => record.email.includes(params.email as string))
+      }
+      if (params.gender) {
+        results = results.filter((record) => record.gender === params.gender)
+      }
+      if (params.area) {
+        results = results.filter((record) => record.area === params.area)
+      }
+      if (params.age !== undefined) {
+        results = results.filter((record) => record.age === params.age)
+      }
+      if (params.registerTime && params.registerTime.length === 2) {
+        results = results.filter((record) =>
+          isTimeInRange(params.registerTime as unknown as string[], record.registerTime)
+        )
+      }
 
-  pullVideo({
-    tagsName: params.tags,
-    tagFilterMode: 'filterAll',
-    sort: 'sort'
-  })
-    .then((videos) => {
-      const promises = videos.map(
-        async (video): Promise<VideoRecord> =>
-          getVideoInfoById(video.id)
-            .then((record) => record)
-            .catch((e) => {
-              // 处理错误
-              Message.error({
-                id: 'videoList',
-                content: e.message
-              })
-              // 返回一个标记错误的值或者抛出一个新的错误，具体取决于你的需求
-              throw e.message
-            })
-      )
-      Promise.all(promises).then((records) => {
-        let results = records
-        if (params.authorName) {
-          results = results.filter((record) =>
-            record.authorName.includes(params.authorName as string)
-          )
-        }
-        if (params.videoTitle) {
-          results = results.filter((record) =>
-            record.videoTitle.includes(params.videoTitle as string)
-          )
-        }
-        if (params.contentType) {
-          results = results.filter((record) => record.contentType === params.contentType)
-        }
-        if (params.status) {
-          results = results.filter((record) => record.status === params.status)
-        }
-        if (params.publishTime && params.publishTime.length === 2) {
-          results = results.filter((record) =>
-            isTimeInRange(params.publishTime as unknown as string[], record.publishTime)
-          )
-        }
-
-        const data: VideoListRes = {
-          list: results,
-          total: 0
-        }
-        const editableList = data.list as VideoRecordCanEdit[]
-        editableList.forEach((item) => (item.isEditing = false))
-        renderData.value = editableList
-        editingData.value = _.cloneDeep(renderData.value)
-        pagination.current = params.current
-        pagination.total = data.total
-        setLoading(false)
-      })
+      const data: UserListRes = {
+        list: results,
+        total: 0
+      }
+      renderData.value = data.list
+      pagination.current = params.current
+      pagination.total = data.total
+      setLoading(false)
     })
-    .catch((e) => {
+    .catch((msg: string) => {
       Message.error({
-        id: 'videoList',
-        content: e.message
+        id: 'userList',
+        content: msg
       })
+      location.reload()
     })
+  return
+  // pullVideo({
+  //   tagsName: params.tags,
+  //   tagFilterMode: 'filterAll',
+  //   sort: 'sort'
+  // }).then((videos) => {
+  //   const promises = videos.map(
+  //     async (video): Promise<VideoRecord> =>
+  //       getVideoInfoById(video.id)
+  //         .then((record) => record)
+  //         .catch((e) => {
+  //           // 处理错误
+  //           Message.error({
+  //             id: 'videoList',
+  //             content: e.message
+  //           })
+  //           // 返回一个标记错误的值或者抛出一个新的错误，具体取决于你的需求
+  //           throw e.message
+  //         })
+  //   )
+  //   Promise.all(promises).then((records) => {
+  //     let results = records
+  //     if (params.authorName) {
+  //       results = results.filter((record) =>
+  //         record.authorName.includes(params.authorName as string)
+  //       )
+  //     }
+  //     if (params.videoTitle) {
+  //       results = results.filter((record) =>
+  //         record.videoTitle.includes(params.videoTitle as string)
+  //       )
+  //     }
+  //     if (params.contentType) {
+  //       results = results.filter((record) => record.contentType === params.contentType)
+  //     }
+  //     if (params.status) {
+  //       results = results.filter((record) => record.status === params.status)
+  //     }
+  //     if (params.publishTime && params.publishTime.length === 2) {
+  //       results = results.filter((record) =>
+  //         isTimeInRange(params.publishTime as unknown as string[], record.publishTime)
+  //       )
+  //     }
+  //
+  //     const data: VideoListRes = {
+  //       list: results,
+  //       total: 0
+  //     }
+  //     const editableList = data.list as VideoRecordCanEdit[]
+  //     editableList.forEach((item) => (item.isEditing = false))
+  //     renderData.value = editableList
+  //     editingData.value = _.cloneDeep(renderData.value)
+  //     pagination.current = params.current
+  //     pagination.total = data.total
+  //     setLoading(false)
+  //   })
+  // })
 }
 
 const search = () => {
   fetchData({
     ...basePagination,
     ...formModel.value
-  } as unknown as PolicyParams)
+  } as unknown as PolicyParamsVideo)
 }
 const onPageChange = (current: number) => {
   fetchData({ ...basePagination, current })

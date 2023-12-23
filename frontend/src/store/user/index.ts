@@ -23,6 +23,7 @@ export interface User {
   username: string
   signature: string
 }
+
 // impo mandert { mande } from 'mande'
 // const api = mande('/api/users')
 
@@ -74,11 +75,42 @@ export const useUserStore = defineStore('user', {
           })
         })
     },
-    // getUserInfo: ()=>
-    //   (userId:number|string)=>
-    //     new Promise<UserRecord>((resolve,reject)=>{
-    //       fetch(prefix_url.concat("user/info"))
-    //     })
+    getUserInfoAll: () => () =>
+      new Promise<UserRecord[]>((resolve, reject) => {
+        fetch(prefix_url.concat('user/info/all'), {
+          method: 'GET'
+        })
+          .then((res) => {
+            if (res.ok) {
+              res.json().then((records: UserRecord[]) => {
+                resolve(records)
+              })
+            } else {
+              reject(res.statusText)
+            }
+          })
+          .catch((e) => {
+            reject(e.message)
+          })
+      }),
+    getUserInfoById: () => (userId: number | string) =>
+      new Promise<UserRecord>((resolve, reject) => {
+        fetch(prefix_url.concat(`user/info/${userId}`), {
+          method: 'GET'
+        })
+          .then((res) => {
+            if (res.ok) {
+              res.json().then((record: UserRecord) => {
+                resolve(record)
+              })
+            } else {
+              reject(res.statusText)
+            }
+          })
+          .catch((e) => {
+            reject(e.message)
+          })
+      }),
     getUserAvatar: (state) =>
       state.userData !== undefined
         ? state.userData.avatar
@@ -182,6 +214,28 @@ export const useUserStore = defineStore('user', {
         localStorage.removeItem('currentUser')
         this.isStoredToken = false
       }
+    },
+    async deleteUser(userId: string | number) {
+      return new Promise<void>((resolve, reject) => {
+        fetch(prefix_url.concat(`user/delete?id=${userId}`), {
+          method: 'POST'
+        }).then((res) => {
+          if (res.ok) {
+            res.json().then((ajaxData: AjaxResponse) => {
+              if (ajaxData.ajax_ok) {
+                Message.success(ajaxData.ajax_msg)
+                resolve()
+              } else {
+                reject(ajaxData.ajax_msg)
+              }
+            })
+          } else {
+            reject(res.statusText)
+          }
+        })
+      }).catch((e) => {
+        reject(e.message)
+      })
     }
   }
 })
