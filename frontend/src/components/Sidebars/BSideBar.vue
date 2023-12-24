@@ -19,11 +19,6 @@
       首页
     </a-menu-item>
 
-    <a-menu-item key="postVideo" @click="handleClickPost">
-      <IconCalendar />
-      发布
-    </a-menu-item>
-
     <a-sub-menu key="search" v-if="userStore.isAdmin">
       <template #title>
         <span><IconCalendar />查询</span>
@@ -42,12 +37,17 @@
       v-if="userStore.isAdmin"
     >
       <IconSettings />
-      设置
+      备份
     </a-menu-item>
 
     <a-menu-item key="logView" @click="$router.push({ name: 'logView' })" v-if="userStore.isAdmin">
       <IconSettings />
       日志
+    </a-menu-item>
+
+    <a-menu-item key="postVideo" @click="handleClickPost">
+      <IconCalendar />
+      发布视频
     </a-menu-item>
   </a-menu>
 </template>

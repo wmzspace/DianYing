@@ -662,7 +662,8 @@ const fetchData = async (params: PolicyParamsVideo = { current: 1, pageSize: 20 
   pullVideo({
     tagsName: params.tags,
     tagFilterMode: 'filterAll',
-    sort: 'sort'
+    sort: 'sort',
+    allStatus: 'all'
   })
     .then((videos) => {
       const promises = videos.map(

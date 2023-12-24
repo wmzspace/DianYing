@@ -136,6 +136,13 @@ watch(video, (value) => {
     commentsNum.value = 0
     userStore.getUserById(value.authorId).then((user) => {
       author.value = user
+      // if (value.status !== 'online' && !userStore.isAdminOrCurUser(author.value.id)) {
+      //   Message.warning({
+      //     id: 'videoNotOnline',
+      //     content: '视频不存在'
+      //   })
+      //   router.replace({ name: 'discover' })
+      // }
     })
     refreshVideoRecord()
     refreshVideoLikeAndStar()

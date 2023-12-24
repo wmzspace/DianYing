@@ -3,10 +3,14 @@ import type { VideoMedia } from '@/types'
 import Player, { Events } from 'xgplayer'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import PresetPlayer from 'xgplayer'
+import type { VideoRecord } from '@/api/list'
+import { getVideoInfoById } from '@/utils/video'
 
 const props = defineProps<{
   src: VideoMedia
 }>()
+
+const videoRecord = ref<VideoRecord | undefined>(undefined)
 
 const createPlayer = (video: VideoMedia) => {
   return new Player({
@@ -44,6 +48,11 @@ const mouseOver = ref(false)
 const coolDown = ref<number>()
 const canPlay = ref(false)
 const showCover = ref(true)
+
+getVideoInfoById(props.src.id).then((record) => {
+  videoRecord.value = record
+})
+
 watch(mouseOver, (value, oldValue, onCleanup) => {
   if (value) {
     canPlay.value = true
@@ -112,7 +121,7 @@ watch(mouseOver, (value, oldValue, onCleanup) => {
         <template #extra>
           <div class="like-statistic">
             <icon-heart />
-            1234
+            {{ videoRecord?.likeCount }}
           </div>
         </template>
       </a-image>

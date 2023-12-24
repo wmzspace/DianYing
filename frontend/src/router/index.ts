@@ -9,6 +9,9 @@ import adminSetting from '@/views/admin/settings/index.vue'
 import PostVideo from '@/views/admin/post-video/index.vue'
 import logView from '@/views/admin/log/index.vue'
 import { useMainStore } from '@/store/main'
+import { Message } from '@arco-design/web-vue'
+import { getVideoInfoById } from '@/utils/video'
+import type { VideoRecord } from '@/api/list'
 
 let routes: Array<RouteRecordRaw> = [
   {
@@ -222,8 +225,13 @@ const router = createRouter({
   }
 })
 
+export const canUserAccess = () =>
+  new Promise((resolve, reject) => {
+    resolve(true)
+  })
+
 // router/index.js
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
   const mainStore = useMainStore()
   // const isAuthenticated = userStore.isAdmin
@@ -236,22 +244,75 @@ router.beforeEach((to, from, next) => {
         !userStore.isAdmin &&
         userStore.getCurrentUser)
     ) {
-      next() //允许访问
+      // next() //允许访问
+      return
     } else {
+      // 跳转访问
       if (userStore.isAdmin) {
-        next('/admin')
+        // 管理员跳转
+        // next('/admin')
+        return '/admin'
       } else {
+        // 用户跳转
         if (mainStore.goToPost) {
+          // 用户重定向
           mainStore.goToPost = false
-          alert('!')
-          next('/admin/post-video')
+          return '/admin/post-video'
+          // next('/admin/post-video')
         } else {
-          next('/')
+          // 用户跳转回首页
+          // next('/')
+          return '/'
         }
       }
     }
   } else {
-    next() //允许访问
+    //允许访问
+    if (to.name === 'videoDetail') {
+      // console.log(to)
+      try {
+        const video = await getVideoInfoById(to.params.video_id as string)
+        if (video.status !== 'online' && !userStore.isAdminOrCurUser(video.authorId)) {
+          Message.warning({
+            id: 'videoNotOnline',
+            content: '视频不存在'
+          })
+          return '/'
+        }
+      } catch (msg) {
+        Message.error({
+          id: 'videoNotOnline',
+          content: msg as string
+        })
+        return '/'
+      }
+    }
+    // next()
+    // if (to.name === 'videoDetail') {
+    //   next('/')
+    // setTimeout(() => {
+    //   console.log('!!')
+    //   return '/'
+    // }, 1000)
+    // if (value.status !== 'online' && !userStore.isAdminOrCurUser(author.value.id)) {
+    //   Message.warning({
+    //     id: 'videoNotOnline',
+    //     content: '视频不存在'
+    //   })
+    //   router.replace({ name: 'discover' })
+    // }
+    //
+    // if (userStore.isAdminOrCurUser(userStore.getCurrentUser?.id)) {
+    //   next()
+    // } else {
+    //   // 用户跳转回首页
+    //   next('/')
+    // }
+    //   next()
+    // } else {
+    //   //允许访问
+    //   next()
+    // }
   }
 })
 

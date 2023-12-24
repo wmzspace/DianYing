@@ -66,6 +66,7 @@ export interface pullVideoRequest {
   tagsName?: string[]
   tagFilterMode?: 'filterAll' | undefined
   sort?: 'sort' | undefined
+  allStatus?: 'all' | undefined
 }
 export const pullVideo = (request?: pullVideoRequest) =>
   new Promise<VideoMedia[]>((resolve, reject) => {
@@ -81,6 +82,8 @@ export const pullVideo = (request?: pullVideoRequest) =>
         ? `&tag_filter_mode=${request.tagFilterMode}`
         : ''
     const sortString = request && typeof request.sort !== 'undefined' ? `&sort=${request.sort}` : ''
+    const allStatusString =
+      request && typeof request.allStatus !== 'undefined' ? `&all_status=${request.allStatus}` : ''
 
     fetch(
       prefix_url
@@ -89,7 +92,8 @@ export const pullVideo = (request?: pullVideoRequest) =>
         .concat(authorString)
         .concat(tagString)
         .concat(tagFilterModeString)
-        .concat(sortString),
+        .concat(sortString)
+        .concat(allStatusString),
       {
         method: 'GET'
       }

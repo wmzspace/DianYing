@@ -1,6 +1,8 @@
 import axios from 'axios'
 import qs from 'query-string'
 import type { DescData } from '@arco-design/web-vue/es/descriptions/interface'
+import type { BackupRecord } from '@/utils/database'
+import type { VideoMedia } from '@/types'
 
 export interface VideoRecord {
   authorName: string
@@ -58,12 +60,21 @@ export interface UserQueryForm {
   area: string | undefined
 }
 
+export interface BackupQueryForm {
+  name: string | undefined
+}
+
 export interface PolicyParamsVideo extends Partial<VideoQueryForm> {
   current: number
   pageSize: number
 }
 
 export interface PolicyParamsUser extends Partial<UserQueryForm> {
+  current: number
+  pageSize: number
+}
+
+export interface PolicyParamsBackup extends Partial<BackupQueryForm> {
   current: number
   pageSize: number
 }
@@ -75,6 +86,10 @@ export interface UserListRes {
 
 export interface VideoListRes {
   list: VideoRecord[]
+  total: number
+}
+export interface BackupListRes {
+  list: BackupRecord[]
   total: number
 }
 

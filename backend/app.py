@@ -112,9 +112,6 @@ def db_load():
     click.echo("成功载入初始数据")
 
 
-
-
-
 @app.cli.command('db-load')
 def api_db_load():
     db_load()

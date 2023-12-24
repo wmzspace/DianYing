@@ -7,7 +7,7 @@ from sqlalchemy import event
 
 from blueprints.database import database_bp
 from exts import AjaxResponse, db, mail, scheduler
-from models import Comment, model2dict, User, Video, VideoLike, CommentLike, Register, DatabaseBackup
+from models import Comment, model2dict, User, Video, VideoLike, CommentLike, Register, DatabaseBackup, load_init_data
 
 from flask_mail import Message
 
@@ -16,6 +16,15 @@ from flask_mail import Message
 def get_backup():
     backup = DatabaseBackup.query.all()
     return model2dict(backup), 200
+
+
+@database_bp.route('/force/rollback', methods=['GET', 'POST'])
+def force_rollback():
+    db.drop_all()
+    db.create_all()
+    # load_init_data()
+    db.session.commit()
+    return AjaxResponse.success(None,"已重置数据库")
 
 
 @database_bp.route("/rollback", methods=["GET", 'POST'])
@@ -45,12 +54,15 @@ def backup_data():
         return AjaxResponse.error("参数缺失: name")
     path = f"~/web2_cwk2/backup-{name}.sql"
     backup_cli = (f"mysqldump -uroot -proot --host=127.0.0.1 --port=3306 --databases web2_cwk2 "
-                  f"--ignore-table=web2_cwk2.database_backup --default-character-set=utf8mb4 > {path}")
+                  f"--ignore-table=web2_cwk2.database_backup --ignore-table=web2_cwk2.registers "
+                  f"--default-character-set=utf8mb4 > {path}")
     result = os.system(backup_cli)
 
     if result == 0:
         query_exist = DatabaseBackup.query.filter_by(name=name).first()
         if query_exist is not None:
+            query_exist.create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            db.session.commit()
             return AjaxResponse.success(result, f"成功覆盖还原点'{query_exist.name}'")
         new_backup_record = DatabaseBackup(
             name=name, path=path, create_time=datetime.datetime.strftime(

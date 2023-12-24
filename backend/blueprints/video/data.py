@@ -21,6 +21,9 @@ def get_all_videos():
     tags_name_raw = request.args.get("tags_name")
     tag_filter_mode = request.args.get("tag_filter_mode")
 
+    # 是否包含未上线的视频
+    all_status = request.args.get("all_status")
+
     # 是否按id降序
     sort = request.args.get("sort")
 
@@ -28,10 +31,17 @@ def get_all_videos():
     query_tags_name = []
     if tags_name_raw is not None:
         query_tags_name = tags_name_raw.split(',')
+
     if sort == "sort":
-        all_videos = Video.query.order_by(db.desc(Video.id)).all()
+        if all_status == "all":
+            all_videos = Video.query.order_by(db.desc(Video.id)).all()
+        else:
+            all_videos = Video.query.filter_by(status="online").order_by(db.desc(Video.id)).all()
     else:
-        all_videos = Video.query.order_by(func.random())
+        if all_status == "all":
+            all_videos = Video.query.order_by(func.random())
+        else:
+            all_videos = Video.query.filter_by(status="online").order_by(func.random())
     results = []
     for video in all_videos:
         if author_id is not None and video.author_id != author_id:
@@ -74,6 +84,8 @@ def get_all_videos():
 def query_video():
     video_id = request.args.get("id")
     target = Video.query.filter_by(id=video_id).first()
+    if target is None:
+        return AjaxResponse.error("视频不存在")
     return model2dict([target])
 
 
@@ -336,7 +348,7 @@ class VideoRecord:
     contentType: str
     likeCount: int
     starCount: int
-    playCount:int
+    playCount: int
     commentCount: int
     publishTime: str
     tags: list[str]

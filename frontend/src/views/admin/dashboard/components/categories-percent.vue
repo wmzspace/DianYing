@@ -94,14 +94,6 @@ const { chartOption } = useChartOption((isDark) => {
           borderWidth: 1
         },
         data: tagNames.value.map((_, index) => {
-          console.log({
-            value: tagCount.value[index],
-            name: tagNames.value[index],
-            itemStyle: {
-              color: isDark ? itemStyles[index].dark : itemStyles[index].light
-            }
-          })
-
           return {
             value: tagCount.value[index],
             name: tagNames.value[index],

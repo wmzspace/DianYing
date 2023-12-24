@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Breadcrumb :items="['日志']" />
+    <Breadcrumb :addition-items="['日志']" />
     <a-card class="general-card" title="所有日志"> </a-card>
   </div>
 </template>

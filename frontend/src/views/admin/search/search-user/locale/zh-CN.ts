@@ -35,7 +35,7 @@ export default {
   'searchTable.user.columns.registerTime': '注册时间',
   'searchTable.user.columns.videoNum': '投稿数',
   'searchTable.user.columns.likedNum': '获赞次数',
-  'searchTable.user.columns.playedNum': '播放量',
+  'searchTable.user.columns.playedNum': '活跃度',
   'searchTable.user.columns.operations': '操作',
   'searchTable.user.columns.operations.view': '查看',
   'searchTable.user.columns.operations.delete': '注销',

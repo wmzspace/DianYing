@@ -164,7 +164,9 @@ const querySearch = (videos: VideoMedia[]) => {
 const videoListByAuthor = computed(() =>
   videoList.filter((v) => queryUser.value && v.authorId === queryUser.value.id)
 )
-pullVideo().then((videos) => {
+pullVideo({
+  allStatus: 'all'
+}).then((videos) => {
   videos.forEach((video) => {
     videoList.push(video)
   })
@@ -174,7 +176,9 @@ const videosLiked: VideoMedia[] = reactive([])
 getVideosByUserLikeOrStar(props.user_id, 'like').then((videos) => {
   videosLiked.slice(0)
   videos.forEach((v) => {
-    videosLiked.push(v)
+    if (v.status === 'online') {
+      videosLiked.push(v)
+    }
   })
 })
 
@@ -182,7 +186,9 @@ const videosStarred: VideoMedia[] = reactive([])
 getVideosByUserLikeOrStar(props.user_id, 'star').then((videos) => {
   videosStarred.slice(0)
   videos.forEach((v) => {
-    videosStarred.push(v)
+    if (v.status === 'online') {
+      videosStarred.push(v)
+    }
   })
 })
 
@@ -190,7 +196,9 @@ const videosPlayed: VideoMedia[] = reactive([])
 getVideosByUserLikeOrStar(props.user_id, 'play').then((videos) => {
   videosPlayed.slice(0)
   videos.forEach((v) => {
-    videosPlayed.push(v)
+    if (v.status === 'online') {
+      videosPlayed.push(v)
+    }
   })
 })
 
