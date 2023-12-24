@@ -41,7 +41,7 @@
     </a-menu-item>
 
     <a-menu-item key="logView" @click="$router.push({ name: 'logView' })" v-if="userStore.isAdmin">
-      <IconSettings />
+      <icon-schedule />
       日志
     </a-menu-item>
 
