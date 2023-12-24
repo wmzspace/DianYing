@@ -58,6 +58,7 @@ class Config:
 class DevelopmentConfig(Config):
     # 开发环境
     DEBUG = True
+    # SQLALCHEMY_RECORD_QUERIES = True
     # MAIL_SERVER = 'smtp.googlemail.com'
     # MAIL_PORT = 587
     # MAIL_USE_TLS = True

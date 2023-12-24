@@ -7,7 +7,8 @@ from sqlalchemy import event
 
 from blueprints.database import database_bp
 from exts import AjaxResponse, db, mail, scheduler
-from models import Comment, model2dict, User, Video, VideoLike, CommentLike, Register, DatabaseBackup, load_init_data
+from models import Comment, model2dict, User, Video, VideoLike, CommentLike, Register, DatabaseBackup, load_init_data, \
+    DatabaseLog
 
 from flask_mail import Message
 
@@ -24,7 +25,7 @@ def force_rollback():
     db.create_all()
     # load_init_data()
     db.session.commit()
-    return AjaxResponse.success(None,"已重置数据库")
+    return AjaxResponse.success(None, "已重置数据库")
 
 
 @database_bp.route("/rollback", methods=["GET", 'POST'])
@@ -101,3 +102,10 @@ def delete_data():
     #     return AjaxResponse.success(result, f"成功添加还原点'{name}'")
     # else:
     #     return AjaxResponse.error(f"备份失败：错误码{result}")
+
+
+# API: 获取数据库日志
+@database_bp.route("/logs", methods=["GET"])
+def get_logs():
+    logs = DatabaseLog.query.all()
+    return model2dict(logs), 200

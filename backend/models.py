@@ -5,8 +5,12 @@ from typing import Any
 
 import numpy
 from apscheduler.schedulers.background import BackgroundScheduler
+from flask_sqlalchemy.record_queries import get_recorded_queries
+from flask_sqlalchemy.track_modifications import models_committed
 from sqlalchemy import event
+from flask import current_app, signals
 
+app = current_app
 from exts import PREFIX_URL
 from exts import db, scheduler
 
@@ -441,7 +445,84 @@ class DatabaseBackup(db.Model):
         nullable=False)
 
 
+class DatabaseLog(db.Model):
+    __tablename__ = 'database_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    operation = db.Column(db.String(50), nullable=False)
+    table_name = db.Column(db.String(50), nullable=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    timestamp = db.Column(
+        db.String(50),
+        nullable=False)
+
+    # user = db.relationship("User")
+
+    def __init__(self, operation, log_table_name, timestamp):
+        self.operation = operation
+        self.table_name = log_table_name
+        # self.user_id = user_id
+        self.timestamp = timestamp
+
+
+# Function to get the model class based on table name
+# Define a function that acts like a class method
+# def get_model_class(cls, table_name):
+#     for class_ in cls._decl_class_registry.values():
+#         if hasattr(class_, '__tablename__') and class_.__tablename__ == table_name:
+#             return class_
+#     return None
+
+
+# Add the function as a class method to db.Model
+# setattr(db.Model, 'get_model_class', classmethod(get_model_class))
+#
+# # Create a dictionary to store mapping between table names and class models
+# table_class_mapping = {
+#     'registers': Register,
+#     'users': User,
+#     'tags': VTag,
+#     'videos': Video,
+#     'video_tag_relation': VTRelation,
+#     'comments': Comment,
+#     'video_plays': VideoPlay,
+#     'video_likes': VideoLike,
+#     'video_stars': VideoStar,
+#     'comment_likes': CommentLike,
+#     'database_backup': DatabaseBackup
+# }
+
+# def log_data_changes(mapper, connection, target):
+#     table_name = table_name_mapping.get(target.__class__.__name__)
+#     if table_name:
+#         operation = 'INSERT' if target._sa_instance_state.transient else 'UPDATE'
+#         user_id = getattr(target, 'id', None)  # Assuming 'id' is the user_id
+#         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#
+#         log_entry = DatabaseLog(operation=operation, table_name=table_name, user_id=user_id, timestamp=timestamp)
+#         db.session.add(log_entry)
+#         db.session.commit()
+
+# Attach event listener to each mapped class
+# for table_name in table_class_mapping.keys():
+#     @db.event.listens_for(table_class_mapping.get(table_name), "after_insert")
+#     def log_data_changes(mapper, connection, target):
+#         log_table_name = target.__tablename__
+#         print(log_table_name)
+#         if log_table_name:
+#             operation = 'INSERT' if target._sa_instance_state.transient else 'UPDATE'
+#             # user_id = getattr(target, 'id', None)  # Assuming 'id' is the user_id
+#             timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#
+#             log_entry = DatabaseLog(operation, log_table_name, timestamp)
+#             print(log_entry)
+#             # db.session.add(log_entry)
+#             # db.session.commit()
+#     # event.listen(db.metadata.tables[table_name_mapping[class_name]], 'after_update', log_data_changes)
+#     # event.listen(db.metadata.tables[table_name_mapping[class_name]], 'after_delete', log_data_changes)
+
+
 def load_init_data():
+
     """
         This load initial data function
 
@@ -617,7 +698,23 @@ def load_init_data():
             VTRelation({'video_id': 5, 'tag_id': 10}),
         ]
     )
+    db.session.commit()
+    def on_models_committed(sender, changes):
+        # 处理模型提交事件
+        print(sender)
+        print(changes)
 
+    models_committed.connect(on_models_committed)
+
+    # user = User.query.get(1)
+    # user.nickname="1"
+    # db.session.commit()
+    # def get_parameters(query):
+    #     if len(query.parameters)>1:
+    #         print(query.parameters)
+    #     return len(query.parameters)
+    #
+    # print(list(map(get_parameters, queries)))
 # class Income(Invoice, db.Model):
 #     """
 #         This is a class for Income
