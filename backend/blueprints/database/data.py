@@ -30,7 +30,7 @@ def load_data():
     path = query_exist.path
     if path != f"~/web2_cwk2/backup-{name}.sql":
         return AjaxResponse.error("备份文件名称不匹配，请联系相关技术人员")
-    rollback_cli = f"mysql -uroot -proot web2_cwk2 < {path}"
+    rollback_cli = f"mysql -uroot -proot -h127.0.0.1 web2_cwk2 < {path}"
     result = os.system(rollback_cli)
     if result == 0:
         return AjaxResponse.success(result, f"成功还原数据库，还原点:{name}")
