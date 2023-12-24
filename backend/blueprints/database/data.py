@@ -57,6 +57,8 @@ def backup_data():
         db.session.commit()
         return AjaxResponse.success(result, f"成功添加还原点'{name}'")
     else:
+        if result in [256, 512]:
+            return AjaxResponse.error(f"备份失败, 错误码{result}: 请确保名称不含非法字符")
         return AjaxResponse.error(f"备份失败：错误码{result}")
 
 
