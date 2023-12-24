@@ -28,7 +28,7 @@ def load_data():
     if query_exist is None:
         return AjaxResponse.error("该还原点不存在")
     path = query_exist.path
-    if path != f"/tmp/web2_cwk2-{name}.sql":
+    if path != f"~/web2_cwk2/backup-{name}.sql":
         return AjaxResponse.error("备份文件名称不匹配，请联系相关技术人员")
     rollback_cli = f"mysql -uroot -proot web2_cwk2 < {path}"
     result = os.system(rollback_cli)
@@ -43,9 +43,10 @@ def backup_data():
     name = request.args.get("name")
     if name is None:
         return AjaxResponse.error("参数缺失: name")
-    path = f"/tmp/web2_cwk2-{name}.sql"
+    path = f"~/web2_cwk2/backup-{name}.sql"
     backup_cli = f"mysqldump -uroot -proot --host=127.0.0.1 --port=3306 --databases web2_cwk2 > {path}"
     result = os.system(backup_cli)
+
     if result == 0:
         query_exist = DatabaseBackup.query.filter_by(name=name).first()
         if query_exist is not None:
