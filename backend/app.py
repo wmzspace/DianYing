@@ -3,18 +3,19 @@ import os
 
 import click
 from apscheduler.schedulers.blocking import BlockingScheduler
-from flask import render_template, Flask
+from flask import render_template, Flask, request
 from flask_mail import Mail, Message
 
 import models
 from blueprints.comment import comment_bp
+from blueprints.database import database_bp
 from blueprints.email import email_bp
 from blueprints.tag import tag_bp
 from blueprints.video import video_bp
 from models import *
 from blueprints.user import user_bp
 from config import config
-from exts import db, mail, scheduler
+from exts import db, mail, scheduler, AjaxResponse
 
 # from flask_script import Manager, Shell
 
@@ -27,6 +28,7 @@ app.register_blueprint(video_bp)
 app.register_blueprint(comment_bp)
 app.register_blueprint(email_bp)
 app.register_blueprint(tag_bp)
+app.register_blueprint(database_bp)
 # app.register_blueprint(api.get)
 # app.register_blueprint(api.delete)
 # app.register_blueprint(api.update)
@@ -90,7 +92,7 @@ def api_index():
 # migrate = Migrate(app, db)
 
 
-# 新设备需执行以下任意命令以建表
+# @app.route("/init", methods=["POST"])
 @app.cli.command('db-init')
 def db_init():
     """数据库建表/格式化"""
@@ -101,7 +103,6 @@ def db_init():
     click.echo("已清空并初始化数据库")
 
 
-@app.cli.command('db-load')
 def db_load():
     """数据库建表/格式化，并载入初始数据"""
     db.drop_all()
@@ -111,24 +112,19 @@ def db_load():
     click.echo("成功载入初始数据")
 
 
+
+
+
+@app.cli.command('db-load')
+def api_db_load():
+    db_load()
+
+
 @app.cli.command('db-drop')
 def db_init():
     """数据库建表/格式化"""
     db.drop_all()
     click.echo("已清空数据库")
-
-
-@app.cli.command('db-test')
-def db_init():
-    """数据库建表/格式化"""
-    # db.drop_all()
-    # click.echo("已清空数据库")
-    comment = Comment.query.get(2)
-    print(comment.replies)
-    print(comment.parent)
-    # print(test.author.videos)
-    # test = Video.query.filter_by(author_id=1).count()
-    # print(test)
 
 
 if __name__ == '__main__':

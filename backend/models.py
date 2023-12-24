@@ -219,7 +219,6 @@ class Video(db.Model):
         backref="video",
         cascade="all, delete-orphan")
 
-
     def __init__(self, args):
         if 'id' in args:
             self.id = args['id']
@@ -432,6 +431,16 @@ class CommentLike(db.Model):
     )
 
 
+class DatabaseBackup(db.Model):
+    __tablename__ = 'database_backup'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    path = db.Column(db.String(100), nullable=False, unique=True)
+    create_time = db.Column(
+        db.String(50),
+        nullable=False)
+
+
 def load_init_data():
     """
         This load initial data function
@@ -607,7 +616,6 @@ def load_init_data():
             VTRelation({'video_id': 1, 'tag_id': 10}),
             VTRelation({'video_id': 5, 'tag_id': 10}),
         ]
-
     )
 
 # class Income(Invoice, db.Model):

@@ -355,7 +355,6 @@ class VideoRecord:
         self.publishTime = video.publish_time
         # tags = video.tags
         tags = video.vt_relations
-        print(len(tags))
 
         def get_tag_name(vtr):
             return vtr.tag.name
