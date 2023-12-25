@@ -1,4 +1,8 @@
 # 导入所需包
+import json
+
+from exts import db, scheduler
+from exts import PREFIX_URL
 import copy
 import datetime
 from typing import Any
@@ -11,8 +15,6 @@ from sqlalchemy import event
 from flask import current_app, signals
 
 app = current_app
-from exts import PREFIX_URL
-from exts import db, scheduler
 
 
 # PREFIX_URL = 'http://192.168.1.104:5000/'
@@ -34,24 +36,20 @@ def model2dict(models: list[Any] | None) -> list[Any]:
         return []
     result = []
     for model in list[any](models):
-        tmp = model.__dict__
+        tmp = copy.deepcopy(model.__dict__)
         if "_sa_instance_state" in tmp:
             tmp.pop("_sa_instance_state")
-        result.append(copy.deepcopy(tmp))
+        result.append(tmp)
     return result
-
-
-class Register(db.Model):
-    __tablename__ = "registers"
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), nullable=False)
-    code = db.Column(db.String(6), nullable=True)
-    code_timestamp = db.Column(
-        db.DateTime)
 
 
 class User(db.Model):
     __tablename__ = 'users'
+    __description__ = '用户'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(100))
@@ -99,7 +97,7 @@ class User(db.Model):
         cascade="all, delete-orphan")
 
     def __repr__(self):
-        return '<User %r>' % self.nickname
+        return f"{self.nickname}"
 
     def __init__(self, args):
         if 'id' in args:
@@ -124,8 +122,99 @@ class User(db.Model):
             self.register_time = args['register_time']
 
 
+class Register(db.Model):
+    __tablename__ = "registers"
+    __description__ = '验证码记录'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), nullable=False)
+    code = db.Column(db.String(6), nullable=True)
+    code_timestamp = db.Column(
+        db.String(50),
+        nullable=False)
+
+    def __repr__(self):
+        return f"{self.id}"
+
+
+class Video(db.Model):
+    __tablename__ = 'videos'
+    __description__ = '视频'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    author_id = db.Column(
+        db.Integer, db.ForeignKey(
+            'users.id', ondelete="cascade"))
+    # backref: author = User
+    url = db.Column(db.String(100), nullable=False)
+    cover = db.Column(db.String(100), nullable=False)
+    width = db.Column(db.Integer, nullable=False)
+    height = db.Column(db.Integer, nullable=False)
+    # tags = db.relationship("VTag", secondary="video_tag_relation")
+    status = db.Column(db.String(100), nullable=False, default="awaitApproval")
+    publish_time = db.Column(
+        db.String(50),
+        nullable=False)
+    author = db.relationship("User", back_populates="videos")
+    video_played = db.relationship(
+        "VideoPlay",
+        back_populates="video",
+        cascade="all, delete")
+    video_liked = db.relationship(
+        "VideoLike",
+        back_populates="video",
+        cascade="all, delete")
+    video_starred = db.relationship(
+        "VideoStar",
+        back_populates="video",
+        cascade="all, delete")
+    vt_relations = db.relationship(
+        "VTRelation",
+        back_populates="video",
+        cascade="all, delete")
+    comments = db.relationship(
+        "Comment",
+        backref="video",
+        cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f"{self.id}"
+
+    def __init__(self, args):
+        if 'id' in args:
+            self.id = args['id']
+        if 'title' in args:
+            self.title = args['title']
+        if 'author_id' in args:
+            self.author_id = args['author_id']
+        if 'url' in args:
+            self.url = args['url']
+        if 'cover' in args:
+            self.cover = args['cover']
+        if 'width' in args:
+            self.width = args['width']
+        if 'height' in args:
+            self.height = args['height']
+        if 'status' in args:
+            self.status = args['status']
+        if 'publish_time' in args:
+            self.publish_time = args['publish_time']
+
+
 class VTag(db.Model):
     __tablename__ = 'tags'
+    __description__ = '标签'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
     """
         This is a class for VTag
 
@@ -184,68 +273,15 @@ class VTag(db.Model):
         pass
 
 
-class Video(db.Model):
-    __tablename__ = 'videos'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    author_id = db.Column(
-        db.Integer, db.ForeignKey(
-            'users.id', ondelete="cascade"))
-    # backref: author = User
-    url = db.Column(db.String(100), nullable=False)
-    cover = db.Column(db.String(100), nullable=False)
-    width = db.Column(db.Integer, nullable=False)
-    height = db.Column(db.Integer, nullable=False)
-    # tags = db.relationship("VTag", secondary="video_tag_relation")
-    status = db.Column(db.String(100), nullable=False, default="awaitApproval")
-    publish_time = db.Column(
-        db.String(50),
-        nullable=False)
-    author = db.relationship("User", back_populates="videos")
-    video_played = db.relationship(
-        "VideoPlay",
-        back_populates="video",
-        cascade="all, delete")
-    video_liked = db.relationship(
-        "VideoLike",
-        back_populates="video",
-        cascade="all, delete")
-    video_starred = db.relationship(
-        "VideoStar",
-        back_populates="video",
-        cascade="all, delete")
-    vt_relations = db.relationship(
-        "VTRelation",
-        back_populates="video",
-        cascade="all, delete")
-    comments = db.relationship(
-        "Comment",
-        backref="video",
-        cascade="all, delete-orphan")
-
-    def __init__(self, args):
-        if 'id' in args:
-            self.id = args['id']
-        if 'title' in args:
-            self.title = args['title']
-        if 'author_id' in args:
-            self.author_id = args['author_id']
-        if 'url' in args:
-            self.url = args['url']
-        if 'cover' in args:
-            self.cover = args['cover']
-        if 'width' in args:
-            self.width = args['width']
-        if 'height' in args:
-            self.height = args['height']
-        if 'status' in args:
-            self.status = args['status']
-        if 'publish_time' in args:
-            self.publish_time = args['publish_time']
-
-
 class VTRelation(db.Model):
     __tablename__ = 'video_tag_relation'
+    __description__ = '视频标签关系'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"{self.tag.name}"
 
     def __init__(self, args):
         """
@@ -284,6 +320,13 @@ class VTRelation(db.Model):
 # 定义评论模型
 class Comment(db.Model):
     __tablename__ = 'comments'
+    __description__ = '评论'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"{self.content}"
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(400), nullable=False)
@@ -347,6 +390,14 @@ class Comment(db.Model):
 # 定义视频播放统计模型
 class VideoPlay(db.Model):
     __tablename__ = 'video_plays'
+    __description__ = '视频播放记录'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"{self.id}"
+
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(
         db.Integer,
@@ -369,6 +420,14 @@ class VideoPlay(db.Model):
 # 定义视频点赞统计模型
 class VideoLike(db.Model):
     __tablename__ = 'video_likes'
+    __description__ = '视频点赞记录'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"{self.id}"
+
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(
         db.Integer,
@@ -391,6 +450,14 @@ class VideoLike(db.Model):
 # 定义视频收藏统计模型
 class VideoStar(db.Model):
     __tablename__ = 'video_stars'
+    __description__ = '视频收藏记录'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"{self.id}"
+
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(
         db.Integer,
@@ -412,6 +479,14 @@ class VideoStar(db.Model):
 # 定义评论点赞统计模型
 class CommentLike(db.Model):
     __tablename__ = 'comment_likes'
+    __description__ = '评论点赞记录'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"{self.id}"
+
     id = db.Column(db.Integer, primary_key=True)
     comment_id = db.Column(
         db.Integer,
@@ -437,6 +512,14 @@ class CommentLike(db.Model):
 
 class DatabaseBackup(db.Model):
     __tablename__ = 'database_backup'
+    __description__ = '数据备份记录'
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"{self.name}"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     path = db.Column(db.String(100), nullable=False, unique=True)
@@ -447,82 +530,37 @@ class DatabaseBackup(db.Model):
 
 class DatabaseLog(db.Model):
     __tablename__ = 'database_logs'
+    __description__ = '日志记录'
     id = db.Column(db.Integer, primary_key=True)
-    operation = db.Column(db.String(50), nullable=False)
-    table_name = db.Column(db.String(50), nullable=False)
-    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    operation = db.Column(db.String(10), nullable=False)
+    target = db.Column(db.String(30), nullable=False)
+    record_value = db.Column(db.String(800), nullable=False)
     timestamp = db.Column(
         db.String(50),
         nullable=False)
 
-    # user = db.relationship("User")
+    def to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
-    def __init__(self, operation, log_table_name, timestamp):
+    def __init__(self, model, operation):
         self.operation = operation
-        self.table_name = log_table_name
-        # self.user_id = user_id
-        self.timestamp = timestamp
-
-
-# Function to get the model class based on table name
-# Define a function that acts like a class method
-# def get_model_class(cls, table_name):
-#     for class_ in cls._decl_class_registry.values():
-#         if hasattr(class_, '__tablename__') and class_.__tablename__ == table_name:
-#             return class_
-#     return None
-
-
-# Add the function as a class method to db.Model
-# setattr(db.Model, 'get_model_class', classmethod(get_model_class))
-#
-# # Create a dictionary to store mapping between table names and class models
-# table_class_mapping = {
-#     'registers': Register,
-#     'users': User,
-#     'tags': VTag,
-#     'videos': Video,
-#     'video_tag_relation': VTRelation,
-#     'comments': Comment,
-#     'video_plays': VideoPlay,
-#     'video_likes': VideoLike,
-#     'video_stars': VideoStar,
-#     'comment_likes': CommentLike,
-#     'database_backup': DatabaseBackup
-# }
-
-# def log_data_changes(mapper, connection, target):
-#     table_name = table_name_mapping.get(target.__class__.__name__)
-#     if table_name:
-#         operation = 'INSERT' if target._sa_instance_state.transient else 'UPDATE'
-#         user_id = getattr(target, 'id', None)  # Assuming 'id' is the user_id
-#         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-#
-#         log_entry = DatabaseLog(operation=operation, table_name=table_name, user_id=user_id, timestamp=timestamp)
-#         db.session.add(log_entry)
-#         db.session.commit()
-
-# Attach event listener to each mapped class
-# for table_name in table_class_mapping.keys():
-#     @db.event.listens_for(table_class_mapping.get(table_name), "after_insert")
-#     def log_data_changes(mapper, connection, target):
-#         log_table_name = target.__tablename__
-#         print(log_table_name)
-#         if log_table_name:
-#             operation = 'INSERT' if target._sa_instance_state.transient else 'UPDATE'
-#             # user_id = getattr(target, 'id', None)  # Assuming 'id' is the user_id
-#             timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-#
-#             log_entry = DatabaseLog(operation, log_table_name, timestamp)
-#             print(log_entry)
-#             # db.session.add(log_entry)
-#             # db.session.commit()
-#     # event.listen(db.metadata.tables[table_name_mapping[class_name]], 'after_update', log_data_changes)
-#     # event.listen(db.metadata.tables[table_name_mapping[class_name]], 'after_delete', log_data_changes)
+        self.target = model.__description__
+        self.timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # self.record_value = model.__dict__
+        # record = model.__dict__
+        record = model.to_dict()
+        if "_sa_instance_state" in record:
+            record.pop("_sa_instance_state")
+        # a={'video_id': 5, 'publish_time': '2023-12-25 18:59:19', 'content': '1', 'parent_id': None, 'id': 6, 'author_id': 5, 'comment_liked': [1], 'replies': [], 'parent': None}
+        # print(json.dumps(a,ensure_ascii=False))
+        # a = json.loads(str(record))
+        self.record_value = json.dumps(record, ensure_ascii=False)
+        # self.record_value = str(record)
+        # print(json.dumps(record))
+        # self.record_value = str(model2dict([model])[0])
 
 
 def load_init_data():
-
     """
         This load initial data function
 
@@ -655,33 +693,42 @@ def load_init_data():
         ]
     )
 
-    db.session.add_all([Comment({'video_id': 1,
-                                 'author_id': 1,
-                                 'content': '加油加油，争取保研！',
-                                 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
-                        Comment({'video_id': 1,
-                                 'author_id': 2,
-                                 'content': '加油！😍',
-                                 'parent_id': 1,
-                                 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
-                        Comment({'video_id': 1,
-                                 'author_id': 3,
-                                 'content': '我好喜欢',
-                                 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
-                        Comment({'video_id': 1,
-                                 'author_id': 1,
-                                 'content': '我也好喜欢',
-                                 'parent_id': 3,
-                                 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                                 # 'publish_time': datetime.datetime(2023,
-                                 #                                   10,
-                                 #                                   2,
-                                 #                                   21,
-                                 #                                   50,
-                                 # 16).strftime('%Y-%m-%d %H:%M:%S')
-                                 }),
-                        ])
-
+    db.session.add_all([
+        Comment({
+            'id': 1,
+            'video_id': 1,
+            'author_id': 1,
+            'content': '加油加油，争取保研！',
+            'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
+        Comment({
+            'id': 2,
+            'video_id': 1,
+            'author_id': 2,
+            'content': '加油！😍',
+            'parent_id': 1,
+            'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
+        Comment({
+            'id': 3,
+            'video_id': 1,
+            'author_id': 3,
+            'content': '我好喜欢',
+            'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}),
+        Comment({
+            'id': 4,
+            'video_id': 1,
+            'author_id': 1,
+            'content': '我也好喜欢',
+            'parent_id': 3,
+            'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            # 'publish_time': datetime.datetime(2023,
+            #                                   10,
+            #                                   2,
+            #                                   21,
+            #                                   50,
+            # 16).strftime('%Y-%m-%d %H:%M:%S')
+        }),
+    ])
+    db.session.flush()
     db.session.commit()
     db.session.add_all(
         [
@@ -698,13 +745,8 @@ def load_init_data():
             VTRelation({'video_id': 5, 'tag_id': 10}),
         ]
     )
+    db.session.flush()
     db.session.commit()
-    def on_models_committed(sender, changes):
-        # 处理模型提交事件
-        print(sender)
-        print(changes)
-
-    models_committed.connect(on_models_committed)
 
     # user = User.query.get(1)
     # user.nickname="1"
@@ -715,43 +757,3 @@ def load_init_data():
     #     return len(query.parameters)
     #
     # print(list(map(get_parameters, queries)))
-# class Income(Invoice, db.Model):
-#     """
-#         This is a class for Income
-#
-#         Income class is the child class of Invoice
-#
-#         Attributes: super()
-#     """
-#     pass
-#
-#
-# class Expenditure(Invoice, db.Model):
-#     """
-#         This is a class for Expenditure
-#
-#         Expenditure class is the child class of Invoice
-#
-#         Attributes: super()
-#     """
-#     pass
-#
-#
-
-#
-#
-# class Goal(db.Model):
-#     """
-#         This is a class for Goal
-#
-#         This class contain
-#         general attributes of goal
-#
-#         Attributes:
-#                 id:  	A primary key for Goal model
-#                 name: 	A string of goal's name
-#                 value: 	A float of goal's value
-#     """
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(20))
-#     value = db.Column(db.Float)

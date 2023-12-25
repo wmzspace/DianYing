@@ -37,5 +37,6 @@ def user_delete():
         return AjaxResponse.error("用户不存在")
     nickname = target.nickname
     db.session.delete(target)
+    db.session.flush()
     db.session.commit()
     return AjaxResponse.success(None, f" 用户{nickname}({user_id})已注销")

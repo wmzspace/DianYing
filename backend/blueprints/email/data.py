@@ -19,6 +19,7 @@ def send_mail():
         Register.code_timestamp <= five_minutes_ago).all()
     for record in records_to_delete:
         db.session.delete(record)
+    db.session.flush()
     db.session.commit()
 
     email = request.args.get("email")
@@ -30,6 +31,7 @@ def send_mail():
     random_code = random.randint(100000, 999999)
     db.session.add(
         Register(email=email, code=random_code, code_timestamp=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    db.session.flush()
     db.session.commit()
     target = User.query.filter_by(email=email).first()
     if target is None:
@@ -49,7 +51,7 @@ def send_mail():
 def validate_email():
     email = request.args.get("email")
     code = request.args.get("code")
-    print(code)
+    # print(code)
     if email is None or code is None:
         return AjaxResponse.error("参数缺失：email, code")
     all_records = Register.query.filter_by(email=email).all()
@@ -57,14 +59,17 @@ def validate_email():
         # 有匹配记录
         if record.code == code:
             db.session.delete(record)
+            db.session.flush()
             db.session.commit()
             target = User.query.filter_by(email=email).first()
             if target is None:
                 # 用户注册
-                new_user = User({"email": email,"register_time":datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
+                new_user = User({"email": email, "register_time": datetime.datetime.now(
+                ).strftime('%Y-%m-%d %H:%M:%S')})
                 db.session.add(new_user)
                 db.session.flush()
                 new_id = new_user.id
+                # db.session.flush()
                 db.session.commit()
                 return AjaxResponse.success({'id': new_id, 'isNew': True})
             # 用户注册登录

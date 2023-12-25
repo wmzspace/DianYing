@@ -81,6 +81,7 @@ def like_or_dislike_comment():
             # 取消点赞
             for like in existing_like:
                 db.session.delete(like)
+            db.session.flush()
             db.session.commit()
             return AjaxResponse.success(None, "已取消点赞")
 
@@ -90,6 +91,7 @@ def like_or_dislike_comment():
             like = CommentLike(user_id=user_id, comment_id=comment_id,
                                time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             db.session.add(like)
+            db.session.flush()
             db.session.commit()
             return AjaxResponse.success(None, "点赞成功")
         else:
@@ -131,15 +133,12 @@ def post_comment():
         "publish_time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     })
 
-    # res_comment = model2dict(copy.deepcopy([comment]))[0]
-    # print(res_comment)
     # 将评论对象添加到会话中
     db.session.add(comment)
 
-    # 提交更改到数据库
-    # db.session.commit()
     db.session.flush()
-    res_comment = model2dict([comment])[0]
+    comment_id = comment.id
+    res_comment = model2dict([Comment.query.get(comment_id)])[0]
     db.session.commit()
 
     return AjaxResponse.success(
@@ -169,8 +168,10 @@ def delete_comment(comment_id):
     #     for child_comment in children_comment:
     #         delete_comment(child_comment.id)
     # db.session.commit()
+    db.session.flush()
     db.session.commit()
     # print(comment.content)
     db.session.delete(comment)
+    db.session.flush()
     db.session.commit()
     return AjaxResponse.success(None, "删除成功")

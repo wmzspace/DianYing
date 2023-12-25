@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+import io
 import os
+import sys
 
 import click
-from apscheduler.schedulers.blocking import BlockingScheduler
-from flask import render_template, Flask, request
-from flask_mail import Mail, Message
+from flask import render_template, Flask
+from flask_sqlalchemy.track_modifications import before_models_committed
 
 import models
 from blueprints.comment import comment_bp
@@ -15,11 +15,7 @@ from blueprints.video import video_bp
 from models import *
 from blueprints.user import user_bp
 from config import config
-from exts import db, mail, scheduler, AjaxResponse
-
-# from flask_script import Manager, Shell
-
-# from flask.ext.migrate import Migrate, MigrateCommand
+from exts import db, mail, scheduler
 
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 app = Flask(__name__)
@@ -29,40 +25,25 @@ app.register_blueprint(comment_bp)
 app.register_blueprint(email_bp)
 app.register_blueprint(tag_bp)
 app.register_blueprint(database_bp)
-# app.register_blueprint(api.get)
-# app.register_blueprint(api.delete)
-# app.register_blueprint(api.update)
-# app.register_blueprint(api.add)
-# app.register_blueprint(api.database)
 
 app.config.from_object(config[config_name])  # 可以直接把对象里面的配置数据转换到app.config里面
-# app.json.ensure_ascii = False  # 解决中文乱码问题
-# app.config['JSON_AS_ASCII'] = False  # 解决中文乱码问题
 config[config_name].init_app(app)
-# page.encoding='utf-8'
-# bootstrap.app_init(app)
-# mail.init_app(app)
-# moment.init_app(app)
-# MAIL_SERVER = 'smtp.qq.email'
-# MAIL_PORT = 465
-# MAIL_USE_SSL = True
-# MAIL_USERNAME = '517941374@qq.com'
-# MAIL_PASSWORD = 'jfdhqbglogcubihe'
-# app.config['MAIL_SERVER'] = 'smtp.qq.email'
-# app.config['MAIL_PORT'] = '465'
-# app.config['MAIL_USERNAME'] = '517941374@qq.com'
-# app.config['MAIL_PASSWORD'] = 'jfdhqbglogcubihe'
-#
-# # 启用/禁用传输安全层加密
-# app.config['MAIL_USE_TLS'] = False
-# # 启用/禁用安全套接字层加密
-# app.config['MAIL_USE_SSL'] = True
-# app.config.update(MAIL_SERVER='smtp.qq.com',
-#                   MAIL_PORT='465',
-#                   MAIL_USE_SSL=True,
-#                   MAIL_USERNAME='517941374',  # 使用qq，不是邮箱
-#                   MAIL_PASSWORD='jfdhqbglogcubihe')  # config配置
-# mail = Mail(app)
+
+
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8') #改变标准输出的默认编码
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='gb18030')
+
+def on_before__models_committed(sender, changes):
+    # 处理模型提交事件
+    for change in changes:
+        model = change[0]
+        if model.__tablename__ != 'database_logs':
+            operation = change[1]
+            log = DatabaseLog(model, operation)
+            db.session.add(log)
+
+
+before_models_committed.connect(on_before__models_committed)
 
 mail.init_app(app)
 db.init_app(app)
@@ -70,7 +51,6 @@ scheduler.start()
 
 
 # 路由和其他处理程序定义
-# ...
 
 @app.route("/")
 def api_index():
@@ -86,13 +66,6 @@ def api_index():
     return render_template("index.html")
 
 
-# manager = Manager(app)
-
-
-# migrate = Migrate(app, db)
-
-
-# @app.route("/init", methods=["POST"])
 @app.cli.command('db-init')
 def db_init():
     """数据库建表/格式化"""
@@ -108,6 +81,7 @@ def db_load():
     db.drop_all()
     db.create_all()
     models.load_init_data()
+    db.session.flush()
     db.session.commit()
     click.echo("成功载入初始数据")
 

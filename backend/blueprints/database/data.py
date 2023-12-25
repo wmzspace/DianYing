@@ -24,6 +24,7 @@ def force_rollback():
     db.drop_all()
     db.create_all()
     # load_init_data()
+    db.session.flush()
     db.session.commit()
     return AjaxResponse.success(None, "已重置数据库")
 
@@ -63,12 +64,14 @@ def backup_data():
         query_exist = DatabaseBackup.query.filter_by(name=name).first()
         if query_exist is not None:
             query_exist.create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            db.session.flush()
             db.session.commit()
             return AjaxResponse.success(result, f"成功覆盖还原点'{query_exist.name}'")
         new_backup_record = DatabaseBackup(
             name=name, path=path, create_time=datetime.datetime.strftime(
                 datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"))
         db.session.add(new_backup_record)
+        db.session.flush()
         db.session.commit()
         return AjaxResponse.success(result, f"成功添加还原点'{name}'")
     else:
@@ -86,8 +89,9 @@ def delete_data():
     if query_exist is not None:
         path = query_exist.path
         result = os.system(f"rm {path}")
-        print(result)
+        # print(result)
         db.session.delete(query_exist)
+        db.session.flush()
         db.session.commit()
         return AjaxResponse.success(result, f"成功删除还原点'{query_exist.name}'")
     else:
@@ -109,3 +113,11 @@ def delete_data():
 def get_logs():
     logs = DatabaseLog.query.all()
     return model2dict(logs), 200
+
+
+# API: 清空数据库日志
+@database_bp.route("/delete/logs", methods=["POST"])
+def delete_logs():
+    DatabaseLog.query.delete()
+    db.session.commit()
+    return AjaxResponse.success(None,"日志已清空")

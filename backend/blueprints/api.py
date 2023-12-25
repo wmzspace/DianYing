@@ -85,6 +85,7 @@ def api_update_invoice(invoice_group, invoice_id):
             ajax_data = model2dict([invoice])[0]
 
         # 提交修改至数据库并反馈
+        db.session.flush()
         db.session.commit()
         return AjaxResponse.success(ajax_data, "成功")
 
@@ -115,6 +116,7 @@ def api_update_goal():
             goal.value = body_json['value']
 
         # 提交修改至数据库并反馈
+        db.session.flush()
         db.session.commit()
         return AjaxResponse.success(model2dict(Goal.query.all()), "储蓄目标更新成功")
 
@@ -145,6 +147,7 @@ def api_delete_invoice():
                 db.session.delete(found_expenditure)
 
         # 提交修改至数据库并反馈
+        db.session.flush()
         db.session.commit()
         return AjaxResponse.success(
             {}, f"删除了{len(incomes)}条收入和{len(expenditures)}条支出")
@@ -169,6 +172,7 @@ def api_add_invoice():
         ajax_data = model2dict([invoice])[0]
 
         # 提交修改至数据库并反馈
+        db.session.flush()
         db.session.commit()
         if 'name' in ajax_data:
             msg_data: str = ajax_data['name']
@@ -204,6 +208,7 @@ def api_add_tx_type():
         ajax_data = model2dict([tx_type])[0]
 
         # 提交修改至数据库并反馈
+        db.session.flush()
         db.session.commit()
         return AjaxResponse.success(
             ajax_data, f"成功添加分类：{ajax_data['name'] if 'name' in ajax_data else '未命名'}")

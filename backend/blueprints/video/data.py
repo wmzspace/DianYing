@@ -141,6 +141,7 @@ def action_play_video():
             video_id=video_id,
             time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         db.session.add(new_play)
+        db.session.flush()
         db.session.commit()
         return AjaxResponse.success(None, "视频播放记录已存在")
     else:
@@ -178,6 +179,7 @@ def like_or_dislike_video():
             # 取消该状态
             for exist_status in status_existed:
                 db.session.delete(exist_status)
+            db.session.flush()
             db.session.commit()
             return AjaxResponse.success(
                 None, f"已取消{action_text}")
@@ -190,6 +192,7 @@ def like_or_dislike_video():
                 video_id=video_id,
                 time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             db.session.add(new_action)
+            db.session.flush()
             db.session.commit()
             return AjaxResponse.success(
                 None, f"{action_text}成功")
@@ -207,6 +210,7 @@ def delete_video_by_id():
     if video is None:
         return AjaxResponse.error("视频不存在")
     db.session.delete(video)
+    db.session.flush()
     db.session.commit()
     return AjaxResponse.success(None, "视频已删除")
 
@@ -229,6 +233,7 @@ def add_tags(tags, video_id):
         # 添加 VTRelation
         new_vt_relation = VTRelation({'video_id': video_id, 'tag_id': tag_id})
         db.session.add(new_vt_relation)
+        db.session.flush()
         db.session.commit()
 
 
@@ -265,10 +270,14 @@ def post_video():
         'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     })
     db.session.add(new_video)
+    # db.session.flush()
+    # new_video_id = new_video.id
+    # add_tags(data['tags'], new_video.id)
+    # db.session.commit()
     db.session.flush()
     new_video_id = new_video.id
-    add_tags(data['tags'], new_video.id)
     db.session.commit()
+    add_tags(data['tags'], new_video_id)
 
     return AjaxResponse.success(new_video_id, "视频上传成功")
 
@@ -316,6 +325,7 @@ def edit_video_by_id():
     video.author_id = author_id
     video.status = status
 
+    db.session.flush()
     db.session.commit()
     return AjaxResponse.success(None, "视频信息编辑成功")
 

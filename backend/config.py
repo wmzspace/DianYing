@@ -41,18 +41,21 @@ class Config:
         # 执行当前需要的环境的初始化
         CORS(app)
 
-
-        def delete_due_registry(target):
+        def delete_due_registry(email, code_timestamp):
             with app.app_context():
-                db.session.delete(target)
-                db.session.commit()
+                exist = Register.query.filter_by(
+                    email=email, code_timestamp=code_timestamp).first()
+                if exist is not None:
+                    db.session.delete(exist)
+                    db.session.flush()
+                    db.session.commit()
 
         # 在记录插入后调度删除任务
         @event.listens_for(Register, 'after_insert')
-        def schedule_record_deletion(mapper, connection, target):
+        def schedule_record_deletion(mapper, connection, target: Register):
             scheduler.add_job(delete_due_registry, 'date',
                               run_date=datetime.datetime.now() + datetime.timedelta(minutes=2),
-                              args=[target])
+                              args=[target.email, target.code_timestamp])
 
 
 class DevelopmentConfig(Config):

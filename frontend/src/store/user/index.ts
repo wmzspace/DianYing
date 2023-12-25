@@ -1,12 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { prefix_url } from '@/api'
 import type { AjaxResponse } from '@/api'
-
-import { methods } from '@arco-design/web-vue/es/_utils/date'
+import { prefix_url } from '@/api'
 import { Message } from '@arco-design/web-vue'
 import { useMainStore } from '@/store/main'
-import { useRouter } from 'vue-router'
 import router from '@/router'
 import type { UserRecord } from '@/api/list'
 import { reject } from 'lodash-es'
@@ -20,7 +16,6 @@ export interface User {
   gender: string
   age: number
   email: string
-  username: string
   signature: string
 }
 
@@ -73,6 +68,9 @@ export const useUserStore = defineStore('user', {
               })
             }
           })
+        }).catch((e) => {
+          Message.error(e.message)
+          location.reload()
         })
     },
     getUserInfoAll: () => () =>
@@ -131,21 +129,36 @@ export const useUserStore = defineStore('user', {
       }
       try {
         // this.userData = user
-        this.getUserById(userId).then((user) => {
-          this.isAdmin = false
-          this.userData = user
-          // localStorage.setItem('currentUser', userId.toString())
-          this.setStoreToken(true)
-          const mainStore = useMainStore()
-          mainStore.setLoginVisible(false)
-          if (needRefresh) {
-            // location.reload()
-          }
-          if (mainStore.goToPost) {
-            router.push({ name: 'postVideo' })
-            mainStore.setGoToPost(false)
-          }
-        })
+        this.getUserInfoById(userId)
+          .then((user) => {
+            this.isAdmin = false
+            this.userData = {
+              age: user.age,
+              area: user.area,
+              avatar: user.avatar,
+              email: user.email,
+              gender: user.gender,
+              id: user.id as number,
+              nickname: user.nickName,
+              register_time: user.registerTime,
+              signature: user.signature
+            }
+            // localStorage.setItem('currentUser', userId.toString())
+            this.setStoreToken(true)
+            const mainStore = useMainStore()
+            mainStore.setLoginVisible(false)
+            if (needRefresh) {
+              // location.reload()
+            }
+            if (mainStore.goToPost) {
+              router.push({ name: 'postVideo' })
+              mainStore.setGoToPost(false)
+            }
+          })
+          .catch((msg) => {
+            Message.info(msg)
+            this.userLogOut()
+          })
 
         // this.userData = await api.post({ login, password })
         // showTooltip(`Welcome back ${this.userData.name}!`)

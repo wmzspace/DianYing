@@ -168,7 +168,7 @@
       <a-table
         row-key="id"
         :loading="loading || editLoading"
-        :pagination="pagination"
+        :pagination="true"
         :columns="cloneColumns as TableColumnData[]"
         :data="renderData"
         :bordered="false"

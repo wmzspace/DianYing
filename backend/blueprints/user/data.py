@@ -74,6 +74,7 @@ def update_user():
         user.age = 0
     user.gender = request.json['gender']
     user.signature = request.json['signature']
+    db.session.flush()
     db.session.commit()
     return AjaxResponse.success(None, "修改成功！")
     # email = request.args.get("email")
@@ -118,6 +119,7 @@ def upload(user_id, file_type):
     server_path = os.path.join(PREFIX_URL, relative_path)
     if file_type == "avatar":
         user.avatar = server_path
+        db.session.flush()
         db.session.commit()
         return AjaxResponse.success(None, "头像上传成功")
     elif file_type == "cover":
@@ -209,4 +211,7 @@ def get_user_info(param):
     else:
         if not str(param).isdigit():
             return "param应为user_id", 404
-        return UserRecord(User.query.get(int(param))).__dict__
+        user = User.query.get(int(param))
+        if user is None:
+            return "用户不存在", 404
+        return UserRecord(user).__dict__

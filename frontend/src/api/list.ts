@@ -36,6 +36,14 @@ export interface UserRecord {
   avatar: string
 }
 
+export interface LogRecord {
+  id: number
+  operation: string
+  target: string
+  recordValue: string
+  timestamp: string
+}
+
 export interface VideoRecordCanEdit extends VideoRecord {
   isEditing: boolean
 }
@@ -64,6 +72,25 @@ export interface BackupQueryForm {
   name: string | undefined
 }
 
+export interface LogQueryForm {
+  operation: 'insert' | 'update' | 'delete' | undefined
+  target:
+    | '用户'
+    | '视频'
+    | '标签'
+    | '视频标签关系'
+    | '评论'
+    | '视频播放记录'
+    | '视频点赞记录'
+    | '视频收藏记录'
+    | '评论点赞记录'
+    | '数据备份记录'
+    | '验证码记录'
+    | undefined
+  recordValue: string | undefined
+  timestamp: string[] | undefined
+}
+
 export interface PolicyParamsVideo extends Partial<VideoQueryForm> {
   current: number
   pageSize: number
@@ -79,6 +106,11 @@ export interface PolicyParamsBackup extends Partial<BackupQueryForm> {
   pageSize: number
 }
 
+export interface PolicyParamsLog extends Partial<LogQueryForm> {
+  current: number
+  pageSize: number
+}
+
 export interface UserListRes {
   list: UserRecord[]
   total: number
@@ -90,6 +122,11 @@ export interface VideoListRes {
 }
 export interface BackupListRes {
   list: BackupRecord[]
+  total: number
+}
+
+export interface LogListRes {
+  list: LogRecord[]
   total: number
 }
 
