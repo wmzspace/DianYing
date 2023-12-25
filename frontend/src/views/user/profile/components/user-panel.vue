@@ -185,7 +185,7 @@ const customRequest = (options: RequestOption) => {
         'avatar'
       )
         .then((res) => {
-          if (res.statusText === 'OK') {
+          if (res.status === 200) {
             let ajaxData = res.data as AjaxResponse
             if (ajaxData.ajax_ok) {
               Message.success({
