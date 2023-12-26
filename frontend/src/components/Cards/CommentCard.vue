@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Comment } from '@/utils/comment'
 import { useUserStore } from '@/store/user'
-import type { User } from '@/store/user'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import {
   deleteComment,
@@ -14,6 +13,7 @@ import { getTimeDiffUntilNow } from '@/utils/tools'
 import type { VideoMedia } from '@/types'
 import { Message } from '@arco-design/web-vue'
 import { useMainStore } from '@/store/main'
+import type { UserRecord } from '@/api/list'
 
 const emit = defineEmits(['refresh', 'change'])
 
@@ -31,24 +31,34 @@ const openReply = () => {
   })
 }
 const isReplying = ref(false)
-const author = ref<User | undefined>(undefined)
+const author = ref<UserRecord | undefined>(undefined)
 const isLoadingUser = ref(true)
 const refreshUserInfo = () => {
   // isLoadingUser.value = true
+
   userStore
-    .getUserById(props.comment.authorId)
+    .getUserInfoById(props.comment.authorId)
     .then((user) => {
       author.value = user
-      // isLoadingUser.value = false
     })
     .catch(() => {
       emitRefresh(true)
     })
+
+  // userStore
+  //   .getUserById(props.comment.authorId)
+  //   .then((user) => {
+  //     author.value = user
+  //     // isLoadingUser.value = false
+  //   })
+  //   .catch(() => {
+  //     emitRefresh(true)
+  //   })
 }
 
 const isLiked = ref(false)
 const isProcessLike = ref(true)
-const commentLikeUsers = reactive<User[]>([])
+// const commentLikeUsers = reactive<number[]>([])
 const commentLikeShowNum = ref(0)
 
 const mainStore = useMainStore()
@@ -56,15 +66,15 @@ const refreshCommentLike = () => {
   isProcessLike.value = true
   getCommentLikeUsersByCommentId(props.comment.id)
     .then((users) => {
-      commentLikeUsers.splice(0)
+      // commentLikeUsersId.splice(0)
       commentLikeShowNum.value = 0
       isLiked.value = false
-      users.forEach((user) => {
-        if (userStore.getCurrentUser && user.id === userStore.getCurrentUser.id) {
+      users.forEach((userId) => {
+        if (userStore.getCurrentUser && userId === userStore.getCurrentUser.id) {
           isLiked.value = true
         }
         commentLikeShowNum.value++
-        commentLikeUsers.push(user)
+        // commentLikeUsersId.push(user)
       })
     })
     .catch(() => {
@@ -246,7 +256,7 @@ const isDeleted = ref(false)
           }
         "
       >
-        {{ author?.nickname }}
+        {{ author?.nickName }}
       </span>
     </template>
     <template #avatar>
@@ -310,7 +320,7 @@ const isDeleted = ref(false)
     >
       <template #content>
         <a-input
-          :placeholder="`回复 @${author?.nickname}`"
+          :placeholder="`回复 @${author?.nickName}`"
           class="comment-input"
           id="reply-comment-input"
           v-model.trim="replyCommentContent"

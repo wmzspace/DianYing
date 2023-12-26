@@ -110,13 +110,14 @@ def get_video_actioned_users():
     else:
         return AjaxResponse.error(f"参数错误: action={action}")
 
-    def get_user_by_video_action(video_action: action_table):
-        return video_action.user
+    def get_user_id_by_video_action(video_action: action_table):
+        return video_action.user.id
 
     # video_actions_list = video.video_liked if action == "like" else video.video_starred
     # video_actions_list = Video.query.get(video_id).video_liked
-    target = list(map(get_user_by_video_action, video_actions_list))
-    return AjaxResponse.success(model2dict(target))
+    target = list(map(get_user_id_by_video_action, video_actions_list))
+    return AjaxResponse.success(target)
+    # return AjaxResponse.success(model2dict(target))
 
 
 # API: 记录播放历史

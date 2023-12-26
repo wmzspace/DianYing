@@ -193,8 +193,10 @@ class UserRecord:
         self.signature = user.signature
         self.registerTime = user.register_time
         self.area = user.area
+        # FIXME: 该用户获赞的数量
         self.likedNum = len(user.video_liked)
         self.videoNum = len(user.videos)
+        # 该用户看过的视频数量
         self.playedNum = len(user.video_play)
 
 

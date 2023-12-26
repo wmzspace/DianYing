@@ -9,27 +9,21 @@ import {
   recordVideoPlay
 } from '@/utils/video'
 import type { Comment } from '@/utils/comment'
-import {
-  getCommentLikeUsersByCommentId,
-  getCommentsByVideoIdOrParent,
-  likeCommentOrNot,
-  postComment
-} from '@/utils/comment'
-import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { getCommentsByVideoIdOrParent, postComment } from '@/utils/comment'
+import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { Events } from 'xgplayer'
 import Player from 'xgplayer'
 import { debounce } from 'lodash-es'
 import type { VideoMedia } from '@/types'
 import { useUserStore } from '@/store/user/'
-import type { User } from '@/store/user/'
-import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import CommentCard from '@/components/Cards/CommentCard.vue'
 import _ from 'lodash'
 import VideoCardSmall from '@/components/Cards/VideoCardSmall.vue'
 import { useMainStore } from '@/store/main'
 import { Message } from '@arco-design/web-vue'
 import useLoading from '@/hooks/loading'
-import type { VideoRecord } from '@/api/list'
+import type { UserRecord, VideoRecord } from '@/api/list'
 
 const userStore = useUserStore()
 const mainStore = useMainStore()
@@ -41,7 +35,7 @@ const comments: (Comment | undefined)[] = reactive([])
 let relatedList: VideoMedia[] = reactive([])
 
 const video = ref<VideoMedia | undefined>(undefined)
-const author = ref<User | undefined>(undefined)
+const author = ref<UserRecord | undefined>(undefined)
 const player = ref<Player | undefined>(undefined)
 getVideoById(props.video_id).then((res: VideoMedia | undefined) => {
   video.value = _.cloneDeep(res)
@@ -134,7 +128,7 @@ watch(video, (value) => {
     author.value = undefined
     relatedList.splice(0)
     commentsNum.value = 0
-    userStore.getUserById(value.authorId).then((user) => {
+    userStore.getUserInfoById(value.authorId).then((user) => {
       author.value = user
       // if (value.status !== 'online' && !userStore.isAdminOrCurUser(author.value.id)) {
       //   Message.warning({
@@ -172,8 +166,8 @@ const calculateContainerPositions = () => {
     return
   }
   let playerContainer = document.getElementById('video-player')?.parentElement as HTMLElement
-  let width = 0
-  width = playerContainer.clientWidth
+  // let width = 0
+  let width = playerContainer.clientWidth
   if (width > 0) {
     if (video.value.height >= video.value.width) {
       ;(playerContainer as HTMLElement).classList.add('vh-70')
@@ -248,15 +242,15 @@ const createPlayer = (video: VideoMedia) => {
   })
 }
 
-onBeforeRouteUpdate((to, from, next) => {
+onBeforeRouteUpdate((to) => {
   // console.log(to, from)
   getVideoById(to.params['video_id'][0]).then((res: VideoMedia | undefined) => {
     video.value = _.cloneDeep(res)
   })
-  next((vm) => {
-    // console.log(vm)
-    // vm.$
-  })
+  // next((vm) => {
+  //   // console.log(vm)
+  //   // vm.$
+  // })
 })
 onMounted(() => {
   // player.on(Events.AUTOPLAY_PREVENTED, () => {
@@ -284,7 +278,7 @@ const onPostNewComment = () => {
         return
       }
       if (author.value !== undefined && video.value !== undefined) {
-        postComment(user.id, newCommentContent.value, video.value.id, undefined).then((comment) => {
+        postComment(user.id, newCommentContent.value, video.value.id, undefined).then(() => {
           newCommentContent.value = ''
           refreshRootCommentList()
         })
@@ -306,40 +300,40 @@ const onRefreshComment = (object: CommentFinder) => {
 
 const isLiked = ref(false)
 const isProcessLike = ref(true)
-const videoLikeUsers = reactive<User[]>([])
+// const videoLikeUsers = reactive<User[]>([])
 const videoLikeShowNum = ref(0)
 
 const isStarred = ref(false)
 const isProcessStar = ref(true)
-const videoStarUsers = reactive<User[]>([])
+// const videoStarUsers = reactive<User[]>([])
 const videoStarShowNum = ref(0)
 
 const refreshVideoLikeAndStar = () => {
   getVideoActionUsersByVideoId(parseInt(props.video_id), 'like').then((users) => {
-    videoLikeUsers.splice(0)
+    // videoLikeUsers.splice(0)
     videoLikeShowNum.value = 0
     isLiked.value = false
-    users.forEach((user) => {
-      if (userStore.getCurrentUser && user.id === userStore.getCurrentUser.id) {
+    users.forEach((userId) => {
+      if (userStore.getCurrentUser && userId === userStore.getCurrentUser.id) {
         isLiked.value = true
       }
       videoLikeShowNum.value++
-      videoLikeUsers.push(user)
+      // videoLikeUsers.push(userId)
     })
     setTimeout(() => {
       isProcessLike.value = false
     }, 1000)
   })
   getVideoActionUsersByVideoId(parseInt(props.video_id), 'star').then((users) => {
-    videoStarUsers.splice(0)
+    // videoStarUsers.splice(0)
     videoStarShowNum.value = 0
     isStarred.value = false
-    users.forEach((user) => {
-      if (userStore.getCurrentUser && user.id === userStore.getCurrentUser.id) {
+    users.forEach((userId) => {
+      if (userStore.getCurrentUser && userId === userStore.getCurrentUser.id) {
         isStarred.value = true
       }
       videoStarShowNum.value++
-      videoStarUsers.push(user)
+      // videoStarUsers.push(user)
     })
     setTimeout(() => {
       isProcessStar.value = false
@@ -393,6 +387,16 @@ const handleClickStar = () => {
 const deleteLoadingObject = useLoading()
 const deleteLoading = deleteLoadingObject.loading
 const setDeleteLoading = deleteLoadingObject.setLoading
+
+const handleClickAvatar = () => {
+  if (author.value) {
+    router.push({
+      name: 'userProfile',
+      params: { user_id: author.value.id }
+    })
+  }
+}
+
 const handleClickDelete = () => {
   if (deleteLoading.value === true) {
     Message.info({
@@ -434,7 +438,7 @@ const router = useRouter()
           <div id="video-player"></div>
         </div>
         <div class="detail-video-info">
-          <div class="detail-video-title">
+          <div class="detail-video-title two-line">
             {{ video?.title }}
             <a-link
               v-for="(tag, index) in videoRecord?.tags"
@@ -461,6 +465,23 @@ const router = useRouter()
               </a-list-item>
             </a-list>
             <div class="detail-video-actions-right">
+              <a-tag
+                bordered
+                :color="'arcoblue'"
+                style="background: transparent"
+                :size="'small'"
+                v-if="video?.status === 'awaitApproval'"
+                >审核中</a-tag
+              >
+              <a-tag
+                bordered
+                :color="'red'"
+                style="background: transparent"
+                :size="'small'"
+                v-else-if="video?.status === 'offline'"
+                >未过审</a-tag
+              >
+
               <a-button
                 class="delete-video"
                 v-if="userStore.isAdminOrCurUser(video?.authorId)"
@@ -488,33 +509,12 @@ const router = useRouter()
             :size="60"
             :image-url="author?.avatar"
             :style="{ marginRight: '8px', cursor: 'pointer' }"
-            @click="
-              () => {
-                if (author) {
-                  $router.push({
-                    name: 'userProfile',
-                    params: { user_id: author.id }
-                  })
-                }
-              }
-            "
+            @click="handleClickAvatar"
           ></a-avatar>
           <div class="basic-info">
             <div class="text-info">
-              <a-link
-                class="name"
-                @click="
-                  () => {
-                    if (author) {
-                      $router.push({
-                        name: 'userProfile',
-                        params: { user_id: author.id }
-                      })
-                    }
-                  }
-                "
-              >
-                <span> {{ video ? author?.nickname : '...' }} </span>
+              <a-link class="name" @click="handleClickAvatar">
+                <span> {{ video ? author?.nickName : '...' }} </span>
               </a-link>
               <div class="statistic">
                 <span class="title"> 粉丝</span> <span class="number">8000</span>
@@ -604,6 +604,7 @@ const router = useRouter()
       <!--      commentContainer-->
     </div>
     <!--    mainContainer-->
+
     <!--    footerContainer-->
     <!--    <footer class="footerContainer">-->
     <!--      <div class="content">wmzspace</div>-->

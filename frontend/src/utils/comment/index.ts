@@ -1,11 +1,10 @@
+import type { AjaxResponse } from '@/api'
 import { prefix_url } from '@/api'
 import _ from 'lodash'
 import { Message } from '@arco-design/web-vue'
-import type { User } from '@/store/user'
-import type { AjaxResponse } from '@/api'
 
 export const parseCommentByRaw = (r: RawComment): Comment => {
-  const comment: Comment = {
+  return {
     id: r.id,
     authorId: r.author_id,
     content: r.content,
@@ -13,7 +12,6 @@ export const parseCommentByRaw = (r: RawComment): Comment => {
     publishTime: r.publish_time,
     videoId: r.video_id
   }
-  return comment
 }
 
 export const getCommentsByVideoIdOrParent = (
@@ -50,13 +48,13 @@ export const getCommentsByVideoIdOrParent = (
   })
 }
 export const getCommentLikeUsersByCommentId = (commentId: number) =>
-  new Promise<User[]>((resolve, reject) => {
+  new Promise<number[]>((resolve, reject) => {
     fetch(prefix_url.concat(`comment/get_likes?comment_id=${commentId}`))
       .then((res) => {
         if (res.ok) {
           res.json().then((ajaxData: AjaxResponse) => {
             if (ajaxData.ajax_ok) {
-              resolve(ajaxData.ajax_data as User[])
+              resolve(ajaxData.ajax_data as number[])
             } else {
               Message.info('获取评论点赞信息失败：' + ajaxData.ajax_msg)
               reject()
@@ -71,7 +69,11 @@ export const getCommentLikeUsersByCommentId = (commentId: number) =>
       })
   })
 
-export const likeCommentOrNot = (commentId: number, userId: number, toLike: boolean) =>
+export const likeCommentOrNot = (
+  commentId: number | string,
+  userId: number | string,
+  toLike: boolean
+) =>
   new Promise<void>((resolve, reject) => {
     fetch(
       prefix_url.concat(`comment/like?comment_id=${commentId}&user_id=${userId}&to_like=${toLike}`),
@@ -97,12 +99,12 @@ export const likeCommentOrNot = (commentId: number, userId: number, toLike: bool
       })
   })
 
-interface PostCommentRawResponse {
-  comment_id: number
-}
+// interface PostCommentRawResponse {
+//   comment_id: number
+// }
 
 export const postComment = (
-  authorId: number,
+  authorId: number | string,
   content: string,
   videoId: number | undefined,
   parentId: number | undefined

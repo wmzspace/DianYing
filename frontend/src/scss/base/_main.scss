@@ -27,6 +27,11 @@ html {
   cursor: pointer;
 }
 
+.two-line{
+  @extend .one-line;
+  -webkit-line-clamp: 2 !important;
+}
+
 //html,body,body > div:first-child{
 //  height: 100%;
 //}

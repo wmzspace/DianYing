@@ -2,7 +2,7 @@
   <div class="container" id="user-profile">
     <div class="main-container">
       <!--      <div class="background"></div>-->
-      <Breadcrumb :items="['menu.user']" :addition-items="[queryUser?.nickname]" />
+      <Breadcrumb :items="['menu.user']" :addition-items="[queryUser?.nickName]" />
       <UserPanel
         :user-data="queryUser"
         v-model:is-edit-profile="isEditProfile"
@@ -127,8 +127,7 @@
 <script lang="ts" setup>
 import UserPanel from './components/user-panel.vue'
 import { useUserStore } from '@/store'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
-import type { User } from '@/store/user'
+import { computed, onBeforeMount, onMounted, reactive, ref } from 'vue'
 
 const props = defineProps<{
   user_id: string
@@ -146,11 +145,11 @@ const tabTitlePrefix = computed(() =>
 
 const searchText = ref('')
 const userStore = useUserStore()
-const queryUser = ref<User | undefined>(undefined)
+const queryUser = ref<UserRecord | undefined>(undefined)
 
 const refreshUserInfo = () => {
   isEditProfile.value = false
-  userStore.getUserById(props.user_id).then((user) => {
+  userStore.getUserInfoById(props.user_id).then((user) => {
     queryUser.value = user
   })
 }
@@ -164,6 +163,11 @@ const querySearch = (videos: VideoMedia[]) => {
 const videoListByAuthor = computed(() =>
   videoList.filter((v) => queryUser.value && v.authorId === queryUser.value.id)
 )
+
+const videosLiked: VideoMedia[] = reactive([])
+const videosStarred: VideoMedia[] = reactive([])
+const videosPlayed: VideoMedia[] = reactive([])
+
 pullVideo({
   allStatus: 'all'
 }).then((videos) => {
@@ -172,51 +176,48 @@ pullVideo({
   })
 })
 
-const videosLiked: VideoMedia[] = reactive([])
 getVideosByUserLikeOrStar(props.user_id, 'like').then((videos) => {
   videosLiked.slice(0)
   videos.forEach((v) => {
-    if (v.status === 'online') {
+    if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
       videosLiked.push(v)
     }
   })
 })
 
-const videosStarred: VideoMedia[] = reactive([])
 getVideosByUserLikeOrStar(props.user_id, 'star').then((videos) => {
   videosStarred.slice(0)
   videos.forEach((v) => {
-    if (v.status === 'online') {
+    if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
       videosStarred.push(v)
     }
   })
 })
 
-const videosPlayed: VideoMedia[] = reactive([])
 getVideosByUserLikeOrStar(props.user_id, 'play').then((videos) => {
   videosPlayed.slice(0)
   videos.forEach((v) => {
-    if (v.status === 'online') {
+    if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
       videosPlayed.push(v)
     }
   })
 })
+refreshUserInfo()
 
-onMounted(() => {
-  refreshUserInfo()
-})
+onMounted(() => {})
 
 import VideoCardSm from '@/views/user/profile/components/video-card-sm.vue'
 import type { VideoMedia } from '@/types'
 import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
 import BasicInformation from '@/views/user/profile/components/basic-information.vue'
+import type { UserRecord } from '@/api/list'
 </script>
 
 <style scoped lang="less">
 .video-cards-container {
   .action-bar {
     height: 44px;
-    padding: 0px;
+    padding: 0;
     display: flex;
     align-items: center;
     font-size: 13px;
@@ -235,8 +236,8 @@ import BasicInformation from '@/views/user/profile/components/basic-information.
       margin: 0;
       margin-block-start: 1em;
       margin-block-end: 1em;
-      margin-inline-start: 0px;
-      margin-inline-end: 0px;
+      margin-inline-start: 0;
+      margin-inline-end: 0;
       width: 100%;
       padding: 0;
       line-height: 0;

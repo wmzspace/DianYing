@@ -5,6 +5,7 @@ from flask import request
 from sqlalchemy.orm.collections import InstrumentedList
 
 from blueprints.comment import comment_bp
+from blueprints.user.data import UserRecord
 from exts import AjaxResponse, db
 from models import Comment, model2dict, User, Video, VideoLike, CommentLike
 
@@ -45,17 +46,18 @@ def get_comments_by_video_id_or_comment_id():
 
 
 @comment_bp.route('/get_likes', methods=['GET'])
-def get_comment_liked_users():
-    def get_user_by_comment_like(comment_like: CommentLike):
-        return comment_like.user
+def get_comment_liked_users_id():
+    def get_user_id_by_comment_like(comment_like: CommentLike):
+        return comment_like.user.id
 
     comment_id = request.args.get("comment_id")
     comment = Comment.query.get(comment_id)
     if not comment:
         return AjaxResponse.error("评论不存在")
     comment_liked_list = Comment.query.get(comment_id).comment_liked
-    target = list(map(get_user_by_comment_like, comment_liked_list))
-    return AjaxResponse.success(model2dict(target))
+    target = list(map(get_user_id_by_comment_like, comment_liked_list))
+    return AjaxResponse.success(target)
+    # return AjaxResponse.success(model2dict(target))
 
 
 @comment_bp.route('/like', methods=['POST'])

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { VideoMedia } from '@/types'
 import { onMounted, ref } from 'vue'
-import type { User } from '@/store/user'
 import { useUserStore } from '@/store/user'
-import _ from 'lodash'
+import type { UserRecord } from '@/api/list'
 
 const props = defineProps<{
   video: VideoMedia
@@ -11,10 +10,10 @@ const props = defineProps<{
 
 const userStore = useUserStore()
 
-const author = ref<User | undefined>(undefined)
+const author = ref<UserRecord | undefined>(undefined)
 
 onMounted(() => {
-  userStore.getUserById(props.video.authorId).then((res) => {
+  userStore.getUserInfoById(props.video.authorId).then((res) => {
     author.value = res
   })
 })
@@ -41,7 +40,7 @@ onMounted(() => {
       </template>
     </a-list-item-meta>
     <span class="action"> <IconHeart /> <span>1</span> </span>
-    <a class="action-author">{{ author ? author.nickname : '...' }}</a>
+    <a class="action-author">{{ author ? author.nickName : '...' }}</a>
   </a-list-item>
 </template>
 

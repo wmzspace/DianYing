@@ -31,7 +31,7 @@
     <div class="user-info-content">
       <div class="name">
         <h1>
-          {{ userData?.nickname }}
+          {{ userData?.nickName }}
         </h1>
       </div>
       <div class="statistic">
@@ -47,7 +47,9 @@
         <a-divider :direction="'vertical'" />
         <div class="statistic-item">
           <div class="label">获赞</div>
-          <div class="value">{{ simplifyNumber(26000, 1, 'CN').string }}</div>
+          <div class="value">
+            {{ props.userData && simplifyNumber(props.userData.likedNum, 1, 'CN').string }}
+          </div>
         </div>
       </div>
 
@@ -116,14 +118,13 @@ import { computed, reactive, ref } from 'vue'
 import type { FileItem, RequestOption } from '@arco-design/web-vue/es/upload/interfaces'
 import { useUserStore } from '@/store'
 import { userUploadApi } from '@/api/user-center'
-import type { DescData } from '@arco-design/web-vue/es/descriptions/interface'
-import type { User } from '@/store/user'
-import { simplifyNumber } from '../../../../utils/tools'
+import { simplifyNumber } from '@/utils/tools'
 import { Message } from '@arco-design/web-vue'
 import type { AjaxResponse } from '@/api'
+import type { UserRecord } from '@/api/list'
 
 const props = defineProps<{
-  userData: User | undefined
+  userData: UserRecord | undefined
   isEditProfile: boolean
 }>()
 const emit = defineEmits(['update:isEditProfile', 'change'])

@@ -13,11 +13,7 @@
     <template #cover>
       <div
         style="width: 100%; height: 100%"
-        @click="
-          () => {
-            $router.push({ name: 'videoDetail', params: { video_id: props.src.id } })
-          }
-        "
+        @click="handleClickVideoCard"
         @mouseenter="
           () => {
             mouseOver = true
@@ -65,7 +61,7 @@
           ></a-avatar>
           <a-typography-text>
             <div class="video-meta">
-              <div class="name">{{ author ? author.nickname : '...' }}</div>
+              <div class="name">{{ author ? author.nickName : '...' }}</div>
               <div class="time-diff">·{{ getTimeDiffUntilNow(props.src.publishTime) }}</div>
             </div>
           </a-typography-text>
@@ -79,19 +75,22 @@
 </template>
 
 <script setup lang="ts">
-import { IconThumbUp, IconShareInternal, IconMore } from '@arco-design/web-vue/es/icon'
+import { IconMore } from '@arco-design/web-vue/es/icon'
 import type { VideoMedia } from '@/types'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { useUserStore } from '@/store/user'
-import type { User } from '@/store/user'
 import { getTimeDiffUntilNow } from '@/utils/tools'
 import PresetPlayer, { Events } from 'xgplayer'
 import Player from 'xgplayer'
-
+import type { UserRecord } from '@/api/list'
+import { useRouter } from 'vue-router'
 onMounted(() => {
   onLoadedImageData()
 })
+const router = useRouter()
+const handleClickVideoCard = () => {
+  router.push({ name: 'videoDetail', params: { video_id: props.src.id } })
+}
 
 const emit = defineEmits(['loadeddata'])
 const videoRefHome = ref()
@@ -107,8 +106,9 @@ const handleMouseLeave = () => {
   mouseOver.value = false
 }
 const userStore = useUserStore()
-const author = ref<User | undefined>(undefined)
-userStore.getUserById(props.src.authorId).then((user) => {
+const author = ref<UserRecord | undefined>(undefined)
+
+userStore.getUserInfoById(props.src.authorId).then((user) => {
   author.value = user
 })
 
@@ -118,7 +118,7 @@ const onLoadedImageData = () => {
   emit('loadeddata')
 }
 
-watch(mouseOver, (value, oldValue, onCleanup) => {
+watch(mouseOver, (value) => {
   if (value) {
     isAnimated.value = true
 

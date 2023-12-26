@@ -3,7 +3,6 @@ import { prefix_url } from '@/api'
 import type { AjaxResponse } from '@/api'
 import _ from 'lodash'
 import { Message } from '@arco-design/web-vue'
-import type { User } from '@/store/user'
 import type { VideoRecord } from '@/api/list'
 
 export const getVideoById = (videoId: number | string) => {
@@ -155,13 +154,13 @@ export const pullVideo = (request?: pullVideoRequest) =>
 // }
 
 export const getVideoActionUsersByVideoId = (videoId: number, action: string) =>
-  new Promise<User[]>((resolve, reject) => {
+  new Promise<number[]>((resolve, reject) => {
     fetch(prefix_url.concat(`video/get/actions?video_id=${videoId}&action=${action}`))
       .then((res) => {
         if (res.ok) {
           res.json().then((ajaxData: AjaxResponse) => {
             if (ajaxData.ajax_ok) {
-              resolve(ajaxData.ajax_data as User[])
+              resolve(ajaxData.ajax_data as number[])
             }
           })
         }
@@ -198,7 +197,7 @@ export const recordVideoPlay = (videoId: number | string, userId: number | strin
 
 export const likeOrStarVideoOrNot = (
   videoId: number,
-  userId: number,
+  userId: number | string,
   toStatus: boolean,
   action: 'like' | 'star'
 ) =>

@@ -2,6 +2,8 @@
 
 from flask import Blueprint
 
+
+
 # 从Flask导入Blueprint类，实例化这个类就获得了我们的蓝本对象。
 user_bp = Blueprint("user", __name__, url_prefix="/user/")
 

@@ -7,17 +7,17 @@ import router from '@/router'
 import type { UserRecord } from '@/api/list'
 import { reject } from 'lodash-es'
 
-export interface User {
-  avatar: string
-  id: number
-  nickname: string
-  register_time: string
-  area: string
-  gender: string
-  age: number
-  email: string
-  signature: string
-}
+// export interface User {
+//   avatar: string
+//   id: number
+//   nickname: string
+//   register_time: string
+//   area: string
+//   gender: string
+//   age: number
+//   email: string
+//   signature: string
+// }
 
 // impo mandert { mande } from 'mande'
 // const api = mande('/api/users')
@@ -36,12 +36,15 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     // userList: [] as User[]
     isAdmin: false,
-    userData: undefined as User | undefined,
+    userData: undefined as UserRecord | undefined,
     isStoredToken: false
     // ...
   }),
   getters: {
-    isAdminOrCurUser: (state) => (userId?: number) => {
+    isAdminOrCurUser: (state) => (userId?: number | string) => {
+      if (typeof userId === 'string') {
+        userId = parseInt(userId)
+      }
       return state.isAdmin || (state.userData && state.userData.id === userId)
     },
     isUserNotAdmin: (state) => (): boolean => {
@@ -49,30 +52,33 @@ export const useUserStore = defineStore('user', {
     },
 
     // 表示已登录
-    getCurrentUser: (state) => state.userData as User | undefined,
+    getCurrentUser: (state) => state.userData as UserRecord | undefined,
 
     // 表示登录的普通用户
     getCurrentUserNotAdmin: (state) => {
       // assert(!state.isAdmin, 'Is admin') // FIXME: getCurrentUserNotAdmin
-      return state.userData as User
+      return state.userData as UserRecord
     },
-    getUserById: (state) => {
-      return (userId: number | string | undefined) =>
-        new Promise<User>((resolve, reject) => {
-          fetch(prefix_url + `/user/get?id=${userId}`, {
-            method: 'GET'
-          }).then((res) => {
-            if (res.ok) {
-              res.json().then((data: User[]) => {
-                resolve(data[0])
-              })
-            }
-          })
-        }).catch((e) => {
-          Message.error(e.message)
-          location.reload()
-        })
-    },
+    // getUserById: (state) => {
+    //   return (userId: number | string | undefined) =>
+    //     new Promise<User>((resolve, reject) => {
+    //       fetch(prefix_url + `/user/get?id=${userId}`, {
+    //         method: 'GET'
+    //       }).then((res) => {
+    //         if (res.ok) {
+    //           res.json().then((data: User[]) => {
+    //             resolve(data[0])
+    //           })
+    //         } else {
+    //           reject(res.statusText)
+    //         }
+    //       })
+    //     }).catch((e) => {
+    //       Message.error(e.message)
+    //       reject(e.message)
+    //       location.reload()
+    //     })
+    // },
     getUserInfoAll: () => () =>
       new Promise<UserRecord[]>((resolve, reject) => {
         fetch(prefix_url.concat('user/info/all'), {
@@ -117,7 +123,7 @@ export const useUserStore = defineStore('user', {
           : guestUser.avatar,
     getUserNickname: (state) =>
       state.userData !== undefined
-        ? state.userData.nickname
+        ? state.userData.nickName
         : state.isAdmin
           ? adminUser.nickname
           : guestUser.nickname
@@ -132,17 +138,22 @@ export const useUserStore = defineStore('user', {
         this.getUserInfoById(userId)
           .then((user) => {
             this.isAdmin = false
-            this.userData = {
-              age: user.age,
-              area: user.area,
-              avatar: user.avatar,
-              email: user.email,
-              gender: user.gender,
-              id: user.id as number,
-              nickname: user.nickName,
-              register_time: user.registerTime,
-              signature: user.signature
-            }
+            this.userData = user
+            // this.userData = {
+            //   likedNum: user.likedNum,
+            //   password: '',
+            //   playedNum: 0,
+            //   videoNum: 0,
+            //   age: user.age,
+            //   area: user.area,
+            //   avatar: user.avatar,
+            //   email: user.email,
+            //   gender: user.gender,
+            //   id: user.id as number,
+            //   nickName: user.nickName,
+            //   registerTime: user.registerTime,
+            //   signature: user.signature
+            // }
             // localStorage.setItem('currentUser', userId.toString())
             this.setStoreToken(true)
             const mainStore = useMainStore()
@@ -174,7 +185,7 @@ export const useUserStore = defineStore('user', {
       location.reload()
     },
     pwdLogin(email: string, pwd: string) {
-      return new Promise<User>((resolve, reject) => {
+      return new Promise<UserRecord>((resolve, reject) => {
         fetch(prefix_url + `/user/login/pwd?email=${email}&pwd=${pwd}`, {
           method: 'POST'
         })
@@ -186,7 +197,7 @@ export const useUserStore = defineStore('user', {
                     id: 'loginRes',
                     content: ajaxData.ajax_msg
                   })
-                  resolve(ajaxData.ajax_data as User)
+                  resolve(ajaxData.ajax_data as UserRecord)
                 } else {
                   reject(ajaxData.ajax_msg)
                 }
@@ -208,9 +219,9 @@ export const useUserStore = defineStore('user', {
       mainStore.setLoginVisible(false)
     },
     checkLogin() {
-      return new Promise<User>((resolve, reject) => {
+      return new Promise<UserRecord>((resolve, reject) => {
         if (this.userData !== undefined) {
-          resolve(this.userData as User)
+          resolve(this.userData as UserRecord)
         } else {
           reject()
         }

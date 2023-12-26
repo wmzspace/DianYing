@@ -42,18 +42,18 @@
       />
     </a-form-item>
     <a-form-item
-      field="nickname"
-      :label="$t('userSetting.basicInfo.form.label.nickname')"
+      field="nickName"
+      :label="$t('userSetting.basicInfo.form.label.nickName')"
       :rules="[
         {
           required: true,
-          message: $t('userSetting.form.error.nickname.required')
+          message: $t('userSetting.form.error.nickName.required')
         }
       ]"
     >
       <a-input
-        v-model.trim="formData.nickname"
-        :placeholder="$t('userSetting.basicInfo.placeholder.nickname')"
+        v-model.trim="formData.nickName"
+        :placeholder="$t('userSetting.basicInfo.placeholder.nickName')"
       />
     </a-form-item>
     <a-form-item
@@ -147,7 +147,7 @@
 import { ref } from 'vue'
 import { type FormInstance } from '@arco-design/web-vue/es/form'
 import { type BasicInfoModel } from '@/api/user-center'
-import { type User, useUserStore } from '@/store/user'
+import { useUserStore } from '@/store/user'
 import { useRoute } from 'vue-router'
 import { areas } from '@/views/user/profile/mock'
 import { type AjaxResponse, prefix_url } from '@/api'
@@ -156,20 +156,21 @@ import useLoading from '@/hooks/loading'
 
 const userStore = useUserStore()
 const route = useRoute()
-userStore.getUserById(route.params.user_id as string).then((user) => {
+userStore.getUserInfoById(route.params.user_id as string).then((user) => {
   formData.value.email = user.email
-  formData.value.nickname = user.nickname
+  formData.value.nickName = user.nickName
   formData.value.age = user.age
   formData.value.gender = user.gender
   formData.value.area = user.area
   formData.value.signature = user.signature
+  formData.value.password = user.password
 })
 
 const formRef = ref<FormInstance>()
 const formData = ref<BasicInfoModel>({
   id: route.params.user_id as string,
   email: '',
-  nickname: '',
+  nickName: '',
   gender: '',
   area: '',
   age: 0,
@@ -233,7 +234,8 @@ const validate = async () => {
   }
 }
 const reset = async () => {
-  await formRef.value?.resetFields()
+  formRef.value?.resetFields()
+  // await formRef.value?.resetFields()
 }
 
 const emit = defineEmits(['update'])
