@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@arco-design/web-vue'
-import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { guestUser, useUserStore } from '@/store/user'
 import { useMainStore } from '@/store/main'
 import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
@@ -41,43 +41,36 @@ const handleLogOut = () => {
   // location.reload()
 }
 
-const videoLikeNum = computed(() => videosLiked.length)
-const videoStarNum = computed(() => videosStarred.length)
-const videoOwnNum = computed(() => videoListByAuthor.value.length)
+const videoLikeNum = ref(0)
+const videoStarNum = ref(0)
+const videoOwnNum = ref(0)
 
-let videoList: VideoMedia[] = reactive([])
-const videosLiked: VideoMedia[] = reactive([])
-const videosStarred: VideoMedia[] = reactive([])
-const videoListByAuthor = computed(() =>
-  userStore.isUserNotAdmin()
-    ? videoList.filter(
-        (v) =>
-          userStore.getCurrentUserNotAdmin.id && v.authorId === userStore.getCurrentUserNotAdmin.id
-      )
-    : []
-)
-
-onMounted(() => {
-  if (userStore.isUserNotAdmin()) {
-    getVideosByUserLikeOrStar(userStore.getCurrentUserNotAdmin.id, 'star').then((videos) => {
-      videosStarred.slice(0)
-      videos.forEach((v) => {
-        videosStarred.push(v)
+watch(
+  () => userStore.isUserNotAdmin(),
+  () => {
+    if (userStore.isUserNotAdmin()) {
+      getVideosByUserLikeOrStar(userStore.getCurrentUserNotAdmin.id, 'star').then((videos) => {
+        videoStarNum.value = videos.length
       })
-    })
-    getVideosByUserLikeOrStar(userStore.getCurrentUserNotAdmin.id, 'like').then((videos) => {
-      videosLiked.slice(0)
-      videos.forEach((v) => {
-        videosLiked.push(v)
+      getVideosByUserLikeOrStar(userStore.getCurrentUserNotAdmin.id, 'like').then((videos) => {
+        videoLikeNum.value = videos.length
       })
-    })
+      pullVideo().then((videos) => {
+        videoOwnNum.value = videos.filter(
+          (v) =>
+            userStore.getCurrentUserNotAdmin.id &&
+            v.authorId === userStore.getCurrentUserNotAdmin.id
+        ).length
+      })
+    }
   }
-  pullVideo().then((videos) => {
-    videos.forEach((video) => {
-      videoList.push(video)
-    })
-  })
-})
+)
+//
+// onMounted(() => {
+//   // videos.forEach((video) => {
+//   // videoList.push(video)
+//   // })
+// })
 </script>
 
 <template>

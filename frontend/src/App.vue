@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RouterView, useRoute } from 'vue-router'
-import { computed, onMounted } from 'vue'
+import { onBeforeRouteUpdate, RouterView, useRoute } from 'vue-router'
+import { computed, onBeforeMount, onMounted } from 'vue'
 import { adminUser, useUserStore } from '@/store/user/'
 import LoginCard from '@/components/Cards/LoginCard.vue'
 import { useMainStore } from '@/store/main'
@@ -28,12 +28,8 @@ const locale = computed(() => {
       return enUS
   }
 })
-onMounted(() => {
-  document.documentElement.style.height = `${window.innerHeight}px`
-  window.addEventListener('resize', () => {
-    document.documentElement.style.height = `${window.innerHeight}px`
-  })
 
+onBeforeMount(() => {
   const storedUser = localStorage.getItem('currentUser') as string | null
   if (storedUser === null) {
     // no storedUser
@@ -48,6 +44,17 @@ onMounted(() => {
     userStore.isStoredToken = true
     userStore.userLogin(storedUser)
   }
+})
+
+// onBeforeRouteUpdate(() => {
+//
+// })
+
+onMounted(() => {
+  document.documentElement.style.height = `${window.innerHeight}px`
+  window.addEventListener('resize', () => {
+    document.documentElement.style.height = `${window.innerHeight}px`
+  })
 })
 </script>
 

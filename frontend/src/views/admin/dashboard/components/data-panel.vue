@@ -153,7 +153,9 @@ const newplayNumRate = computed(() => {
 // })
 
 onMounted(() => {
-  pullVideo().then((videos) => {
+  pullVideo({
+    allStatus: 'all'
+  }).then((videos) => {
     videoList.value = videos
   })
   fetch(prefix_url.concat('video/get/weekly'))

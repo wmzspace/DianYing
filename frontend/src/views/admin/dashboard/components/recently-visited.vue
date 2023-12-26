@@ -29,8 +29,9 @@
 <script lang="ts" setup>
 const links = [
   { text: 'workplace.contentManagement', icon: 'icon-file', routeName: 'searchVideo' },
-  { text: 'workplace.userManagement', icon: 'icon-user', routeName: 'searchUser' },
-  { text: 'workplace.advanced', icon: 'icon-settings', routeName: 'dashboard' }
+  { text: 'workplace.userManagement', icon: 'icon-user', routeName: 'searchUser' }
+  // { text: 'workplace.advanced', icon: 'icon-settings', routeName: 'dashboard' },
+  // { text: 'workplace.publish', icon: 'IconCalendar', routeName: 'postVideo' },
 ]
 </script>
 
