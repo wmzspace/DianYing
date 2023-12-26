@@ -551,9 +551,9 @@ class DatabaseLog(db.Model):
         record = model.to_dict()
         if "_sa_instance_state" in record:
             record.pop("_sa_instance_state")
-        # a={'video_id': 5, 'publish_time': '2023-12-25 18:59:19', 'content': '1', 'parent_id': None, 'id': 6, 'author_id': 5, 'comment_liked': [1], 'replies': [], 'parent': None}
-        # print(json.dumps(a,ensure_ascii=False))
-        # a = json.loads(str(record))
+        # a={'video_id': 5, 'publish_time': '2023-12-25 18:59:19', 'content': '1', 'parent_id': None, 'id': 6,
+        # 'author_id': 5, 'comment_liked': [1], 'replies': [], 'parent': None} print(json.dumps(a,
+        # ensure_ascii=False)) a = json.loads(str(record))
         self.record_value = json.dumps(record, ensure_ascii=False)
         # self.record_value = str(record)
         # print(json.dumps(record))

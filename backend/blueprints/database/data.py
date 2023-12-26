@@ -41,7 +41,7 @@ def load_data():
     path = query_exist.path
     if path != f"~/web2_cwk2/backup-{name}.sql":
         return AjaxResponse.error("备份文件名称不匹配，请联系相关技术人员")
-    rollback_cli = f"mysql -uroot -proot -h127.0.0.1 web2_cwk2 --default-character-set=utf8mb4 < {path}"
+    rollback_cli = f"mysql -uroot -pwmz030907 -h127.0.0.1 web2_cwk2 --default-character-set=utf8mb4 < {path}"
     result = os.system(rollback_cli)
     if result == 0:
         return AjaxResponse.success(result, f"成功还原数据库，还原点:{name}")
@@ -55,7 +55,7 @@ def backup_data():
     if name is None:
         return AjaxResponse.error("参数缺失: name")
     path = f"~/web2_cwk2/backup-{name}.sql"
-    backup_cli = (f"mysqldump -uroot -proot --host=127.0.0.1 --port=3306 --databases web2_cwk2 "
+    backup_cli = (f"mysqldump -uroot -pwmz030907 --host=127.0.0.1 --port=3306 --databases web2_cwk2 "
                   f"--ignore-table=web2_cwk2.database_backup --ignore-table=web2_cwk2.registers "
                   f"--default-character-set=utf8mb4 > {path}")
     result = os.system(backup_cli)
