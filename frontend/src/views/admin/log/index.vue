@@ -152,29 +152,6 @@
             </template>
           </a-tooltip>
         </template>
-
-        <!--        <template #operations="{ record, rowIndex }">-->
-        <!--          <div style="display: flex; align-items: center; justify-content: center">-->
-        <!--            <a-button-->
-        <!--              type="text"-->
-        <!--              size="small"-->
-        <!--              :status="'normal'"-->
-        <!--              style="padding: 6px"-->
-        <!--              @click="$router.push({ name: 'userProfile', params: { user_id: record.id } })"-->
-        <!--            >-->
-        <!--              编辑-->
-        <!--            </a-button>-->
-        <!--            <a-button-->
-        <!--              type="text"-->
-        <!--              size="small"-->
-        <!--              :status="'danger'"-->
-        <!--              style="padding: 6px"-->
-        <!--              @click="handleDeleteUser(record, rowIndex)"-->
-        <!--            >-->
-        <!--              删除-->
-        <!--            </a-button>-->
-        <!--          </div>-->
-        <!--        </template>-->
       </a-table>
     </a-card>
   </div>
@@ -226,8 +203,6 @@ import { deleteAllLogs, getDbLog, parseRecordValue } from '@/utils/database'
 type SizeProps = 'mini' | 'small' | 'medium' | 'large'
 type Column = TableColumnData & { checked?: true }
 
-const mainStore = useMainStore()
-
 const editLoadObject = useLoading()
 const editLoading = editLoadObject.loading
 const setEditLoading = editLoadObject.setLoading
@@ -257,7 +232,6 @@ const generateFormModel = () => {
   return record
 }
 
-const userStore = useUserStore()
 const { loading, setLoading } = useLoading(true)
 const { t } = useI18n()
 
@@ -333,14 +307,6 @@ const columns = computed<TableColumnData[]>(() => [
       sortDirections: ['descend', 'ascend']
     }
   }
-  // {
-  //   title: t('searchTable.columns.operations'),
-  //   dataIndex: 'operations',
-  //   slotName: 'operations',
-  //   fixed: 'right',
-  //   align: 'center',
-  //   width: 100
-  // }
 ])
 const operationOptions = computed<SelectOptionData[]>(() => [
   {
@@ -411,9 +377,6 @@ const targetOptions = computed<SelectOptionData[]>(() => [
     value: '数据备份记录'
   }
 ])
-
-const inputValue = ref('')
-const options = ref<string[]>([])
 
 const fetchData = async (params: PolicyParamsLog = { current: 1, pageSize: 20 }) => {
   setLoading(true)

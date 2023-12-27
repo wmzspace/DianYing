@@ -38,7 +38,8 @@ export interface UserRecord {
 
 export interface LogRecord {
   id: number
-  operation: string
+  operation: 'insert' | 'update' | 'delete'
+  // operation: string
   target: string
   recordValue: string
   timestamp: string

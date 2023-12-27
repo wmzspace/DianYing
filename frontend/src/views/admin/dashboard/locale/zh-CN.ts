@@ -23,7 +23,7 @@ export default {
   'workplace.publish': '发布视频',
   'workplace.onlinePromotion': '线上推广',
   'workplace.contentPutIn': '内容投放',
-  'workplace.announcement': '公告',
+  'workplace.announcement': '日志',
   'workplace.recently.visited': '最近访问',
   'workplace.record.nodata': '暂无数据',
   'workplace.quick.operation': '快捷操作',
