@@ -34,7 +34,7 @@ const userStore = useUserStore()
             <div class="nav-text"><span>首页</span></div>
           </a>
         </a-menu-item>
-        <a-menu-item key="2" v-show="false">
+        <a-menu-item key="2" @click="$router.push({ name: 'VideoRecommend' })">
           <a class="nav-a">
             <div class="nav-icon"></div>
             <div class="nav-text"><span>推荐</span></div>

@@ -1,0 +1,71 @@
+#slide-list{
+  height: 100%;
+  flex-direction: column;
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  .outer-container{
+    position: absolute;
+    left: 0;
+    top: calc(0% + 0px);
+    width: 100%;
+    height: calc(100% - 12px);
+    overflow: visible;
+    padding-left: 0;
+    padding-right: 68px;
+    //padding: 0 30px;
+    min-height: 400px;
+    .slide-list-container{
+      width: 100%;
+      height: 100%;
+      display: flex;
+      transform: translate3d(0px, 0px, 0px); // TODO 需要改变
+      transition-duration: 0ms;
+      flex-direction: column;
+      .page-recommend-container{
+        height: 1161px;
+        margin-bottom: 12px;
+        -ms-user-select: none;
+        user-select: none;
+        flex-direction: column;
+        display: flex;
+        position: relative;
+        flex-shrink: 0;
+        width: 100%;
+
+        .feed-video,.feed-active-video{
+          border-radius: 16px;
+          width: 100%;
+          height: 100%;
+          opacity: 1;
+          background-color: #000;
+          //border-radius: 4px;
+          flex-grow: 1;
+          transition: all .15s linear;
+          position: relative;
+          overflow: hidden;
+          white-space: nowrap;
+          .playerContainer{
+            white-space: normal;
+            background-color: transparent;
+            position: relative;
+            transition: unset!important;
+            height: 100%;
+            z-index: 2;
+            vertical-align: top;
+            width: 100%;
+            display: inline-block;
+            .slider-video{
+              width: 100%;
+              position: absolute;
+              top: 0;
+              bottom: 0;
+              overflow: hidden;
+            }
+          }
+        }
+      }
+    }
+  }
+}

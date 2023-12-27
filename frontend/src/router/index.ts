@@ -19,13 +19,13 @@ let routes: Array<RouteRecordRaw> = [
     path: '/:catchAll(.*)', // 不识别的path自动匹配404
     component: () => import('@/views/Status404.vue')
   },
-  {
-    path: '/',
-    redirect: '/discover',
-    meta: {
-      layout: 'a'
-    }
-  },
+  // {
+  //   path: '/',
+  //   redirect: '/discover',
+  //   meta: {
+  //     layout: 'a'
+  //   }
+  // },
   {
     path: '/discover',
     name: 'discover',
@@ -35,6 +35,16 @@ let routes: Array<RouteRecordRaw> = [
     },
     component: () => import('@/views/HomeView.vue')
   },
+  {
+    path: '/',
+    name: 'VideoRecommend',
+    meta: {
+      layout: 'a',
+      key: '2'
+    },
+    component: () => import('@/views/VideoRecommend/index.vue')
+  },
+
   {
     path: '/video/:video_id',
     name: 'videoDetail',
