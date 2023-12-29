@@ -28,8 +28,8 @@ const userStore = useUserStore()
     </div>
     <div class="scroll-content">
       <a-menu mode="pop" :selected-keys="[$route.meta.key]" class="nav-menu" :theme="'dark'">
-        <a-menu-item key="1">
-          <a class="nav-a" @click="$router.push({ name: 'discover' })">
+        <a-menu-item key="1" @click="$router.push({ name: 'discover' })">
+          <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>首页</span></div>
           </a>
@@ -99,55 +99,145 @@ const userStore = useUserStore()
             <div class="nav-text"><span>放映厅</span></div>
           </a></a-menu-item
         >
-        <a-menu-item key="8">
+        <a-menu-item
+          key="8"
+          @click="
+            $router.replace({
+              name: 'Channel',
+              params: {
+                channelName: 'knowledge'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>知识</span></div>
           </a></a-menu-item
         >
-        <a-menu-item key="9">
+        <a-menu-item
+          key="9"
+          @click="
+            $router.replace({
+              name: 'Channel',
+              params: {
+                channelName: 'hot'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>热点</span></div>
           </a></a-menu-item
         >
-        <a-menu-item key="10">
+        <a-menu-item
+          key="10"
+          @click="
+            $router.replace({
+              name: 'Channel',
+              params: {
+                channelName: 'game'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>游戏</span></div>
           </a></a-menu-item
         >
-        <a-menu-item key="11">
+        <a-menu-item
+          key="11"
+          @click="
+            $router.replace({
+              name: 'Channel',
+              params: {
+                channelName: 'entertainment'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>娱乐</span></div>
           </a>
         </a-menu-item>
-        <a-menu-item key="12">
+        <a-menu-item
+          key="12"
+          @click="
+            $router.replace({
+              name: 'Channel',
+              params: {
+                channelName: 'ACGN'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>二次元</span></div>
           </a>
         </a-menu-item>
-        <a-menu-item key="13">
+        <a-menu-item
+          key="13"
+          @click="
+            $router.replace({
+              name: 'Channel',
+              params: {
+                channelName: 'music'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>音乐</span></div>
           </a>
         </a-menu-item>
-        <a-menu-item key="14">
+        <a-menu-item
+          key="14"
+          @click="
+            $router.push({
+              name: 'Channel',
+              params: {
+                channelName: 'delicacy'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>美食</span></div>
           </a>
         </a-menu-item>
-        <a-menu-item key="15">
+        <a-menu-item
+          key="15"
+          @click="
+            $router.push({
+              name: 'Channel',
+              params: {
+                channelName: 'sports'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>体育</span></div>
           </a>
         </a-menu-item>
-        <a-menu-item key="16">
+        <a-menu-item
+          key="16"
+          @click="
+            $router.push({
+              name: 'Channel',
+              params: {
+                channelName: 'fashions'
+              }
+            })
+          "
+        >
           <a class="nav-a">
             <div class="nav-icon" />
             <div class="nav-text"><span>时尚</span></div>

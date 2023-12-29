@@ -1,4 +1,7 @@
+from flask import request
+
 from blueprints.tag import tag_bp
+from exts import AjaxResponse
 
 from models import VTag
 
@@ -22,3 +25,28 @@ def get_tag_statistic():
         result.append({'name': tag.name, 'count': len(tag.vt_relations)})
     result = sorted(result, key=lambda x: x['count'], reverse=True)
     return result, 200
+
+
+channel_dict = {
+    "knowledge": ["知识"],
+    "hot": ["热点"],
+    "game": ["游戏"],
+    "entertainment": ["娱乐"],
+    "ACGN": ["二次元"],
+    "music": ["音乐"],
+    "delicacy": ["美食"],
+    "sports": ["体育"],
+    "fashions": ["时尚"],
+}
+
+
+# API: 根据Channel名获取对应的标签列表
+@tag_bp.route('/channel/', methods=['GET'])
+def get_channel_tags():
+    channel_name = request.args.get("name")
+    if channel_name is None:
+        return AjaxResponse.error("参数缺失: name")
+    if channel_name not in channel_dict:
+        return AjaxResponse.error("参数错误: name")
+
+    return AjaxResponse.success(channel_dict[channel_name])

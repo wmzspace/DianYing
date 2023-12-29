@@ -1,6 +1,7 @@
-import { prefix_url } from '@/api'
+import { type AjaxResponse, prefix_url } from '@/api'
 import { reject } from 'lodash-es'
 import _ from 'lodash'
+import { Message } from '@arco-design/web-vue'
 
 export const getAllTags = () =>
   new Promise<string[]>((resolve) => {
@@ -65,3 +66,24 @@ export const tagSuffixes = () => [
     4
   )
 ]
+
+export const getTagsByChannel = (channelName: string) =>
+  new Promise<string[]>((resolve, reject) => {
+    fetch(prefix_url.concat(`tag/channel?name=${channelName}`))
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              resolve(ajaxData.ajax_data as unknown as string[])
+            } else {
+              reject(ajaxData.ajax_msg)
+            }
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })

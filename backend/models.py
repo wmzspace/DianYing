@@ -48,7 +48,8 @@ class User(db.Model):
     __description__ = '用户'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
@@ -127,7 +128,8 @@ class Register(db.Model):
     __description__ = '验证码记录'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), nullable=False)
@@ -145,7 +147,8 @@ class Video(db.Model):
     __description__ = '视频'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -213,7 +216,8 @@ class VTag(db.Model):
     __description__ = '标签'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     """
         This is a class for VTag
@@ -278,7 +282,8 @@ class VTRelation(db.Model):
     __description__ = '视频标签关系'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     def __repr__(self):
         return f"{self.tag.name}"
@@ -323,7 +328,8 @@ class Comment(db.Model):
     __description__ = '评论'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     def __repr__(self):
         return f"{self.content}"
@@ -393,7 +399,8 @@ class VideoPlay(db.Model):
     __description__ = '视频播放记录'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     def __repr__(self):
         return f"{self.id}"
@@ -423,7 +430,8 @@ class VideoLike(db.Model):
     __description__ = '视频点赞记录'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     def __repr__(self):
         return f"{self.id}"
@@ -453,7 +461,8 @@ class VideoStar(db.Model):
     __description__ = '视频收藏记录'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     def __repr__(self):
         return f"{self.id}"
@@ -482,7 +491,8 @@ class CommentLike(db.Model):
     __description__ = '评论点赞记录'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     def __repr__(self):
         return f"{self.id}"
@@ -515,7 +525,8 @@ class DatabaseBackup(db.Model):
     __description__ = '数据备份记录'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     def __repr__(self):
         return f"{self.name}"
@@ -540,7 +551,8 @@ class DatabaseLog(db.Model):
         nullable=False)
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name, None)
+                for c in self.__table__.columns}
 
     def __init__(self, model, operation):
         self.operation = operation
@@ -617,66 +629,65 @@ def load_init_data():
         })
     ])
 
-    video1 = {
-        'id': 1,
-        'title': '电子科技大学，4个计算机男生，毕业4年后现状',
-        'author_id': 1,
-        'url': PREFIX_URL + 'static/videos/3.mp4',
-        'cover': PREFIX_URL + 'static/videos/covers/3.jpeg',
-        'width': 1280,
-        'height': 720,
-        'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'status': "online"
-    }
-    video2 = {
-        'id': 2,
-        'title': '亿万富翁找回儿子',
-        'author_id': 4,
-        'url': PREFIX_URL + 'static/videos/1.mp4',
-        'cover': PREFIX_URL + 'static/videos/covers/1.png',
-        'width': 1080,
-        'height': 1920, 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'status': "online"
-    }
-    video3 = {
-        'id': 3,
-        'title': '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
-        'author_id': 2,
-        'url': PREFIX_URL + 'static/videos/2.mp4',
-        'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
-        'width': 1024,
-        'height': 576, 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'status': "awaitApproval"
-    }
-    video4 = {
-        'id': 4,
-        'title': '19岁带饭冲锋🌈的作品',
-        'author_id': 1,
-        'url': PREFIX_URL + 'static/videos/2.mp4',
-        'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
-        'width': 1024,
-        'height': 576, 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'status': "offline"
-    }
-    video5 = {
-        'id': 5,
-        'title': '带东北同学第一次逛成都犀浦夜市！！ 好多没见过的美食！',
-        'author_id': 1,
-        'url': PREFIX_URL + 'static/videos/4.mp4',
-        'cover': PREFIX_URL + 'static/videos/covers/4.jpg',
-        'width': 1024,
-        'height': 576, 'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'status': "online"
-    }
+    videos = [{'id': 1,
+               'title': '电子科技大学，4个计算机男生，毕业4年后现状',
+               'author_id': 1,
+               'url': PREFIX_URL + 'static/videos/3.mp4',
+               'cover': PREFIX_URL + 'static/videos/covers/3.jpeg',
+               'width': 1280,
+               'height': 720,
+               'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+               'status': "online"},
+              {'id': 2,
+               'title': '亿万富翁找回儿子',
+               'author_id': 4,
+               'url': PREFIX_URL + 'static/videos/1.mp4',
+               'cover': PREFIX_URL + 'static/videos/covers/1.png',
+               'width': 1080,
+               'height': 1920,
+               'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+               'status': "online"},
+              {'id': 3,
+               'title': '男孩意外搬到大明星的房间，没想竟从此走向人生巅峰',
+               'author_id': 2,
+               'url': PREFIX_URL + 'static/videos/2.mp4',
+               'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
+               'width': 1024,
+               'height': 576,
+               'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+               'status': "awaitApproval"},
+              {'id': 4,
+               'title': '19岁带饭冲锋🌈的作品',
+               'author_id': 1,
+               'url': PREFIX_URL + 'static/videos/2.mp4',
+               'cover': PREFIX_URL + 'static/videos/covers/2.jpeg',
+               'width': 1024,
+               'height': 576,
+               'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+               'status': "offline"},
+              {'id': 5,
+               'title': '带东北同学第一次逛成都犀浦夜市！！ 好多没见过的美食！',
+               'author_id': 1,
+               'url': PREFIX_URL + 'static/videos/4.mp4',
+               'cover': PREFIX_URL + 'static/videos/covers/4.jpg',
+               'width': 1024,
+               'height': 576,
+               'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+               'status': "online"},
+              {'id': 6,
+               'title': '如果你只有手机，但是你想用手机拍出电影感视频，那么你就要看完这个教程',
+               'author_id': 1,
+               'url': 'http://127.0.0.1:5000/static/videos/knowledge-1.mp4',
+               'cover': 'http://127.0.0.1:5000/static/videos/covers/knowledge-1.jpg',
+               'width': 1024,
+               'height': 576,
+               'publish_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+               'status': 'online'}]
 
-    videos = []
-    for i in range(1):
-        videos.append(copy.deepcopy(Video(video1)))
-        videos.append(copy.deepcopy(Video(video2)))
-        videos.append(copy.deepcopy(Video(video3)))
-        videos.append(copy.deepcopy(Video(video4)))
-        videos.append(copy.deepcopy(Video(video5)))
-    db.session.add_all(videos)
+    def get_video(params):
+        return Video(params)
+
+    db.session.add_all(list(map(get_video, videos)))
 
     db.session.add_all(
         [
@@ -690,6 +701,19 @@ def load_init_data():
             VTag({'id': 8, 'name': '成都夜市'}),
             VTag({'id': 9, 'name': '犀浦夜市'}),
             VTag({'id': 10, 'name': '成都'}),
+            VTag({'id': 11, 'name': '知识'}),
+            VTag({'id': 12, 'name': '热点'}),
+            VTag({'id': 13, 'name': '游戏'}),
+            VTag({'id': 14, 'name': '娱乐'}),
+            VTag({'id': 15, 'name': '二次元'}),
+            VTag({'id': 16, 'name': '音乐'}),
+            VTag({'id': 17, 'name': '美食'}),
+            VTag({'id': 18, 'name': '体育'}),
+            VTag({'id': 19, 'name': '时尚'}),
+            VTag({'id': 20, 'name': '拍摄技巧'}),
+            VTag({'id': 21, 'name': '干货分享'}),
+            VTag({'id': 22, 'name': '电影感'}),
+            VTag({'id': 23, 'name': '剪辑'}),
         ]
     )
 
@@ -743,6 +767,11 @@ def load_init_data():
             VTRelation({'video_id': 5, 'tag_id': 9}),
             VTRelation({'video_id': 1, 'tag_id': 10}),
             VTRelation({'video_id': 5, 'tag_id': 10}),
+            VTRelation({'video_id': 6, 'tag_id': 11}),
+            VTRelation({'video_id': 6, 'tag_id': 20}),
+            VTRelation({'video_id': 6, 'tag_id': 21}),
+            VTRelation({'video_id': 6, 'tag_id': 22}),
+            VTRelation({'video_id': 6, 'tag_id': 23}),
         ]
     )
     db.session.flush()

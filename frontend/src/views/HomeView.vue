@@ -1,15 +1,52 @@
 <script setup lang="ts">
 import VideoCard from '@/components/Cards/VideoCard.vue'
 import type { VideoMedia } from '@/types'
-import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { pullVideo } from '@/utils/video'
 import { debounce } from 'lodash-es'
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router'
+import { getTagsByChannel } from '@/utils/tag'
 
 const videoList = ref<VideoMedia[]>([])
 const currentShowNum = ref(0) // not include new loaded
-pullVideo({ num: 20 }).then((res: VideoMedia[]) => {
-  videoList.value = res
+
+const currentTags = ref<string[]>([])
+const currentChannelName = ref<string | undefined>(undefined)
+const route = useRoute()
+
+const refreshChannelTags = (channelName: string | undefined) => {
+  currentChannelName.value = channelName
+  if (currentChannelName.value !== undefined) {
+    getTagsByChannel(currentChannelName.value).then((tags) => {
+      currentTags.value = tags
+    })
+  } else {
+    currentTags.value = []
+  }
+}
+
+onBeforeRouteLeave((to) => {
+  refreshChannelTags(to.params.channelName as string | undefined)
 })
+
+onBeforeRouteUpdate((to) => {
+  refreshChannelTags(to.params.channelName as string | undefined)
+})
+watch(
+  () => currentTags.value,
+  (value) => {
+    videoList.value = []
+    currentShowNum.value = 0
+    videoListHeight.value = 0
+    loadedNum.value = 0
+    isLoadedAll.value = false
+    pullVideo({ num: 20, tagsName: value }).then((res: VideoMedia[]) => {
+      videoList.value = res
+    })
+  }
+)
+refreshChannelTags(route.params.channelName as string | undefined)
+
 const isLoadedAll = ref(false)
 const loadedNum = ref(0)
 
@@ -17,14 +54,14 @@ const home = ref()
 
 const onScroll = () => {
   if (home.value.scrollTop + home.value.clientHeight >= videoListHeight.value) {
-    onLoadMore()
+    onLoadMore(currentTags.value)
   }
 }
 
-const onLoadMore = () => {
+const onLoadMore = (tags: string[]) => {
   if (isLoadedAll.value) {
     isLoadedAll.value = false
-    pullVideo({ num: 20 }).then((res: VideoMedia[]) => {
+    pullVideo({ num: 20, tagsName: tags }).then((res: VideoMedia[]) => {
       res.forEach((e) => {
         videoList.value.push(e)
       })
@@ -41,13 +78,12 @@ const onLoadedAll = () => {
     calculateVideoPositions()
     if (videoListHeight.value < window.innerHeight * 1.5) {
       isLoadedAll.value = false
-      pullVideo({ num: 20 }).then((res: VideoMedia[]) => {
+      pullVideo({ num: 20, tagsName: currentTags.value }).then((res: VideoMedia[]) => {
         res.forEach((e) => {
           videoList.value.push(e)
         })
       })
     } else {
-      console.log('loaded all')
       isLoadedAll.value = true
     }
   })
@@ -96,7 +132,7 @@ const calculateVideoPositions = () => {
 
 function resizeEventHandler() {
   if (home.value.scrollTop + home.value.clientHeight >= videoListHeight.value) {
-    onLoadMore()
+    onLoadMore(currentTags.value)
   }
   calculateVideoPositions()
 }

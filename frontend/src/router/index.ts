@@ -12,6 +12,7 @@ import { useMainStore } from '@/store/main'
 import { Message } from '@arco-design/web-vue'
 import { getVideoInfoById } from '@/utils/video'
 import type { VideoRecord } from '@/api/list'
+import CATEGORIES from '@/router/categories'
 
 let routes: Array<RouteRecordRaw> = [
   {
@@ -153,7 +154,8 @@ let routes: Array<RouteRecordRaw> = [
       }
     ]
     // component: () => import('@/views/DashboardView.vue')
-  }
+  },
+  CATEGORIES
   // TODO: EXCEPTION
   // children: [
   //   // 当 /user/:id 匹配成功
