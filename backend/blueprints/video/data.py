@@ -39,9 +39,10 @@ def get_all_videos():
             all_videos = Video.query.filter_by(status="online").order_by(db.desc(Video.id)).all()
     else:
         if all_status == "all":
-            all_videos = Video.query.order_by(func.random())
+            all_videos = Video.query.order_by(func.random()).all()
         else:
-            all_videos = Video.query.filter_by(status="online").order_by(func.random())
+            all_videos = Video.query.filter_by(status="online").order_by(func.random()).all()
+
     results = []
     for video in all_videos:
         if author_id is not None and video.author_id != author_id:
@@ -352,7 +353,9 @@ def get_video_play_weekly():
 
 class VideoRecord:
     videoId: int | str
+    url:str
     videoTitle: str
+    authorAvatar:str
     authorName: str
     authorId: int
     status: str
@@ -365,9 +368,12 @@ class VideoRecord:
     tags: list[str]
 
     def __init__(self, video: Video):
+        user = User.query.get(video.author_id)
         self.videoId = video.id
+        self.url = video.url
         self.videoTitle = video.title
-        self.authorName = User.query.get(video.author_id).nickname
+        self.authorName = user.nickname
+        self.authorAvatar = user.avatar
         self.authorId = video.author_id
         self.status = video.status
         self.contentType = "horizontalVideo" if video.width >= video.height else "verticalVideo"
@@ -376,6 +382,7 @@ class VideoRecord:
         self.starCount = len(video.video_starred)
         self.commentCount = len(video.comments)
         self.publishTime = video.publish_time
+
         # tags = video.tags
         tags = video.vt_relations
 

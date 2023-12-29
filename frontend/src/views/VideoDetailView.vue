@@ -188,7 +188,7 @@ const createPlayer = (video: VideoMedia) => {
   return new Player({
     // id: `video-2`,
     id: 'video-player',
-    lang: 'zh',
+    lang: 'zh-cn',
     // url: 'https://www.wmzspace.space/web2_cwk2/videos/3.mp4',
     // plugins: [Danmu],
     loop: true,
@@ -384,10 +384,6 @@ const handleClickStar = () => {
     })
 }
 
-const deleteLoadingObject = useLoading()
-const deleteLoading = deleteLoadingObject.loading
-const setDeleteLoading = deleteLoadingObject.setLoading
-
 const handleClickAvatar = () => {
   if (author.value) {
     router.push({
@@ -396,6 +392,10 @@ const handleClickAvatar = () => {
     })
   }
 }
+
+const deleteLoadingObject = useLoading()
+const deleteLoading = deleteLoadingObject.loading
+const setDeleteLoading = deleteLoadingObject.setLoading
 
 const handleClickDelete = () => {
   if (deleteLoading.value === true) {

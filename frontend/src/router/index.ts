@@ -278,8 +278,7 @@ router.beforeEach(async (to, from) => {
     }
   } else {
     //允许访问
-    if (to.name === 'videoDetail') {
-      // console.log(to)
+    if (to.name === 'videoDetail' && to.query.validate !== 'ignore') {
       try {
         const video = await getVideoInfoById(to.params.video_id as string)
         if (video.status !== 'online' && !userStore.isAdminOrCurUser(video.authorId)) {
@@ -297,32 +296,6 @@ router.beforeEach(async (to, from) => {
         return '/'
       }
     }
-    // next()
-    // if (to.name === 'videoDetail') {
-    //   next('/')
-    // setTimeout(() => {
-    //   console.log('!!')
-    //   return '/'
-    // }, 1000)
-    // if (value.status !== 'online' && !userStore.isAdminOrCurUser(author.value.id)) {
-    //   Message.warning({
-    //     id: 'videoNotOnline',
-    //     content: '视频不存在'
-    //   })
-    //   router.replace({ name: 'discover' })
-    // }
-    //
-    // if (userStore.isAdminOrCurUser(userStore.getCurrentUser?.id)) {
-    //   next()
-    // } else {
-    //   // 用户跳转回首页
-    //   next('/')
-    // }
-    //   next()
-    // } else {
-    //   //允许访问
-    //   next()
-    // }
   }
 })
 

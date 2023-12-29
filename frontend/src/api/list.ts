@@ -5,11 +5,13 @@ import type { BackupRecord } from '@/utils/database'
 import type { VideoMedia } from '@/types'
 
 export interface VideoRecord {
+  authorAvatar: string
   authorName: string
   authorId: number
   videoId: number | string
   videoTitle: string
   contentType: 'horizontalVideo' | 'verticalVideo'
+  url: string
   // filterType: 'artificial' | 'rules';
   playCount: number
   likeCount: number

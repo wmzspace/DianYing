@@ -89,7 +89,11 @@ onMounted(() => {
 })
 const router = useRouter()
 const handleClickVideoCard = () => {
-  router.push({ name: 'videoDetail', params: { video_id: props.src.id } })
+  router.push({
+    name: 'videoDetail',
+    params: { video_id: props.src.id },
+    query: { validate: 'ignore' }
+  })
 }
 
 const emit = defineEmits(['loadeddata'])
@@ -167,11 +171,11 @@ const createPlayer = (video: VideoMedia) => {
     // url: 'https://www.wmzspace.space/web2_cwk2/videos/3.mp4',
     // plugins: [Danmu],
     loop: true,
-    controlls: false,
+    controls: false,
     dynamicBg: {
       disable: false
     },
-    screenShot: true, //显示截图按钮
+
     videoAttributes: {
       crossOrigin: 'anonymous'
     },
@@ -183,9 +187,21 @@ const createPlayer = (video: VideoMedia) => {
     autoplayMuted: true,
     autoplay: true,
     // playsinline: true,
-    download: true,
     poster: video.cover,
-    closeVideoClick: true
+    closeVideoClick: true,
+    closeVideoDblclick: true,
+    disableProgress: true,
+    ignores: [
+      'time',
+      'definition',
+      'fullscreen',
+      'i18n',
+      'play',
+      'poster',
+      'progress',
+      'replay',
+      'volume'
+    ]
   })
 }
 </script>

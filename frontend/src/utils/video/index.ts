@@ -153,7 +153,7 @@ export const pullVideo = (request?: pullVideoRequest) =>
 //   })
 // }
 
-export const getVideoActionUsersByVideoId = (videoId: number, action: string) =>
+export const getVideoActionUsersByVideoId = (videoId: number | string, action: string) =>
   new Promise<number[]>((resolve, reject) => {
     fetch(prefix_url.concat(`video/get/actions?video_id=${videoId}&action=${action}`))
       .then((res) => {
@@ -196,7 +196,7 @@ export const recordVideoPlay = (videoId: number | string, userId: number | strin
   })
 
 export const likeOrStarVideoOrNot = (
-  videoId: number,
+  videoId: number | string,
   userId: number | string,
   toStatus: boolean,
   action: 'like' | 'star'
