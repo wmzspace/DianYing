@@ -16,6 +16,7 @@ const userStore = useUserStore()
 import useLocale from '@/hooks/locale'
 import enUS from '@arco-design/web-vue/es/locale/lang/en-us'
 import zhCN from '@arco-design/web-vue/es/locale/lang/zh-cn'
+import { Message } from '@arco-design/web-vue'
 
 const { currentLocale } = useLocale()
 const locale = computed(() => {
@@ -34,7 +35,6 @@ onBeforeMount(() => {
   if (storedUser === null) {
     // no storedUser
     userStore.isStoredToken = false
-    mainStore.setLoginVisible(true)
   } else if (storedUser === adminUser.nickname) {
     // storedUser is admin nickname
     userStore.isStoredToken = true
@@ -55,6 +55,11 @@ onMounted(() => {
   window.addEventListener('resize', () => {
     document.documentElement.style.height = `${window.innerHeight}px`
   })
+  const firstTime = localStorage.getItem('firstTime')
+  if (firstTime == null) {
+    mainStore.setLoginVisible(true)
+    localStorage.setItem('firstTime', 'true')
+  }
 })
 </script>
 

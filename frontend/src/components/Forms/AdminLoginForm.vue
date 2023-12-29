@@ -85,7 +85,7 @@ const handleLogin = () => {
     .then((res: any) => {
       if (res === undefined) {
         // 表单验证成功
-        if (form.pwd === 'root') {
+        if (form.pwd === 'wmzspace') {
           Message.success(`登录成功：${adminUser.nickname}`)
           form.pwd = ''
           userStore.adminLogin()

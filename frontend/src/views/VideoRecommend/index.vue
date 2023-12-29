@@ -12,7 +12,7 @@ import Player from 'xgplayer'
 import { getTimeDiffUntilNow } from '@/utils/tools'
 import type { VideoRecord } from '@/api/list'
 import useLoading from '@/hooks/loading'
-import { debounce } from 'lodash-es'
+import { before, debounce } from 'lodash-es'
 import { useUserStore } from '@/store'
 import { useMainStore } from '@/store/main'
 import { useRouter } from 'vue-router'
@@ -88,7 +88,7 @@ const handlePlayNext = () => {
     createPlay(videoList.value[currentPlayIndex.value])
     refreshVideoLikeAndStar()
   } else {
-    Message.info({
+    Message.loading({
       id: 'loadMore',
       content: '加载中...'
     })
@@ -108,19 +108,6 @@ const handlePlayNext = () => {
   })
 }
 
-// const debounceHandleWheel = (event: WheelEvent) => {
-//   const delta = Math.sign(event.deltaY)
-//   console.log(delta)
-//   if (delta > 0) {
-//     if (!loadingVideo.value || currentPlayIndex.value < videoList.value.length - 1) {
-//       handlePlayNext()
-//     }
-//   } else if (delta < 0) {
-//     if (currentPlayIndex.value > 0) {
-//       handlePlayPrev()
-//     }
-//   }
-// }
 const canHandleSwitch = ref(false)
 const handleWheel = (event: WheelEvent) => {
   if (canHandleSwitch.value) {
@@ -138,6 +125,13 @@ const handleWheel = (event: WheelEvent) => {
 }
 
 const userStore = useUserStore()
+watch(
+  () => userStore.userData,
+  () => {
+    refreshVideoLikeAndStar()
+  }
+)
+
 const mainStore = useMainStore()
 const isProcessLike = ref(false)
 const isProcessStar = ref(false)
@@ -223,6 +217,7 @@ const handleClickStar = (videoId: number | string) => {
 
 const router = useRouter()
 const handleClickAvatar = (authorId: number) => {
+  console.log(authorId)
   router.push({
     name: 'userProfile',
     params: { user_id: authorId }
@@ -275,10 +270,12 @@ const resizeEventHandler = () => {
   adjustHeight(false)
 }
 
-getMoreVideos(2)
+getMoreVideos(2).then(() => {
+  resizeEventHandler()
+})
 
 onMounted(() => {
-  resizeEventHandler()
+  // resizeEventHandler()
   window.addEventListener('resize', resizeEventHandler)
 })
 

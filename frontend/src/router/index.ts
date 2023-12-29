@@ -59,9 +59,9 @@ let routes: Array<RouteRecordRaw> = [
     name: 'userProfile',
     meta: {
       layout: 'a',
-      key: '5',
-      requiresAuth: true,
-      roles: ['user', 'admin']
+      key: '5'
+      // requiresAuth: true,
+      // roles: ['user', 'admin']
     },
     component: () => import('@/views/user/profile/UserProfileView.vue'),
     props: true

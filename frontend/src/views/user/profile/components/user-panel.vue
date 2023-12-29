@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false" class="user-panel">
+  <a-card :bordered="false" class="user-panel" :loading="props.userData === undefined">
     <a-card-meta>
       <template #avatar>
         <a-upload
@@ -36,19 +36,23 @@
       </div>
       <div class="statistic">
         <div class="statistic-item">
-          <div class="label">关注</div>
-          <div class="value">14</div>
-        </div>
-        <a-divider :direction="'vertical'" />
-        <div class="statistic-item">
-          <div class="label">粉丝</div>
-          <div class="value">{{ simplifyNumber(8000, 1, 'CN').string }}</div>
+          <div class="label">作品</div>
+          <div class="value">
+            {{ props.userData && simplifyNumber(props.userData.videoNum, 1, 'CN').string }}
+          </div>
         </div>
         <a-divider :direction="'vertical'" />
         <div class="statistic-item">
           <div class="label">获赞</div>
           <div class="value">
             {{ props.userData && simplifyNumber(props.userData.likedNum, 1, 'CN').string }}
+          </div>
+        </div>
+        <a-divider :direction="'vertical'" />
+        <div class="statistic-item">
+          <div class="label">活跃度</div>
+          <div class="value">
+            {{ props.userData && simplifyNumber(props.userData.playedNum, 1, 'EN').string }}
           </div>
         </div>
       </div>
@@ -114,7 +118,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import type { FileItem, RequestOption } from '@arco-design/web-vue/es/upload/interfaces'
 import { useUserStore } from '@/store'
 import { userUploadApi } from '@/api/user-center'
@@ -127,6 +131,7 @@ const props = defineProps<{
   userData: UserRecord | undefined
   isEditProfile: boolean
 }>()
+
 const emit = defineEmits(['update:isEditProfile', 'change'])
 const userStore = useUserStore()
 const storedTokenValue = computed({

@@ -26,6 +26,12 @@ import useLoading from '@/hooks/loading'
 import type { UserRecord, VideoRecord } from '@/api/list'
 
 const userStore = useUserStore()
+watch(
+  () => userStore.userData,
+  () => {
+    refreshVideoLikeAndStar()
+  }
+)
 const mainStore = useMainStore()
 const props = defineProps<{
   video_id: string
@@ -517,11 +523,16 @@ const router = useRouter()
                 <span> {{ video ? author?.nickName : '...' }} </span>
               </a-link>
               <div class="statistic">
-                <span class="title"> 粉丝</span> <span class="number">8000</span>
-                <span class="title"> 获赞</span> <span class="number">2.6万</span>
+                <span class="title"> 活跃度</span>
+                <span class="number">{{ author?.playedNum }}</span>
+                <span class="title"> 获赞</span> <span class="number">{{ author?.likedNum }}</span>
               </div>
             </div>
-            <a-button class="follow-button">关注</a-button>
+            <a-button
+              class="follow-button"
+              @click="$router.push({ name: 'userProfile', params: { user_id: author?.id } })"
+              >查看</a-button
+            >
           </div>
         </div>
         <div class="related-video">

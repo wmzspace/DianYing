@@ -358,7 +358,7 @@
 
 
       // Sidebar Nav Icon Display
-      $index-list: 0, 1, 2, 3, 15, 0, 4, 5, 8, 6, 10, 7, 9, 14, 11, 12, 13, 0, 16;
+      $index-list: 0, 1, 2, 3, 15, 4, 0, 5, 8, 6, 10, 7, 9, 14, 11, 12, 13, 0, 16;
       @for $i from 1 through length($index_list) {
         $unselected-position-x: -48px*((nth($index-list,$i)));
         .arco-menu-item:nth-child(#{$i}) .nav-a .nav-icon {

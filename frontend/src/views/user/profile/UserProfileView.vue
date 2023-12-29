@@ -94,7 +94,8 @@
             line-height: 20px;
           "
         >
-          暂时没有更多了
+          <a-spin class="load-more" dot v-if="queryUser === undefined" :loading="true" />
+          <span v-else>暂时没有更多了</span>
         </div>
       </div>
     </div>
@@ -127,7 +128,7 @@
 <script lang="ts" setup>
 import UserPanel from './components/user-panel.vue'
 import { useUserStore } from '@/store'
-import { computed, onBeforeMount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeMount, onMounted, reactive, ref, watch } from 'vue'
 
 const props = defineProps<{
   user_id: string
@@ -154,6 +155,13 @@ const refreshUserInfo = () => {
   })
 }
 
+watch(
+  () => userStore.userData,
+  () => {
+    refreshUserInfo()
+  }
+)
+
 let videoList: VideoMedia[] = reactive([])
 
 const querySearch = (videos: VideoMedia[]) => {
@@ -161,7 +169,12 @@ const querySearch = (videos: VideoMedia[]) => {
 }
 
 const videoListByAuthor = computed(() =>
-  videoList.filter((v) => queryUser.value && v.authorId === queryUser.value.id)
+  videoList.filter(
+    (v) =>
+      queryUser.value &&
+      v.authorId === queryUser.value.id &&
+      (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id))
+  )
 )
 
 const videosLiked: VideoMedia[] = reactive([])

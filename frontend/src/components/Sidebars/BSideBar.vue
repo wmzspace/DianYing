@@ -49,6 +49,11 @@
       <IconCalendar />
       发布视频
     </a-menu-item>
+
+    <a-menu-item @click="$router.push({ name: 'discover' })">
+      <IconRedo />
+      返回点映
+    </a-menu-item>
   </a-menu>
 </template>
 <script setup lang="ts">

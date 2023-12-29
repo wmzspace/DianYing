@@ -5,6 +5,7 @@ import { guestUser, useUserStore } from '@/store/user'
 import { useMainStore } from '@/store/main'
 import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
 import type { VideoMedia } from '@/types'
+import IconCommunity from '@/components/icons/IconCommunity.vue'
 
 const userStore = useUserStore()
 const storedTokenValue = computed({
@@ -140,7 +141,7 @@ watch(
             </template>
           </a-trigger>
         </a-menu-item>
-        <a-menu-item v-if="userStore.isUserNotAdmin" disabled>
+        <a-menu-item v-if="userStore.isUserNotAdmin()" disabled>
           <a-button
             @click="
               $router.push({
@@ -152,6 +153,39 @@ watch(
               <icon-share-external style="color: white; width: 100%; margin: 0" />
             </template>
           </a-button>
+
+          <!--          <a-trigger :trigger="['click']" :unmount-on-close="false">-->
+          <!--            <a-button-->
+          <!--              @click="-->
+          <!--                $router.push({-->
+          <!--                  name: 'postVideo'-->
+          <!--                })-->
+          <!--              "-->
+          <!--              ><p class="nav-text">投稿</p>-->
+          <!--              <template #icon>-->
+          <!--                <icon-share-external style="color: white; width: 100%; margin: 0" />-->
+          <!--              </template>-->
+          <!--            </a-button>-->
+          <!--            <template #content>-->
+          <!--              <div>-->
+          <!--                <a-empty />-->
+          <!--              </div>-->
+          <!--            </template>-->
+          <!--          </a-trigger>-->
+        </a-menu-item>
+        <a-menu-item v-if="userStore.isAdmin" disabled>
+          <a-button
+            @click="
+              $router.push({
+                name: 'dashboard'
+              })
+            "
+            ><p class="nav-text">管理后台</p>
+            <template #icon>
+              <icon-command style="color: white; width: 100%; margin: 0" />
+            </template>
+          </a-button>
+
           <!--          <a-trigger :trigger="['click']" :unmount-on-close="false">-->
           <!--            <a-button-->
           <!--              @click="-->

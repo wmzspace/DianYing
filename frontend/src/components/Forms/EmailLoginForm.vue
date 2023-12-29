@@ -5,7 +5,7 @@
         <a-input
           class="email-input"
           v-model.trim="form.email"
-          placeholder="邮箱"
+          placeholder="请输入真实邮箱"
           :allow-clear="true"
         >
           <!--          <template #prefix>1</template>-->
