@@ -162,6 +162,13 @@ watch(
   }
 )
 
+watch(
+  () => props.user_id,
+  () => {
+    refreshUserInfo()
+  }
+)
+
 let videoList: VideoMedia[] = reactive([])
 
 const querySearch = (videos: VideoMedia[]) => {

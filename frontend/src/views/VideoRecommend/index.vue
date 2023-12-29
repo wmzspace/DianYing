@@ -125,12 +125,6 @@ const handleWheel = (event: WheelEvent) => {
 }
 
 const userStore = useUserStore()
-watch(
-  () => userStore.userData,
-  () => {
-    refreshVideoLikeAndStar()
-  }
-)
 
 const mainStore = useMainStore()
 const isProcessLike = ref(false)
@@ -253,7 +247,9 @@ const getMoreVideos = (num: number) =>
   })
 
 const adjustHeight = (animation: boolean) => {
-  parentHeight.value = slideList.value.offsetHeight
+  if (slideList.value) {
+    parentHeight.value = slideList.value.offsetHeight
+  }
   nextTick(() => {
     const sliderVideo = document.getElementById('sliderVideo') as HTMLElement | null
     if (sliderVideo !== null) {
@@ -271,6 +267,14 @@ const resizeEventHandler = () => {
 }
 
 getMoreVideos(2).then(() => {
+  watch(
+    () => userStore.userData,
+    (value) => {
+      if (value !== undefined) {
+        refreshVideoLikeAndStar()
+      }
+    }
+  )
   resizeEventHandler()
 })
 
