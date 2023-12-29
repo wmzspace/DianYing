@@ -8,7 +8,7 @@ from sqlalchemy import event
 from blueprints.database import database_bp
 from exts import AjaxResponse, db, mail, scheduler
 from models import Comment, model2dict, User, Video, VideoLike, CommentLike, Register, DatabaseBackup, load_init_data, \
-    DatabaseLog
+    DatabaseLog, VTag
 
 from flask_mail import Message
 
@@ -21,9 +21,12 @@ def get_backup():
 
 @database_bp.route('/force/rollback', methods=['GET', 'POST'])
 def force_rollback():
-    db.drop_all()
-    db.create_all()
-    # load_init_data()
+    users = User.query.all()
+    for user in users:
+        db.session.delete(user)
+    tags = VTag.query.all()
+    for tag in tags:
+        db.session.delete(tag)
     db.session.flush()
     db.session.commit()
     return AjaxResponse.success(None, "已重置数据库")
