@@ -11,7 +11,11 @@ export const getVideoById = (videoId: number | string) => {
     fetch(prefix_url + `/video/query?id=${videoId}`).then((res) => {
       if (res.ok) {
         res.json().then((data: RawVideo[]) => {
-          resolve(parseVideoMedia(data[0]))
+          if (data[0] === undefined) {
+            reject('视频不存在')
+          } else {
+            resolve(parseVideoMedia(data[0]))
+          }
         })
       }
     })

@@ -150,9 +150,17 @@ const queryUser = ref<UserRecord | undefined>(undefined)
 
 const refreshUserInfo = () => {
   isEditProfile.value = false
-  userStore.getUserInfoById(props.user_id).then((user) => {
-    queryUser.value = user
-  })
+  userStore
+    .getUserInfoById(props.user_id)
+    .then((user) => {
+      queryUser.value = user
+    })
+    .catch((e) => {
+      Message.error({
+        id: 'getUser',
+        content: e
+      })
+    })
 }
 
 watch(
@@ -196,32 +204,54 @@ pullVideo({
   })
 })
 
-getVideosByUserLikeOrStar(props.user_id, 'like').then((videos) => {
-  videosLiked.slice(0)
-  videos.forEach((v) => {
-    if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
-      videosLiked.push(v)
-    }
+getVideosByUserLikeOrStar(props.user_id, 'like')
+  .then((videos) => {
+    videosLiked.slice(0)
+    videos.forEach((v) => {
+      if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
+        videosLiked.push(v)
+      }
+    })
   })
-})
+  .catch((e) => {
+    Message.error({
+      id: 'getUser',
+      content: e
+    })
+  })
 
-getVideosByUserLikeOrStar(props.user_id, 'star').then((videos) => {
-  videosStarred.slice(0)
-  videos.forEach((v) => {
-    if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
-      videosStarred.push(v)
-    }
+getVideosByUserLikeOrStar(props.user_id, 'star')
+  .then((videos) => {
+    videosStarred.slice(0)
+    videos.forEach((v) => {
+      if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
+        videosStarred.push(v)
+      }
+    })
   })
-})
+  .catch((e) => {
+    Message.error({
+      id: 'getUser',
+      content: e
+    })
+  })
 
-getVideosByUserLikeOrStar(props.user_id, 'play').then((videos) => {
-  videosPlayed.slice(0)
-  videos.forEach((v) => {
-    if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
-      videosPlayed.push(v)
-    }
+getVideosByUserLikeOrStar(props.user_id, 'play')
+  .then((videos) => {
+    videosPlayed.slice(0)
+    videos.forEach((v) => {
+      if (v.status === 'online' || userStore.isAdminOrCurUser(props.user_id)) {
+        videosPlayed.push(v)
+      }
+    })
   })
-})
+  .catch((e) => {
+    Message.error({
+      id: 'getUser',
+      content: e
+    })
+  })
+
 refreshUserInfo()
 
 onMounted(() => {})
@@ -231,6 +261,7 @@ import type { VideoMedia } from '@/types'
 import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
 import BasicInformation from '@/views/user/profile/components/basic-information.vue'
 import type { UserRecord } from '@/api/list'
+import { Message } from '@arco-design/web-vue'
 </script>
 
 <style scoped lang="less">

@@ -43,9 +43,13 @@ let relatedList: VideoMedia[] = reactive([])
 const video = ref<VideoMedia | undefined>(undefined)
 const author = ref<UserRecord | undefined>(undefined)
 const player = ref<Player | undefined>(undefined)
-getVideoById(props.video_id).then((res: VideoMedia | undefined) => {
-  video.value = _.cloneDeep(res)
-})
+getVideoById(props.video_id)
+  .then((res: VideoMedia | undefined) => {
+    video.value = _.cloneDeep(res)
+  })
+  .catch((e) => {
+    Message.error(e)
+  })
 
 // const CommentCardRefs = ref()
 // const focusComment = (
@@ -119,9 +123,13 @@ const refreshRootCommentList = (focusIndex?: CommentFinder) => {
 
 const videoRecord = ref<VideoRecord | undefined>(undefined)
 const refreshVideoRecord = () => {
-  getVideoInfoById(props.video_id).then((record) => {
-    videoRecord.value = record
-  })
+  getVideoInfoById(props.video_id)
+    .then((record) => {
+      videoRecord.value = record
+    })
+    .catch((e) => {
+      Message.error(e)
+    })
 }
 
 watch(video, (value) => {
