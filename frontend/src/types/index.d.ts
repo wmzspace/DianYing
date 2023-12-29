@@ -33,6 +33,8 @@ export interface DanMuProps {
 
 export interface RawVideo {
   author_id: number
+  author_name: string
+  author_avatar: string
   cover: string
   height: number
   id: number
@@ -50,6 +52,8 @@ export interface VideoMedia {
   id: number
   title: string
   authorId: number
+  authorAvatar: string
+  authorName: string
   url: string
   cover: string
   height: number

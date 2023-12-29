@@ -8,17 +8,24 @@ import type { VideoRecord } from '@/api/list'
 export const getVideoById = (videoId: number | string) => {
   const id = typeof videoId === 'string' ? parseInt(videoId) : videoId
   return new Promise<VideoMedia | undefined>((resolve, reject) => {
-    fetch(prefix_url + `/video/query?id=${videoId}`).then((res) => {
-      if (res.ok) {
-        res.json().then((data: RawVideo[]) => {
-          if (data[0] === undefined) {
-            reject('视频不存在')
-          } else {
-            resolve(parseVideoMedia(data[0]))
-          }
-        })
-      }
-    })
+    fetch(prefix_url + `/video/query?id=${videoId}`)
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              const data = ajaxData.ajax_data as RawVideo
+              resolve(parseVideoMedia(data))
+            } else {
+              reject(ajaxData.ajax_msg)
+            }
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
   })
   // return videos.filter((v) => v.id === id)[0]
 }
@@ -49,6 +56,8 @@ export const deleteVideoById = (videoId: number | string) =>
 export const parseVideoMedia = (rawVideo: RawVideo): VideoMedia => {
   return {
     authorId: rawVideo.author_id,
+    authorAvatar: rawVideo.author_avatar,
+    authorName: rawVideo.author_name,
     cover: rawVideo.cover,
     height: rawVideo.height,
     id: rawVideo.id,

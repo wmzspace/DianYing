@@ -61,6 +61,9 @@ const createPlay = (video: VideoRecord) => {
 }
 
 const handlePlayPrev = () => {
+  if (!canHandleSwitch.value) {
+    return
+  }
   if (currentPlayIndex.value > 0) {
     canHandleSwitch.value = false
     currentPlayIndex.value -= 1
@@ -258,7 +261,7 @@ const adjustHeight = (animation: boolean) => {
     }
     setTimeout(() => {
       canHandleSwitch.value = true
-    }, 500)
+    }, 1000)
   })
 }
 

@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from flask import request
 from sqlalchemy import func
@@ -72,12 +73,18 @@ def get_all_videos():
                         break
             if not find:
                 continue
+        author = video.author
+        if author is None:
+            continue
+        # video_dict = model2dict([video])[0]
+        video_dict = video.to_dict()
+        video_dict["author_name"] = author.nickname
+        video_dict["author_avatar"] = author.avatar
 
-        results.append(video)
+        results.append(video_dict)
         if num_records is not None and len(results) >= int(num_records):
             break
-
-    return model2dict(results)
+    return results
 
 
 # API: 根据id查询
@@ -87,7 +94,13 @@ def query_video():
     target = Video.query.filter_by(id=video_id).first()
     if target is None:
         return AjaxResponse.error("视频不存在")
-    return model2dict([target])
+    author:User =  target.author
+    if author is None:
+        return AjaxResponse.error("用户不存在")
+    video_dict = target.to_dict()
+    video_dict["author_name"] = author.nickname
+    video_dict["author_avatar"] = author.avatar
+    return AjaxResponse.success(video_dict)
 
 
 # API: 获取视频被哪些用户点赞，收藏或者播放

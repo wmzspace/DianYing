@@ -56,12 +56,12 @@
         <div :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }">
           <a-avatar
             :size="24"
-            :image-url="author?.avatar"
+            :image-url="props.src.authorAvatar"
             :style="{ marginRight: '8px' }"
           ></a-avatar>
           <a-typography-text>
             <div class="video-meta">
-              <div class="name">{{ author ? author.nickName : '...' }}</div>
+              <div class="name">{{ props.src.authorName }}</div>
               <div class="time-diff">·{{ getTimeDiffUntilNow(props.src.publishTime) }}</div>
             </div>
           </a-typography-text>
@@ -69,7 +69,7 @@
       </template>
     </a-card-meta>
     <template #actions>
-      <span class="icon-hover"> <IconMore /> </span>
+      <span class="icon-hover" @click="handleClickVideoCard"> <IconMore /> </span>
     </template>
   </a-card>
 </template>
@@ -110,11 +110,11 @@ const handleMouseLeave = () => {
   mouseOver.value = false
 }
 const userStore = useUserStore()
-const author = ref<UserRecord | undefined>(undefined)
+// const author = ref<UserRecord | undefined>(undefined)
 
-userStore.getUserInfoById(props.src.authorId).then((user) => {
-  author.value = user
-})
+// userStore.getUserInfoById(props.src.authorId).then((user) => {
+//   author.value = user
+// })
 
 const isAnimated = ref(false)
 

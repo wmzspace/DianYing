@@ -84,6 +84,7 @@ const onLoadedAll = () => {
         })
       })
     } else {
+      // console.log(videoList.value)
       isLoadedAll.value = true
     }
   })
