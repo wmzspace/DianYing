@@ -66,6 +66,8 @@ def backup_data():
     if result == 0:
         query_exist = DatabaseBackup.query.filter_by(name=name).first()
         if query_exist is not None:
+            if "__protect__" in name:
+                return AjaxResponse.error("该还原点禁止覆盖")
             query_exist.create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             db.session.flush()
             db.session.commit()
@@ -90,7 +92,6 @@ def delete_data():
         return AjaxResponse.error("参数缺失: name")
     query_exist = DatabaseBackup.query.filter_by(name=name).first()
     if query_exist is not None:
-        print(name)
         if "__protect__" in name:
             return AjaxResponse.error("该还原点禁止删除")
         path = query_exist.path
