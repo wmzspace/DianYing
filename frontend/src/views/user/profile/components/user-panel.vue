@@ -17,11 +17,11 @@
               <template #trigger-icon>
                 <icon-camera />
               </template>
-              <img v-if="fileList.length" :src="fileList[0].url" />
+              <img v-if="fileList.length" :src="fileList[0].url" alt="avatar" />
               <!--            <img v-if="fileList.length" :src="fileList[0].url" />-->
             </a-avatar>
             <a-avatar :size="100" class="info-avatar" v-else>
-              <img v-if="fileList.length" :src="fileList[0].url" />
+              <img v-if="fileList.length" :src="fileList[0].url" alt="avatar" />
             </a-avatar>
           </template>
         </a-upload>

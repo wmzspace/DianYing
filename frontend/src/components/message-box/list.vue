@@ -18,7 +18,7 @@
         <a-list-item-meta>
           <template v-if="item.avatar" #avatar>
             <a-avatar shape="circle">
-              <img v-if="item.avatar" :src="item.avatar" />
+              <img v-if="item.avatar" :src="item.avatar" alt="avatar" />
               <icon-desktop v-else />
             </a-avatar>
           </template>

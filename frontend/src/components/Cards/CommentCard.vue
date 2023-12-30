@@ -306,7 +306,7 @@ const isDeleted = ref(false)
           <template #suffix>
             <a-tooltip>
               <template #content> 没有可以@的朋友 </template>
-              <img class="icon-at" src="/images/videoDetails/comment_at.svg" />
+              <img class="icon-at" src="/images/videoDetails/comment_at.svg" alt="at friend" />
             </a-tooltip>
             <a-tooltip>
               <template #content>回复评论</template>
@@ -315,6 +315,7 @@ const isDeleted = ref(false)
                 src="/images/videoDetails/send_comment.svg"
                 v-if="replyCommentContent.length > 0"
                 @click="onPostReplyComment"
+                alt="reply comment"
               />
             </a-tooltip>
           </template>

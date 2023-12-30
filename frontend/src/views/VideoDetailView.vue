@@ -524,7 +524,7 @@ const handleSearch = (value: string) => {
               <template #suffix>
                 <a-tooltip>
                   <template #content> 没有可以@的朋友 </template>
-                  <img class="icon-at" src="/images/videoDetails/comment_at.svg" />
+                  <img class="icon-at" src="/images/videoDetails/comment_at.svg" alt="at_friend" />
                 </a-tooltip>
                 <a-tooltip>
                   <template #content>发布评论</template>
@@ -533,6 +533,7 @@ const handleSearch = (value: string) => {
                     src="/images/videoDetails/send_comment.svg"
                     @click="onPostNewComment"
                     v-if="newCommentContent.length > 0"
+                    alt="send_comment"
                   />
                 </a-tooltip>
               </template>
@@ -558,6 +559,7 @@ const handleSearch = (value: string) => {
               v-if="recommendTag"
               class="usually-search-icon"
               src="/images/videoDetails/usually_search.svg"
+              alt="usually-search"
             />
           </a>
         </div>

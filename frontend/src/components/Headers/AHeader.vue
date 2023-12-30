@@ -440,11 +440,11 @@ const handleSearch = (value: string) => {
                 <a-divider direction="vertical" :mode="'horizontal'" />
                 <a-menu class="profile-menu-right">
                   <a-menu-item disabled>
-                    <img src="/images/theme.svg" align="center" />
+                    <img src="/images/theme.svg" align="center" alt="switch theme" />
                     <span style="opacity: 0.34">换肤</span>
                   </a-menu-item>
                   <a-menu-item disabled>
-                    <img src="/images/settings.svg" align="center" />
+                    <img src="/images/settings.svg" align="center" alt="settings" />
                     <span style="opacity: 0.34">设置</span>
                   </a-menu-item></a-menu
                 >
