@@ -90,25 +90,17 @@ def delete_data():
         return AjaxResponse.error("参数缺失: name")
     query_exist = DatabaseBackup.query.filter_by(name=name).first()
     if query_exist is not None:
+        print(name)
+        if "__protect__" in name:
+            return AjaxResponse.error("该还原点禁止删除")
         path = query_exist.path
         result = os.system(f"rm {path}")
-        # print(result)
         db.session.delete(query_exist)
         db.session.flush()
         db.session.commit()
         return AjaxResponse.success(result, f"成功删除还原点'{query_exist.name}'")
     else:
         return AjaxResponse.error("该还原点不存在")
-    # if result == 0:
-    #     query_exist = DatabaseBackup.query.filter_by(name=name).first()
-    #     if query_exist is not None:
-    #         return AjaxResponse.success(result, f"成功覆盖还原点'{query_exist.name}'")
-    #     new_backup_record = DatabaseBackup(name=name, path=path)
-    #     db.session.add(new_backup_record)
-    #     db.session.commit()
-    #     return AjaxResponse.success(result, f"成功添加还原点'{name}'")
-    # else:
-    #     return AjaxResponse.error(f"备份失败：错误码{result}")
 
 
 # API: 获取数据库日志

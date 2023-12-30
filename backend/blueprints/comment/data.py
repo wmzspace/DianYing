@@ -14,7 +14,15 @@ from sqlalchemy import distinct
 
 @comment_bp.route('/all', methods=['GET'])
 def get_all_comments():
-    return model2dict(Comment.query.all())
+    comments = Comment.query.all()
+
+    def get_comment_dict(comment):
+        raw_dict = comment.to_dict()
+        raw_dict['author_name'] = comment.author.nickname
+        raw_dict['author_avatar'] = comment.author.avatar
+        return raw_dict
+
+    return list(map(get_comment_dict, comments))
 
 
 @comment_bp.route('/get', methods=['GET', 'POST'])
@@ -42,7 +50,14 @@ def get_comments_by_video_id_or_comment_id():
         #     return comment.parent_id is None
         #
         # target = list(filter(is_root_comment, video.comments))
-    return AjaxResponse.success(model2dict(target))
+
+    def get_comment_dict(comment):
+        raw_dict = comment.to_dict()
+        raw_dict['author_name'] = comment.author.nickname
+        raw_dict['author_avatar'] = comment.author.avatar
+        return raw_dict
+
+    return AjaxResponse.success(list(map(get_comment_dict, target)))
 
 
 @comment_bp.route('/get_likes', methods=['GET'])

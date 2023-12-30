@@ -94,7 +94,7 @@ def query_video():
     target = Video.query.filter_by(id=video_id).first()
     if target is None:
         return AjaxResponse.error("视频不存在")
-    author:User =  target.author
+    author: User = target.author
     if author is None:
         return AjaxResponse.error("用户不存在")
     video_dict = target.to_dict()
@@ -366,9 +366,9 @@ def get_video_play_weekly():
 
 class VideoRecord:
     videoId: int | str
-    url:str
+    url: str
     videoTitle: str
-    authorAvatar:str
+    authorAvatar: str
     authorName: str
     authorId: int
     status: str
@@ -379,6 +379,8 @@ class VideoRecord:
     commentCount: int
     publishTime: str
     tags: list[str]
+    width: int
+    height: int
 
     def __init__(self, video: Video):
         user = User.query.get(video.author_id)
@@ -395,6 +397,8 @@ class VideoRecord:
         self.starCount = len(video.video_starred)
         self.commentCount = len(video.comments)
         self.publishTime = video.publish_time
+        self.height = video.height
+        self.width = video.width
 
         # tags = video.tags
         tags = video.vt_relations

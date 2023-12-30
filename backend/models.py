@@ -328,8 +328,11 @@ class Comment(db.Model):
     __description__ = '评论'
 
     def to_dict(self):
-        return {c.name: getattr(self, c.name, None)
-                for c in self.__table__.columns}
+        raw_dict = {c.name: getattr(self, c.name, None)
+                    for c in self.__table__.columns}
+        raw_dict['author_name'] = self.author.nickname
+        raw_dict['author_avatar'] = self.author.avatar
+        return raw_dict
 
     def __repr__(self):
         return f"{self.content}"
