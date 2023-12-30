@@ -97,7 +97,10 @@ const calculateVideoPositions = () => {
   if (!isLoadedAll.value) {
     return
   }
-  const container = document.getElementById('waterfall-scroll-container') as HTMLElement
+  const container = document.getElementById('waterfall-scroll-container') as HTMLElement | null
+  if (container === null) {
+    return
+  }
   const containerWidth = container.clientWidth
 
   const minColumnWidth = 240

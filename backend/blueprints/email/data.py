@@ -29,21 +29,26 @@ def send_mail():
                   sender="517941374@qq.com",
                   recipients=[email])
     random_code = random.randint(100000, 999999)
-    db.session.add(
-        Register(email=email, code=random_code, code_timestamp=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-    db.session.flush()
-    db.session.commit()
+
     target = User.query.filter_by(email=email).first()
     if target is None:
         # 用户注册邮件
         msg.body = f'您正在注册点映，验证码为: {random_code}。\n2分钟内有效。如非本人操作请忽略。'
-        pass
     else:
         # 用户登录邮件
         # target.code_timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         # target.verification_code = random_code
         msg.body = f'您正在登录点映，验证码为: {random_code}。\n2分钟内有效。如非本人操作请忽略。'
-    mail.send(msg)
+    try:
+        mail.send(msg)
+        db.session.add(
+            Register(email=email, code=random_code,
+                     code_timestamp=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        db.session.flush()
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return AjaxResponse.error("验证码发送失败，请检查邮箱是否正确")
     return AjaxResponse.success(None, "验证码发送成功")
 
 

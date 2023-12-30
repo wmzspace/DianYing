@@ -20,8 +20,10 @@ import useLoading from '@/hooks/loading'
 import useChartOption from '@/hooks/chart-option'
 import { computed, ref } from 'vue'
 import { getTagStatistic } from '@/utils/tag'
+import { getVideoInfoAll } from '@/utils/video'
+import { simplifyNumber } from '@/utils/tools'
 
-const { loading } = useLoading()
+const { loading, setLoading } = useLoading()
 
 const tagStatistic = ref<{ name: string; count: number }[]>([])
 const SHOW_TAGS_NUM = 5
@@ -30,6 +32,17 @@ const tagCount = computed(() => tagStatistic.value.slice(0, SHOW_TAGS_NUM).map((
 getTagStatistic().then((data) => {
   tagStatistic.value = data
 })
+
+const totalContentNum = ref(0)
+
+setLoading(true)
+getVideoInfoAll()
+  .then((videos) => {
+    totalContentNum.value = videos.length
+  })
+  .finally(() => {
+    setLoading(false)
+  })
 
 const { chartOption } = useChartOption((isDark) => {
   // echarts support https://echarts.apache.org/zh/theme-builder.html
@@ -70,7 +83,7 @@ const { chartOption } = useChartOption((isDark) => {
           left: 'center',
           top: '50%',
           style: {
-            text: '928,531',
+            text: totalContentNum.value,
             textAlign: 'center',
             fill: isDark ? '#ffffffb3' : '#1D2129',
             fontSize: 16,
