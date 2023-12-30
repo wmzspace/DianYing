@@ -12,7 +12,7 @@ import Player from 'xgplayer'
 import { getTimeDiffUntilNow } from '@/utils/tools'
 import type { VideoRecord } from '@/api/list'
 import useLoading from '@/hooks/loading'
-import { before, debounce } from 'lodash-es'
+import { debounce } from 'lodash-es'
 import { useUserStore } from '@/store'
 import { useMainStore } from '@/store/main'
 import { useRouter } from 'vue-router'
@@ -52,7 +52,9 @@ const createPlay = (video: VideoRecord) => {
       lang: 'zh-cn',
       closeInactive: true,
       marginControls: true,
-      cssFullscreen: false
+      cssFullscreen: false,
+      screenShot: true,
+      ignores: ['definition', 'fullscreen', 'poster']
     })
   })
 }
@@ -295,13 +297,45 @@ getMoreVideos(3, true).then(() => {
   resizeEventHandler()
 })
 
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (!currentVideo.value) {
+    return
+  }
+  switch (e.code) {
+    case 'ArrowDown':
+      handlePlayNext()
+      break
+    case 'ArrowUp':
+      handlePlayPrev()
+      break
+    case 'KeyZ':
+      handleClickLike(currentVideo.value.videoId)
+      break
+    case 'KeyX':
+      handleClickStar(currentVideo.value.videoId)
+      break
+    case 'KeyV':
+      handleClickAvatar(currentVideo.value.authorId)
+      break
+    case 'KeyC':
+      router.push({
+        name: 'videoDetail',
+        params: { video_id: currentVideo.value.videoId },
+        query: { validate: 'ignore' }
+      })
+      break
+  }
+}
+
 onMounted(() => {
   // resizeEventHandler()
   window.addEventListener('resize', resizeEventHandler)
+  window.addEventListener('keydown', handleKeyDown)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', resizeEventHandler)
+  window.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
@@ -368,69 +402,115 @@ onUnmounted(() => {
                     <div class="video-action-outer-container">
                       <div class="video-action-inner-container">
                         <div class="video-action-item">
-                          <div class="video-action-avatar">
-                            <a @click="handleClickAvatar(video.authorId)"
-                              ><a-avatar :image-url="video.authorAvatar" :size="40"></a-avatar
-                            ></a>
-                          </div>
+                          <a-tooltip :position="'left'">
+                            <div class="video-action-avatar">
+                              <a @click="handleClickAvatar(video.authorId)"
+                                ><a-avatar :image-url="video.authorAvatar" :size="40"></a-avatar
+                              ></a>
+                            </div>
+                            <template #content>
+                              查看主页
+                              <a-tag
+                                :size="'small'"
+                                style="margin: 5px; padding: 5px; border-radius: 5px"
+                                >V</a-tag
+                              >
+                            </template>
+                          </a-tooltip>
                         </div>
                         <div class="video-action-item">
-                          <div class="video-action-others">
-                            <div class="video-action-icon" @click="handleClickLike(video.videoId)">
-                              <a-image
-                                :width="45"
-                                :height="45"
-                                :src="
-                                  isLiked
-                                    ? '/images/videoDetails/video_detail_liked.svg'
-                                    : '/images/videoDetails/video_detail_like.svg'
+                          <a-tooltip :position="'left'">
+                            <div class="video-action-others">
+                              <div
+                                class="video-action-icon"
+                                @click="handleClickLike(video.videoId)"
+                              >
+                                <a-image
+                                  :width="45"
+                                  :height="45"
+                                  :src="
+                                    isLiked
+                                      ? '/images/videoDetails/video_detail_liked.svg'
+                                      : '/images/videoDetails/video_detail_like.svg'
+                                  "
+                                  :preview-visible="false"
+                                ></a-image>
+                              </div>
+                              <div class="video-action-statistic">{{ videoLikeShowNum }}</div>
+                            </div>
+                            <template #content>
+                              {{ isLiked ? '取消点赞' : '点赞' }}
+                              <a-tag
+                                :size="'small'"
+                                style="margin: 5px; padding: 5px; border-radius: 5px"
+                                >Z</a-tag
+                              >
+                            </template>
+                          </a-tooltip>
+                        </div>
+                        <div class="video-action-item">
+                          <a-tooltip :position="'left'">
+                            <div class="video-action-others">
+                              <div
+                                class="video-action-icon"
+                                @click="handleClickStar(video.videoId)"
+                              >
+                                <a-image
+                                  :width="45"
+                                  :height="45"
+                                  :src="
+                                    isStarred
+                                      ? '/images/videoDetails/starred.svg'
+                                      : '/images/videoDetails/star.svg'
+                                  "
+                                  :preview-visible="false"
+                                ></a-image>
+                              </div>
+                              <div class="video-action-statistic">{{ videoStarShowNum }}</div>
+                            </div>
+                            <template #content>
+                              {{ isStarred ? '取消收藏' : '收藏' }}
+                              <a-tag
+                                :size="'small'"
+                                style="margin: 5px; padding: 5px; border-radius: 5px"
+                                >X</a-tag
+                              >
+                            </template>
+                          </a-tooltip>
+                        </div>
+                        <div class="video-action-item">
+                          <a-tooltip :position="'left'">
+                            <div class="video-action-others">
+                              <div
+                                class="video-action-icon"
+                                @click="
+                                  $router.push({
+                                    name: 'videoDetail',
+                                    params: { video_id: video.videoId },
+                                    query: { validate: 'ignore' }
+                                  })
                                 "
-                                :preview-visible="false"
-                              ></a-image>
+                              >
+                                <a-image
+                                  :width="45"
+                                  :height="45"
+                                  src="/images/videoDetails/comment.svg"
+                                  :preview-visible="false"
+                                ></a-image>
+                              </div>
+                              <div class="video-action-statistic">
+                                {{ video.commentCount }}
+                              </div>
                             </div>
-                            <div class="video-action-statistic">{{ videoLikeShowNum }}</div>
-                          </div>
-                        </div>
-                        <div class="video-action-item">
-                          <div class="video-action-others">
-                            <div class="video-action-icon" @click="handleClickStar(video.videoId)">
-                              <a-image
-                                :width="45"
-                                :height="45"
-                                :src="
-                                  isStarred
-                                    ? '/images/videoDetails/starred.svg'
-                                    : '/images/videoDetails/star.svg'
-                                "
-                                :preview-visible="false"
-                              ></a-image>
-                            </div>
-                            <div class="video-action-statistic">{{ videoStarShowNum }}</div>
-                          </div>
-                        </div>
-                        <div class="video-action-item">
-                          <div class="video-action-others">
-                            <div
-                              class="video-action-icon"
-                              @click="
-                                $router.push({
-                                  name: 'videoDetail',
-                                  params: { video_id: video.videoId },
-                                  query: { validate: 'ignore' }
-                                })
-                              "
-                            >
-                              <a-image
-                                :width="45"
-                                :height="45"
-                                src="/images/videoDetails/comment.svg"
-                                :preview-visible="false"
-                              ></a-image>
-                            </div>
-                            <div class="video-action-statistic">
-                              {{ video.commentCount }}
-                            </div>
-                          </div>
+                            <template #content>
+                              评论
+                              <a-tag
+                                :size="'small'"
+                                style="margin: 5px; padding: 5px; border-radius: 5px"
+                                >C</a-tag
+                              >
+                            </template>
+                          </a-tooltip>
                         </div>
                         <div
                           class="video-action-item"
@@ -442,16 +522,26 @@ onUnmounted(() => {
                             })
                           "
                         >
-                          <div class="video-action-others">
-                            <div class="video-action-icon">
-                              <a-image
-                                :width="45"
-                                :height="45"
-                                src="/images/videoDetails/more.svg"
-                                :preview-visible="false"
-                              ></a-image>
+                          <a-tooltip :position="'left'">
+                            <div class="video-action-others">
+                              <div class="video-action-icon">
+                                <a-image
+                                  :width="45"
+                                  :height="45"
+                                  src="/images/videoDetails/more.svg"
+                                  :preview-visible="false"
+                                ></a-image>
+                              </div>
                             </div>
-                          </div>
+                            <template #content>
+                              更多
+                              <a-tag
+                                :size="'small'"
+                                style="margin: 5px; padding: 5px; border-radius: 5px"
+                                >C</a-tag
+                              >
+                            </template>
+                          </a-tooltip>
                         </div>
                       </div>
                     </div>

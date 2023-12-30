@@ -189,19 +189,19 @@ const createPlayer = (video: VideoMedia) => {
     // playsinline: true,
     poster: video.cover,
     closeVideoClick: true,
-    closeVideoDblclick: true,
-    disableProgress: true,
-    ignores: [
-      'time',
-      'definition',
-      'fullscreen',
-      'i18n',
-      'play',
-      'poster',
-      'progress',
-      'replay',
-      'volume'
-    ]
+    closeVideoDblclick: true
+    // disableProgress: true,
+    // ignores: [
+    //   'time',
+    //   'definition',
+    //   'fullscreen',
+    //   'i18n',
+    //   'play',
+    //   'poster',
+    //   'progress',
+    //   'replay',
+    //   'volume'
+    // ]
   })
 }
 </script>
