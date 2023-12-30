@@ -461,6 +461,9 @@ const handleClickDelete = () => {
 }
 
 const router = useRouter()
+const handleSearch = (value: string) => {
+  router.push({ name: 'search', query: { search: value } })
+}
 </script>
 
 <template>
@@ -480,6 +483,7 @@ const router = useRouter()
               :key="index"
               :hoverable="false"
               style="color: white"
+              @click="handleSearch(tag)"
             >
               #{{ tag }}</a-link
             >
@@ -623,9 +627,18 @@ const router = useRouter()
 
         <div class="usually-search">
           大家都在搜：<a class="usually-search-topic"
-            ><span class="usually-search-topic-text">{{
-              recommendTag ? recommendTag : '暂无推荐'
-            }}</span>
+            ><span
+              class="usually-search-topic-text"
+              :style="{ cursor: recommendTag ? 'pointer' : 'default' }"
+              @click="
+                () => {
+                  if (recommendTag) {
+                    handleSearch(recommendTag)
+                  }
+                }
+              "
+              >{{ recommendTag ? recommendTag : '暂无推荐' }}</span
+            >
             <img
               v-if="recommendTag"
               class="usually-search-icon"

@@ -36,7 +36,7 @@ const mainStore = useMainStore()
           </a-list-item-meta>
         </a-list-item>
         <a-list-item>
-          朋友视频一键览
+          投稿发布新作品
           <a-list-item-meta>
             <template #avatar>
               <a-avatar shape="square" :size="15">

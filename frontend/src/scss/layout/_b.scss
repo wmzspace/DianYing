@@ -6,7 +6,7 @@
   $layout-max-width: 1100px;
   font-family: "PingFang SC", DFPKingGothicGB-Regular, sans-serif;
   height: 100%;
-  background: var(--color-fill-2);
+  background: $color-dark; //var(--color-fill-2)
   //border: 1px solid $corl;
 
 
@@ -55,7 +55,7 @@
       }
     }
 
-    >.layout-content{
+    > .layout-content {
       min-height: 100vh;
       overflow-y: hidden;
       background-color: var(--color-fill-2);
@@ -63,8 +63,8 @@
       //position: relative;
       //padding-top: $nav-size-height !important;
       //padding-left: $sider-size-width !important; // TODO: 自适应
-      .top-tabs{
-        .arco-tabs-content{
+      .top-tabs {
+        .arco-tabs-content {
           display: none;
         }
       }
