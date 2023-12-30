@@ -10,7 +10,9 @@ export const parseCommentByRaw = (r: RawComment): Comment => {
     content: r.content,
     parentId: r.parent_id === null ? undefined : r.parent_id,
     publishTime: r.publish_time,
-    videoId: r.video_id
+    videoId: r.video_id,
+    authorAvatar: r.author_avatar,
+    authorName: r.author_name
   }
 }
 
@@ -106,7 +108,7 @@ export const likeCommentOrNot = (
 export const postComment = (
   authorId: number | string,
   content: string,
-  videoId: number | undefined,
+  videoId: number | string | undefined,
   parentId: number | undefined
 ) => {
   const videoString = videoId === undefined ? '' : `&video_id=${videoId}`
@@ -182,6 +184,8 @@ export interface Comment {
   authorId: number
   content: string
   publishTime: string
+  authorName: string
+  authorAvatar: string
 }
 
 export interface RawComment {
@@ -191,4 +195,6 @@ export interface RawComment {
   content: string
   parent_id: number | null
   publish_time: string
+  author_name: string
+  author_avatar: string
 }

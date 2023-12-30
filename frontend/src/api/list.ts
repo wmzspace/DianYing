@@ -20,6 +20,8 @@ export interface VideoRecord {
   status: 'online' | 'offline' | 'awaitApproval'
   publishTime: string
   tags: string[]
+  height: number
+  width: number
 }
 
 export interface UserRecord {

@@ -40,7 +40,7 @@ const links = [
   { text: 'workplace.contentManagement', icon: 'icon-file', routeName: 'searchVideo' },
   { text: 'workplace.userManagement', icon: 'icon-user', routeName: 'searchUser' },
   // { text: 'workplace.advanced', icon: 'icon-settings', routeName: 'dashboard' },
-  { text: 'workplace.backup', icon: 'icon-settings', routeName: 'dashboard' },
+  { text: 'workplace.backup', icon: 'icon-settings', routeName: 'adminSetting' },
   { text: 'workplace.log', icon: 'icon-schedule', routeName: 'logView' },
   // { text: 'workplace.publish', icon: 'IconCalendar', routeName: 'postVideo' },
   { text: 'workplace.contentPutIn', icon: 'icon-fire', disabled: true }

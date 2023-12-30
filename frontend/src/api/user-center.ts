@@ -44,7 +44,7 @@ export interface BasicInfoModel {
   age: number
   id: number | string
   email: string
-  nickName: string
+  nickname: string
   gender: string
   area: string
   password: string

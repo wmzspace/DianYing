@@ -85,6 +85,9 @@
               </template>
               刷新
             </a-button>
+            <span style="color: red; margin-left: 10px; white-space: nowrap"
+              >"__protect__": 删改保护标记</span
+            >
           </a-space>
         </a-col>
         <a-col :span="12" style="display: flex; align-items: center; justify-content: end">

@@ -86,9 +86,27 @@ def db_load():
     click.echo("成功载入初始数据")
 
 
+@app.cli.command('db-rebuild')
+def db_load():
+    """数据库建表/格式化，并载入初始数据"""
+    db.drop_all()
+    db.create_all()
+    models.load_init_data()
+    db.session.flush()
+    db.session.commit()
+    click.echo("成功载入初始数据")
+
+
 @app.cli.command('db-load')
 def api_db_load():
-    db_load()
+    for user in User.query.all():
+        db.session.delete(user)
+    for tag in VTag.query.all():
+        db.session.delete(tag)
+    db.session.flush()
+    db.session.commit()
+    models.load_init_data()
+    click.echo("成功载入初始数据")
 
 
 @app.cli.command('db-drop')

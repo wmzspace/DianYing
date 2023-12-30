@@ -2,7 +2,7 @@ import axios from 'axios'
 import { prefix_url } from '@/api/index'
 
 export interface VideoUploadFormModel1 {
-  authorId: number
+  authorId: number | string
   url: string
   // cover: string
   height: number

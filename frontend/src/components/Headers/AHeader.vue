@@ -3,9 +3,13 @@ import type { ButtonProps } from '@arco-design/web-vue'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { guestUser, useUserStore } from '@/store/user'
 import { useMainStore } from '@/store/main'
-import { getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
+import { getVideoInfoAll, getVideosByUserLikeOrStar, pullVideo } from '@/utils/video'
 import type { VideoMedia } from '@/types'
 import IconCommunity from '@/components/icons/IconCommunity.vue'
+import useLoading from '@/hooks/loading'
+import type { TableData } from '@arco-design/web-vue/es/table/interface'
+import { getRankings } from '@/utils/tools'
+import type { VideoRecord } from '@/api/list'
 
 const userStore = useUserStore()
 const storedTokenValue = computed({
@@ -66,30 +70,45 @@ watch(
     }
   }
 )
-//
-// onMounted(() => {
-//   // videos.forEach((video) => {
-//   // videoList.push(video)
-//   // })
-// })
+
+const { loading, setLoading } = useLoading()
+const renderList = ref<VideoRecord[]>([])
+const rankingArr = computed(() => getRankings(renderList.value.map((e) => e.playCount)))
+
+const refreshSearchContent = () => {
+  setLoading(true)
+  getVideoInfoAll()
+    .then((records) => {
+      renderList.value = records
+        .filter((record) => record.status === 'online')
+        .sort((a, b) => b.playCount - a.playCount)
+    })
+    .finally(() => {
+      setLoading(false)
+    })
+}
+
+const searchPopVisible = ref(false)
 </script>
 
 <template>
   <div id="a-header">
     <header>
       <a-popover
+        v-model:popup-visible="searchPopVisible"
         position="bottom"
         id="popover-a-search"
+        :trigger="['hover', 'focus']"
         @popup-visible-change="
           (visible) => {
             if (visible) {
               setSearchBarPopWidth()
+              refreshSearchContent()
             }
           }
         "
       >
         <a-input-search
-          disabled
           class="search-bar"
           placeholder="搜索您感兴趣的内容"
           search-button
@@ -101,7 +120,66 @@ watch(
           </template>
           <template #button-default> 搜索</template>
         </a-input-search>
-        <template #content></template>
+        <template #content>
+          <div class="search-title">猜你想搜</div>
+          <a-divider class="search-bar-divider"></a-divider>
+          <div class="search-title">
+            点映热点
+            <span v-if="loading && renderList.length > 0" style="margin-left: 5px"
+              >更新中 <icon-loading /></span
+            ><icon-fire v-else />
+          </div>
+          <a-list class="hot-list" :bordered="false" :split="false">
+            <template #empty>
+              <div style="padding: 10px 0; color: white">加载中 <icon-loading /></div
+            ></template>
+
+            <a-list-item
+              v-for="(video, idx) in renderList.slice(0, 5)"
+              :key="idx"
+              class="hot-item"
+              @click="
+                () => {
+                  $router.push({
+                    name: 'videoDetail',
+                    params: { video_id: video.videoId },
+                    query: { validate: 'ignore' }
+                  })
+                  searchPopVisible = false
+                }
+              "
+            >
+              <a-list-item-meta>
+                <template #description>
+                  <div class="one-line">
+                    <span
+                      ><a-tag
+                        :color="
+                          (() => {
+                            switch (rankingArr[idx] - 1) {
+                              case 0:
+                                return 'red'
+                              case 1:
+                                return 'orangered'
+                              case 2:
+                                return 'orange'
+                              default:
+                                return 'white'
+                            }
+                          })()
+                        "
+                        bordered
+                        style="background: transparent; margin: 3px 10px 3px 0; font-weight: bold"
+                        >Top{{ rankingArr[idx] - 1 }}</a-tag
+                      ></span
+                    >
+                    <span class="hot-title">{{ video.videoTitle }}</span>
+                  </div>
+                </template>
+              </a-list-item-meta>
+            </a-list-item>
+          </a-list>
+        </template>
       </a-popover>
 
       <a-menu
@@ -153,25 +231,6 @@ watch(
               <icon-share-external style="color: white; width: 100%; margin: 0" />
             </template>
           </a-button>
-
-          <!--          <a-trigger :trigger="['click']" :unmount-on-close="false">-->
-          <!--            <a-button-->
-          <!--              @click="-->
-          <!--                $router.push({-->
-          <!--                  name: 'postVideo'-->
-          <!--                })-->
-          <!--              "-->
-          <!--              ><p class="nav-text">投稿</p>-->
-          <!--              <template #icon>-->
-          <!--                <icon-share-external style="color: white; width: 100%; margin: 0" />-->
-          <!--              </template>-->
-          <!--            </a-button>-->
-          <!--            <template #content>-->
-          <!--              <div>-->
-          <!--                <a-empty />-->
-          <!--              </div>-->
-          <!--            </template>-->
-          <!--          </a-trigger>-->
         </a-menu-item>
         <a-menu-item v-if="userStore.isAdmin" disabled>
           <a-button
@@ -185,25 +244,6 @@ watch(
               <icon-command style="color: white; width: 100%; margin: 0" />
             </template>
           </a-button>
-
-          <!--          <a-trigger :trigger="['click']" :unmount-on-close="false">-->
-          <!--            <a-button-->
-          <!--              @click="-->
-          <!--                $router.push({-->
-          <!--                  name: 'postVideo'-->
-          <!--                })-->
-          <!--              "-->
-          <!--              ><p class="nav-text">投稿</p>-->
-          <!--              <template #icon>-->
-          <!--                <icon-share-external style="color: white; width: 100%; margin: 0" />-->
-          <!--              </template>-->
-          <!--            </a-button>-->
-          <!--            <template #content>-->
-          <!--              <div>-->
-          <!--                <a-empty />-->
-          <!--              </div>-->
-          <!--            </template>-->
-          <!--          </a-trigger>-->
         </a-menu-item>
         <a-menu-item disabled>
           <a-popover position="br" id="popover-a-avatar" :trigger="['click', 'hover']">
@@ -374,28 +414,9 @@ watch(
             </template>
           </a-popover>
         </a-menu-item>
-
-        <!--        <a-menu-item key="2">Solution</a-menu-item>-->
-        <!--        <a-menu-item key="3">Cloud Service</a-menu-item>-->
-        <!--        <a-menu-item key="4">Cooperation</a-menu-item>-->
       </a-menu>
     </header>
   </div>
 </template>
 
-<style scoped lang="scss">
-//.action {
-//  display: inline-block;
-//  padding: 0 4px;
-//  color: var(--color-text-1);
-//  line-height: 24px;
-//  background: transparent;
-//  border-radius: 2px;
-//  cursor: pointer;
-//  transition: all 0.1s ease;
-//}
-//
-//.action:hover {
-//  background: var(--color-fill-3);
-//}
-</style>
+<style scoped lang="scss"></style>

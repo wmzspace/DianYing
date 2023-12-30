@@ -182,19 +182,7 @@
             position: relative;
             //margin-left: 22px;
             max-width: 640px;
-            //min-width: 333px;
-            //width: 70%;
-            //width: 640px !important;
 
-            //@media (min-width: 930px) {
-            //  //width: 320px;
-            //  //max-width: max-content;
-            //  position: absolute;
-            //  margin: 20px 0;
-            //  max-width: 640px;
-            //  //min-width: 333px;
-            //  right: $header-nav-width + 20px;
-            //}
             @media (min-width: 930px) {
               padding: 0;
               position: absolute;
@@ -254,7 +242,7 @@
 
               border: none !important;
               background-color: transparent !important;
-
+              color: white
             }
 
             &:hover {
@@ -900,16 +888,45 @@
 
   .arco-trigger-popup-wrapper {
     width: 100%;
+    transition-duration: 200ms;
 
-    * {
-      color: white !important; // FIXME: optimize
-    }
 
     .arco-popover-popup-content {
       background-color: $video-card-background-color;
       border: none;
 
+      .search-title {
+        color: $color-const-text-white60 !important;
 
+        * {
+          color: $color-const-text-white60 !important;
+        }
+
+      }
+
+      .search-bar-divider {
+        border-color: $color-const-line-white12;
+      }
+
+      .hot-list {
+        margin: 10px 0;
+
+        .hot-item {
+          transition-duration: 100ms;
+          border-radius: 10px;
+          padding: 5px 10px;
+          cursor: pointer;
+          background-color: transparent;
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+          }
+        }
+
+        .hot-title {
+          color: $color-const-text-white90 !important;
+        }
+      }
     }
   }
 

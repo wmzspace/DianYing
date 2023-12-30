@@ -156,7 +156,7 @@ onUnmounted(() => {
     <div id="waterfall-scroll-container">
       <VideoCard
         v-for="(video, index) in videoList"
-        v-show="index + 1 <= currentShowNum"
+        v-show="index + 1 <= currentShowNum && currentShowNum >= 5"
         :src="video"
         :key="index"
         @loadeddata="

@@ -13,7 +13,7 @@ import { getTimeDiffUntilNow } from '@/utils/tools'
 import type { VideoMedia } from '@/types'
 import { Message } from '@arco-design/web-vue'
 import { useMainStore } from '@/store/main'
-import type { UserRecord } from '@/api/list'
+import type { UserRecord, VideoRecord } from '@/api/list'
 
 const emit = defineEmits(['refresh', 'change'])
 
@@ -21,7 +21,7 @@ const userStore = useUserStore()
 const props = defineProps<{
   comment: Comment
   index: any
-  video: VideoMedia | undefined
+  video: VideoRecord | undefined
 }>()
 
 const openReply = () => {
@@ -31,34 +31,22 @@ const openReply = () => {
   })
 }
 const isReplying = ref(false)
-const author = ref<UserRecord | undefined>(undefined)
-const isLoadingUser = ref(true)
-const refreshUserInfo = () => {
-  // isLoadingUser.value = true
-
-  userStore
-    .getUserInfoById(props.comment.authorId)
-    .then((user) => {
-      author.value = user
-    })
-    .catch(() => {
-      emitRefresh(true)
-    })
-
-  // userStore
-  //   .getUserById(props.comment.authorId)
-  //   .then((user) => {
-  //     author.value = user
-  //     // isLoadingUser.value = false
-  //   })
-  //   .catch(() => {
-  //     emitRefresh(true)
-  //   })
-}
+// const author = ref<UserRecord | undefined>(undefined)
+// const isLoadingUser = ref(true)
+// const isLoadingUser = ref(false)
+// const refreshUserInfo = () => {
+//   userStore
+//     .getUserInfoById(props.comment.authorId)
+//     .then((user) => {
+//       author.value = user
+//     })
+//     .catch(() => {
+//       emitRefresh(true)
+//     })
+// }
 
 const isLiked = ref(false)
 const isProcessLike = ref(true)
-// const commentLikeUsers = reactive<number[]>([])
 const commentLikeShowNum = ref(0)
 
 const mainStore = useMainStore()
@@ -66,7 +54,6 @@ const refreshCommentLike = () => {
   isProcessLike.value = true
   getCommentLikeUsersByCommentId(props.comment.id)
     .then((users) => {
-      // commentLikeUsersId.splice(0)
       commentLikeShowNum.value = 0
       isLiked.value = false
       users.forEach((userId) => {
@@ -74,7 +61,6 @@ const refreshCommentLike = () => {
           isLiked.value = true
         }
         commentLikeShowNum.value++
-        // commentLikeUsersId.push(user)
       })
     })
     .catch(() => {
@@ -90,7 +76,7 @@ const handleClickLike = () => {
     .checkLogin()
     .then((user) => {
       if (isProcessLike.value) {
-        // Message.info('点击太频繁')
+        //
       } else {
         likeCommentOrNot(props.comment.id, user.id, !isLiked.value)
           .then(() => {
@@ -126,24 +112,18 @@ const onPostReplyComment = () => {
       if (replyCommentContent.value.length <= 0 || isProcessReplyComment.value) {
         return
       }
-      if (author.value !== undefined) {
+      if (props.video !== undefined) {
+        // FIXME:(author.value !== undefined)
         isProcessReplyComment.value = true
         postComment(user.id, replyCommentContent.value, undefined, props.comment.id)
           .then((comment) => {
             if (comment !== undefined) {
-              // refreshUserInfo()
-              // refreshChildrenComments()
-              // focusCommentId.value = commentId
-              // console.log(comment)
-              // childrenComments.unshift(comment)
               emit('change')
               replyCommentContent.value = ''
               isReplying.value = false
               refreshChildrenComments()
-
-              // refreshUserInfo()
             } else {
-              refreshUserInfo()
+              // refreshUserInfo()
               refreshChildrenComments()
               emitRefresh(true)
             }
@@ -179,7 +159,7 @@ const onDeleteComment = () => {
         // refreshChildrenComments()
         emitRefresh(false)
       } else {
-        refreshUserInfo()
+        // refreshUserInfo()
         emitRefresh(true)
       }
     })
@@ -204,8 +184,9 @@ const refreshChildrenComments = () => {
       emitRefresh(true)
     })
 }
+
 onMounted(() => {
-  refreshUserInfo()
+  // refreshUserInfo()
   refreshCommentLike()
   refreshChildrenComments()
 })
@@ -213,7 +194,7 @@ onMounted(() => {
 const isLoadingComment = computed(() => {
   return (
     !childrenLoaded.value ||
-    isLoadingUser.value ||
+    // isLoadingUser.value ||
     processDeleteComment.value ||
     // isProcessLike.value ||
     isProcessReplyComment.value
@@ -221,13 +202,6 @@ const isLoadingComment = computed(() => {
 })
 
 const emitRefresh = (refreshAll: boolean) => {
-  // let args = props.index
-  // args['index'] = index
-  // let object = {
-  //   children: child_object,
-  //   index: props.index
-  // }
-
   emit('refresh', refreshAll)
 }
 
@@ -247,33 +221,33 @@ const isDeleted = ref(false)
         style="cursor: pointer"
         @click="
           () => {
-            if (author) {
+            if (props.video) {
               $router.push({
                 name: 'userProfile',
-                params: { user_id: author.id }
+                params: { user_id: props.comment.authorId }
               })
             }
           }
         "
       >
-        {{ author?.nickName }}
+        {{ props.comment.authorName }}
       </span>
     </template>
     <template #avatar>
       <a-avatar
         :size="32"
-        :image-url="author?.avatar"
+        :image-url="props.comment.authorAvatar"
         @load="
           () => {
-            isLoadingUser = false
+            // isLoadingUser = false
           }
         "
         @click="
           () => {
-            if (author) {
+            if (props.video) {
               $router.push({
                 name: 'userProfile',
-                params: { user_id: author.id }
+                params: { user_id: props.comment.authorId }
               })
             }
           }
@@ -320,7 +294,7 @@ const isDeleted = ref(false)
     >
       <template #content>
         <a-input
-          :placeholder="`回复 @${author?.nickName}`"
+          :placeholder="`回复 @${props.comment.authorName}`"
           class="comment-input"
           id="reply-comment-input"
           v-model.trim="replyCommentContent"
@@ -329,13 +303,21 @@ const isDeleted = ref(false)
           @focusout="isReplying = false"
           @pressEnter="onPostReplyComment"
         >
-          <template #suffix
-            ><img class="icon-at" src="/images/videoDetails/comment_at.svg" /><img
-              class="icon-send"
-              src="/images/videoDetails/send_comment.svg"
-              v-if="replyCommentContent.length > 0"
-              @click="onPostReplyComment"
-          /></template>
+          <template #suffix>
+            <a-tooltip>
+              <template #content> 没有可以@的朋友 </template>
+              <img class="icon-at" src="/images/videoDetails/comment_at.svg" />
+            </a-tooltip>
+            <a-tooltip>
+              <template #content>回复评论</template>
+              <img
+                class="icon-send"
+                src="/images/videoDetails/send_comment.svg"
+                v-if="replyCommentContent.length > 0"
+                @click="onPostReplyComment"
+              />
+            </a-tooltip>
+          </template>
         </a-input>
       </template>
     </a-comment>

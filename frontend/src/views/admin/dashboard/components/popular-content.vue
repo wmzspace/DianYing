@@ -100,20 +100,7 @@ const renderList = ref<TableData[]>()
 const rankingArr = computed(() =>
   renderList.value !== undefined ? getRankings(renderList.value.map((e) => e.playCount)) : undefined
 )
-// watch(renderList, (value) => {
-//   if (value !== undefined) {
-//     rankingArr.value = getRankings(value.map((e) => e.playCount))
-//   } else {
-//     rankingArr.value = undefined
-//   }
-// })
-// const rankingArr = computed(() => {
-//   if (renderList.value === undefined) {
-//     return undefined
-//   }
-//   console.log(rankingArr)
-//   return getRankings(renderList.value.map((e) => e.playNum))
-// })
+
 setLoading(true)
 getVideoInfoAll()
   .then((records) => {
@@ -122,21 +109,6 @@ getVideoInfoAll()
   .finally(() => {
     setLoading(false)
   })
-// const fetchData = async (contentType: string) => {
-//   try {
-//     setLoading(true)
-//     const { data } = await queryPopularList({ type: contentType })
-//     renderList.value = data
-//   } catch (err) {
-//     // you can report use errorHandler or other
-//   } finally {
-//     setLoading(false)
-//   }
-// }
-// const typeChange = (contentType: string) => {
-//   fetchData(contentType)
-// }
-// fetchData('video')
 </script>
 
 <style scoped lang="less">

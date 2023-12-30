@@ -2,7 +2,6 @@
 import {
   deleteVideoById,
   getVideoActionUsersByVideoId,
-  getVideoById,
   getVideoInfoById,
   likeOrStarVideoOrNot,
   pullVideo,
@@ -10,9 +9,8 @@ import {
 } from '@/utils/video'
 import type { Comment } from '@/utils/comment'
 import { getCommentsByVideoIdOrParent, postComment } from '@/utils/comment'
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
-import { Events } from 'xgplayer'
-import Player from 'xgplayer'
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import Player, { Events } from 'xgplayer'
 import { debounce } from 'lodash-es'
 import type { VideoMedia } from '@/types'
 import { useUserStore } from '@/store/user/'
@@ -40,16 +38,24 @@ const comments: (Comment | undefined)[] = reactive([])
 
 let relatedList: VideoMedia[] = reactive([])
 
-const video = ref<VideoMedia | undefined>(undefined)
+const video = ref<VideoRecord | undefined>(undefined)
 const author = ref<UserRecord | undefined>(undefined)
 const player = ref<Player | undefined>(undefined)
-getVideoById(props.video_id)
-  .then((res: VideoMedia | undefined) => {
-    video.value = _.cloneDeep(res)
+getVideoInfoById(props.video_id)
+  .then((record) => {
+    video.value = _.cloneDeep(record)
   })
   .catch((e) => {
     Message.error(e)
   })
+
+// getVideoById(props.video_id)
+//   .then((res: VideoMedia | undefined) => {
+//     video.value = _.cloneDeep(res)
+//   })
+//   .catch((e) => {
+//     Message.error(e)
+//   })
 
 // const CommentCardRefs = ref()
 // const focusComment = (
@@ -144,13 +150,13 @@ watch(video, (value) => {
     commentsNum.value = 0
     userStore.getUserInfoById(value.authorId).then((user) => {
       author.value = user
-      // if (value.status !== 'online' && !userStore.isAdminOrCurUser(author.value.id)) {
-      //   Message.warning({
-      //     id: 'videoNotOnline',
-      //     content: '视频不存在'
-      //   })
-      //   router.replace({ name: 'discover' })
-      // }
+      if (value.status !== 'online' && !userStore.isAdminOrCurUser(author.value.id)) {
+        Message.warning({
+          id: 'videoNotOnline',
+          content: '视频不存在'
+        })
+        router.replace({ name: 'discover' })
+      }
     })
     refreshVideoRecord()
     refreshVideoLikeAndStar()
@@ -198,7 +204,7 @@ const resizeEventHandler = () => {
   debounce(calculateContainerPositions, 250)()
 }
 
-const createPlayer = (video: VideoMedia) => {
+const createPlayer = (video: VideoRecord) => {
   return new Player({
     // id: `video-2`,
     id: 'video-player',
@@ -258,9 +264,17 @@ const createPlayer = (video: VideoMedia) => {
 
 onBeforeRouteUpdate((to) => {
   // console.log(to, from)
-  getVideoById(to.params['video_id'][0]).then((res: VideoMedia | undefined) => {
-    video.value = _.cloneDeep(res)
-  })
+  // getVideoById(to.params['video_id'][0]).then((res: VideoMedia | undefined) => {
+  //   video.value = _.cloneDeep(res)
+  // })
+  console.log('!!!', to.params['video_id'][0])
+  getVideoInfoById(to.params['video_id'][0])
+    .then((record) => {
+      video.value = _.cloneDeep(record)
+    })
+    .catch((e) => {
+      Message.error(e)
+    })
   // next((vm) => {
   //   // console.log(vm)
   //   // vm.$
@@ -292,7 +306,7 @@ const onPostNewComment = () => {
         return
       }
       if (author.value !== undefined && video.value !== undefined) {
-        postComment(user.id, newCommentContent.value, video.value.id, undefined).then(() => {
+        postComment(user.id, newCommentContent.value, video.value.videoId, undefined).then(() => {
           newCommentContent.value = ''
           refreshRootCommentList()
         })
@@ -411,6 +425,13 @@ const deleteLoadingObject = useLoading()
 const deleteLoading = deleteLoadingObject.loading
 const setDeleteLoading = deleteLoadingObject.setLoading
 
+const recommendTag = computed(() => {
+  if (video.value === undefined) {
+    return undefined
+  }
+  return _.sample(video.value.tags)
+})
+
 const handleClickDelete = () => {
   if (deleteLoading.value === true) {
     Message.info({
@@ -453,7 +474,7 @@ const router = useRouter()
         </div>
         <div class="detail-video-info">
           <div class="detail-video-title two-line">
-            {{ video?.title }}
+            {{ video?.videoTitle }}
             <a-link
               v-for="(tag, index) in videoRecord?.tags"
               :key="index"
@@ -480,6 +501,7 @@ const router = useRouter()
             </a-list>
             <div class="detail-video-actions-right">
               <a-tag
+                class="detail-video-tag"
                 bordered
                 :color="'arcoblue'"
                 style="background: transparent"
@@ -488,6 +510,7 @@ const router = useRouter()
                 >审核中</a-tag
               >
               <a-tag
+                class="detail-video-tag"
                 bordered
                 :color="'red'"
                 style="background: transparent"
@@ -580,21 +603,34 @@ const router = useRouter()
               @pressEnter="onPostNewComment"
             >
               <template #suffix>
-                <img class="icon-at" src="/images/videoDetails/comment_at.svg" />
-                <img
-                  class="icon-send"
-                  src="/images/videoDetails/send_comment.svg"
-                  @click="onPostNewComment"
-                  v-if="newCommentContent.length > 0"
-              /></template>
+                <a-tooltip>
+                  <template #content> 没有可以@的朋友 </template>
+                  <img class="icon-at" src="/images/videoDetails/comment_at.svg" />
+                </a-tooltip>
+                <a-tooltip>
+                  <template #content>发布评论</template>
+                  <img
+                    class="icon-send"
+                    src="/images/videoDetails/send_comment.svg"
+                    @click="onPostNewComment"
+                    v-if="newCommentContent.length > 0"
+                  />
+                </a-tooltip>
+              </template>
             </a-input>
           </a-row>
         </div>
 
         <div class="usually-search">
           大家都在搜：<a class="usually-search-topic"
-            ><span class="usually-search-topic-text">亿万富翁找回儿子</span>
-            <img class="usually-search-icon" src="/images/videoDetails/usually_search.svg" />
+            ><span class="usually-search-topic-text">{{
+              recommendTag ? recommendTag : '暂无推荐'
+            }}</span>
+            <img
+              v-if="recommendTag"
+              class="usually-search-icon"
+              src="/images/videoDetails/usually_search.svg"
+            />
           </a>
         </div>
 

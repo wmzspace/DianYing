@@ -164,10 +164,6 @@ const customRequest = (options: RequestOption) => {
         if (res.status === 200) {
           let ajaxData = res.data as AjaxResponse
           if (ajaxData.ajax_ok) {
-            Message.success({
-              id: 'uploadVideo',
-              content: ajaxData.ajax_msg
-            })
             onSuccess(ajaxData.ajax_msg)
             // isUploaded.value = true
             const resData = ajaxData.ajax_data as VideoUploadResponse
@@ -181,6 +177,19 @@ const customRequest = (options: RequestOption) => {
               uploadVideoFormData.value.height = player.value?._videoHeight
               uploadVideoFormData.value.url = videoUrl.value as string
               isUploaded.value = true
+
+              Message.success({
+                id: 'uploadVideo',
+                content: ajaxData.ajax_msg
+              })
+            })
+
+            player.value.on(Events.ERROR, (e) => {
+              Message.error({
+                id: 'uploadVideo',
+                content: e.message
+              })
+              onError(e)
             })
             // player.value.on(Events.READY, function () {
             //   const firstFrame = player.value?.emit('screenShot')
@@ -210,7 +219,12 @@ const customRequest = (options: RequestOption) => {
       onError(error)
       location.reload()
     }
-  })()
+  })().catch((e) => {
+    Message.error({
+      id: 'uploadVideo',
+      content: e
+    })
+  })
   return {
     abort() {
       controller.abort()

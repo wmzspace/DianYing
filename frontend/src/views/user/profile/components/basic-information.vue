@@ -42,18 +42,18 @@
       />
     </a-form-item>
     <a-form-item
-      field="nickName"
-      :label="$t('userSetting.basicInfo.form.label.nickName')"
+      field="nickname"
+      :label="$t('userSetting.basicInfo.form.label.nickname')"
       :rules="[
         {
           required: true,
-          message: $t('userSetting.form.error.nickName.required')
+          message: $t('userSetting.form.error.nickname.required')
         }
       ]"
     >
       <a-input
-        v-model.trim="formData.nickName"
-        :placeholder="$t('userSetting.basicInfo.placeholder.nickName')"
+        v-model.trim="formData.nickname"
+        :placeholder="$t('userSetting.basicInfo.placeholder.nickname')"
       />
     </a-form-item>
     <a-form-item
@@ -158,7 +158,7 @@ const userStore = useUserStore()
 const route = useRoute()
 userStore.getUserInfoById(route.params.user_id as string).then((user) => {
   formData.value.email = user.email
-  formData.value.nickName = user.nickName
+  formData.value.nickname = user.nickName
   formData.value.age = user.age
   formData.value.gender = user.gender
   formData.value.area = user.area
@@ -170,7 +170,7 @@ const formRef = ref<FormInstance>()
 const formData = ref<BasicInfoModel>({
   id: route.params.user_id as string,
   email: '',
-  nickName: '',
+  nickname: '',
   gender: '',
   area: '',
   age: 0,
