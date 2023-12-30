@@ -41,7 +41,7 @@ channel_dict = {
 
 
 # API: 根据Channel名获取对应的标签列表
-@tag_bp.route('/channel/', methods=['GET'])
+@tag_bp.route('/channel', methods=['GET'])
 def get_channel_tags():
     channel_name = request.args.get("name")
     if channel_name is None:
