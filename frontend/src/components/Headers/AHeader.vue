@@ -11,6 +11,7 @@ import type { TableData } from '@arco-design/web-vue/es/table/interface'
 import { getRankings } from '@/utils/tools'
 import type { VideoRecord } from '@/api/list'
 import { useRouter } from 'vue-router'
+import { getUserLikeTags } from '@/utils/tag'
 
 const userStore = useUserStore()
 const storedTokenValue = computed({
@@ -51,9 +52,18 @@ const videoLikeNum = ref(0)
 const videoStarNum = ref(0)
 const videoOwnNum = ref(0)
 
+const userLikeTags = ref<string[]>([])
+
 watch(
-  () => userStore.isUserNotAdmin(),
-  () => {
+  () => userStore.userLikeTags,
+  (value) => {
+    userLikeTags.value = userStore.getUserLikeTags(4)
+  }
+)
+
+watch(
+  () => userStore.userData,
+  (value) => {
     if (userStore.isUserNotAdmin()) {
       getVideosByUserLikeOrStar(userStore.getCurrentUserNotAdmin.id, 'star').then((videos) => {
         videoStarNum.value = videos.length
@@ -69,6 +79,7 @@ watch(
         ).length
       })
     }
+    userStore.refreshUserLikeTags()
   }
 )
 
@@ -103,11 +114,12 @@ const handleSearch = (value: string) => {
 <template>
   <div id="a-header">
     <header>
+      <!--      'hover', 'focus'-->
       <a-popover
         v-model:popup-visible="searchPopVisible"
         position="bottom"
         id="popover-a-search"
-        :trigger="['hover', 'focus']"
+        :trigger="['click']"
         @popup-visible-change="
           (visible) => {
             if (visible) {
@@ -137,6 +149,18 @@ const handleSearch = (value: string) => {
         </a-input-search>
         <template #content>
           <div class="search-title">猜你想搜</div>
+          <a-row justify="center" align="center" class="user-like-tags" style="width: 100%">
+            <a-col
+              :span="6"
+              v-for="(tag, idx) in userLikeTags"
+              :key="idx"
+              style="width: 25%"
+              @click="handleSearch(tag)"
+            >
+              <div class="one-line">{{ tag }}</div>
+            </a-col>
+            <div v-if="userLikeTags.length === 0">暂无推荐，点赞可以增加个性化推荐</div>
+          </a-row>
           <a-divider class="search-bar-divider"></a-divider>
           <div class="search-title">
             点映热点

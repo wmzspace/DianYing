@@ -2,6 +2,8 @@ import { type AjaxResponse, prefix_url } from '@/api'
 import { reject } from 'lodash-es'
 import _ from 'lodash'
 import { Message } from '@arco-design/web-vue'
+import type { UserRecord } from '@/api/list'
+import { getVideosByUserLikeOrStar } from '@/utils/video'
 
 export const getAllTags = () =>
   new Promise<string[]>((resolve) => {
@@ -75,6 +77,27 @@ export const getTagsByChannel = (channelName: string) =>
           res.json().then((ajaxData: AjaxResponse) => {
             if (ajaxData.ajax_ok) {
               resolve(ajaxData.ajax_data as unknown as string[])
+            } else {
+              reject(ajaxData.ajax_msg)
+            }
+          })
+        } else {
+          reject(res.statusText)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+
+export const getUserLikeTags = (userId: number | string) =>
+  new Promise<string[]>((resolve, reject) => {
+    fetch(prefix_url.concat(`user/get/like_tags?user_id=${userId}`))
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((ajaxData: AjaxResponse) => {
+            if (ajaxData.ajax_ok) {
+              resolve(ajaxData.ajax_data as string[])
             } else {
               reject(ajaxData.ajax_msg)
             }

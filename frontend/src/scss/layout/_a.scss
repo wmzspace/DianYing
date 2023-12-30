@@ -904,6 +904,20 @@
 
       }
 
+      .user-like-tags {
+        color: white;
+        margin-top: 15px;
+        text-align: center;
+        .one-line{
+          border-radius: 10px;
+          padding: 5px;
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+          }
+        }
+
+      }
+
       .search-bar-divider {
         border-color: $color-const-line-white12;
       }

@@ -4,6 +4,7 @@ import cv2
 from flask import request
 from flask import current_app as app
 
+from blueprints.video.data import VideoRecord
 from exts import PREFIX_URL
 from blueprints.user import user_bp
 from exts import AjaxResponse, db
@@ -50,6 +51,25 @@ def get_user_likes():
         )
     else:
         return AjaxResponse.error("参数错误, action")
+
+
+# API 获取用户个性化推荐标签
+@user_bp.route('/get/like_tags', methods=['GET'])
+def get_user_like_tags():
+    user_id = request.args.get("user_id")
+    if user_id is None:
+        return AjaxResponse.error("参数缺失: user_id")
+    user = User.query.get(user_id)
+    if user is None:
+        return AjaxResponse.error("用户不存在")
+    videos_liked = user.video_liked
+    results = []
+    for video_like in videos_liked:
+        tags = VideoRecord(video_like.video).tags
+        for tag in tags:
+            results.append(tag)
+    results = list(set(results))
+    return AjaxResponse.success(results)
 
 
 # API: 更新用户资料

@@ -6,6 +6,8 @@ import { useMainStore } from '@/store/main'
 import router from '@/router'
 import type { UserRecord } from '@/api/list'
 import { reject } from 'lodash-es'
+import { getUserLikeTags } from '@/utils/tag'
+import _ from 'lodash'
 
 // export interface User {
 //   avatar: string
@@ -37,7 +39,8 @@ export const useUserStore = defineStore('user', {
     // userList: [] as User[]
     isAdmin: false,
     userData: undefined as UserRecord | undefined,
-    isStoredToken: false
+    isStoredToken: false,
+    userLikeTags: [] as string[]
     // ...
   }),
   getters: {
@@ -59,6 +62,7 @@ export const useUserStore = defineStore('user', {
       // assert(!state.isAdmin, 'Is admin') // FIXME: getCurrentUserNotAdmin
       return state.userData as UserRecord
     },
+
     // getUserById: (state) => {
     //   return (userId: number | string | undefined) =>
     //     new Promise<User>((resolve, reject) => {
@@ -126,7 +130,10 @@ export const useUserStore = defineStore('user', {
         ? state.userData.nickName
         : state.isAdmin
           ? adminUser.nickname
-          : guestUser.nickname
+          : guestUser.nickname,
+    getUserLikeTags: (state) => (num: number) => {
+      return num === -1 ? state.userLikeTags : _.sampleSize(state.userLikeTags, num)
+    }
   },
   actions: {
     async userLogin(userId: number | string, needRefresh?: boolean) {
@@ -259,6 +266,11 @@ export const useUserStore = defineStore('user', {
         })
       }).catch((e) => {
         reject(e.message)
+      })
+    },
+    refreshUserLikeTags() {
+      getUserLikeTags(this.getCurrentUserNotAdmin.id).then((tags) => {
+        this.userLikeTags = tags
       })
     }
   }
