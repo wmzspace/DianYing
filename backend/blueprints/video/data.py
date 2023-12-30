@@ -28,6 +28,9 @@ def get_all_videos():
     # 是否按id降序
     sort = request.args.get("sort")
 
+    # 是否启用搜索
+    search_text = request.args.get("search_text")
+
     # 待筛选的标签列表
     query_tags_name = []
     if tags_name_raw is not None:
@@ -43,6 +46,21 @@ def get_all_videos():
             all_videos = Video.query.order_by(func.random()).all()
         else:
             all_videos = Video.query.filter_by(status="online").order_by(func.random()).all()
+
+    if search_text is not None and search_text != '':
+        def search_video(f_video):
+            if search_text in f_video.title or search_text in f_video.author.nickname:
+                return True
+
+            f_tags = VTRelation.query.filter_by(video_id=f_video.id).all()
+            for f_tag in f_tags:
+                f_tag_record = VTag.query.get(f_tag.tag_id)
+                if f_tag_record.name in search_text:
+                    return True
+
+            return False
+
+        all_videos = list(filter(search_video, all_videos))
 
     results = []
     for video in all_videos:
@@ -74,9 +92,6 @@ def get_all_videos():
             if not find:
                 continue
         author = video.author
-        if author is None:
-            continue
-        # video_dict = model2dict([video])[0]
         video_dict = video.to_dict()
         video_dict["author_name"] = author.nickname
         video_dict["author_avatar"] = author.avatar

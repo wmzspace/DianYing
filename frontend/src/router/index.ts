@@ -37,6 +37,15 @@ let routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/HomeView.vue')
   },
   {
+    path: '/search',
+    name: 'search',
+    meta: {
+      layout: 'a',
+      key: 'search'
+    },
+    component: () => import('@/views/HomeView.vue')
+  },
+  {
     path: '/',
     name: 'VideoRecommend',
     meta: {

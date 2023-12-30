@@ -2,9 +2,15 @@
 import VideoCard from '@/components/Cards/VideoCard.vue'
 import type { VideoMedia } from '@/types'
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { pullVideo } from '@/utils/video'
+import { pullVideo, type pullVideoRequest } from '@/utils/video'
 import { debounce } from 'lodash-es'
-import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router'
+import {
+  onBeforeRouteLeave,
+  onBeforeRouteUpdate,
+  type RouteLocationNormalized,
+  type RouteLocationNormalizedLoaded,
+  useRoute
+} from 'vue-router'
 import { getTagsByChannel } from '@/utils/tag'
 
 const videoList = ref<VideoMedia[]>([])
@@ -13,9 +19,9 @@ const currentShowNum = ref(0) // not include new loaded
 const currentTags = ref<string[]>([])
 const currentChannelName = ref<string | undefined>(undefined)
 const route = useRoute()
-
-const refreshChannelTags = (channelName: string | undefined) => {
-  currentChannelName.value = channelName
+const searchText = ref<string>('')
+const refreshChannelTags = (to: RouteLocationNormalized | RouteLocationNormalizedLoaded) => {
+  currentChannelName.value = to.params.channelName as string | undefined
   if (currentChannelName.value !== undefined) {
     getTagsByChannel(currentChannelName.value).then((tags) => {
       currentTags.value = tags
@@ -23,15 +29,22 @@ const refreshChannelTags = (channelName: string | undefined) => {
   } else {
     currentTags.value = []
   }
+
+  if (to.name === 'search') {
+    searchText.value = to.query.search ? to.query.search.toString() : ''
+  } else {
+    searchText.value = ''
+  }
 }
 
 onBeforeRouteLeave((to) => {
-  refreshChannelTags(to.params.channelName as string | undefined)
+  refreshChannelTags(to)
 })
 
 onBeforeRouteUpdate((to) => {
-  refreshChannelTags(to.params.channelName as string | undefined)
+  refreshChannelTags(to)
 })
+
 watch(
   () => currentTags.value,
   (value) => {
@@ -40,12 +53,15 @@ watch(
     videoListHeight.value = 0
     loadedNum.value = 0
     isLoadedAll.value = false
-    pullVideo({ num: 20, tagsName: value }).then((res: VideoMedia[]) => {
-      videoList.value = res
-    })
+    pullVideo({ num: 20, tagsName: value, searchText: searchText.value }).then(
+      (res: VideoMedia[]) => {
+        videoList.value = res
+      }
+    )
   }
 )
-refreshChannelTags(route.params.channelName as string | undefined)
+
+refreshChannelTags(route)
 
 const isLoadedAll = ref(false)
 const loadedNum = ref(0)
@@ -61,11 +77,13 @@ const onScroll = () => {
 const onLoadMore = (tags: string[]) => {
   if (isLoadedAll.value) {
     isLoadedAll.value = false
-    pullVideo({ num: 20, tagsName: tags }).then((res: VideoMedia[]) => {
-      res.forEach((e) => {
-        videoList.value.push(e)
-      })
-    })
+    pullVideo({ num: 20, tagsName: tags, searchText: searchText.value }).then(
+      (res: VideoMedia[]) => {
+        res.forEach((e) => {
+          videoList.value.push(e)
+        })
+      }
+    )
   }
 }
 
@@ -78,11 +96,13 @@ const onLoadedAll = () => {
     calculateVideoPositions()
     if (videoListHeight.value < window.innerHeight * 1.5) {
       isLoadedAll.value = false
-      pullVideo({ num: 20, tagsName: currentTags.value }).then((res: VideoMedia[]) => {
-        res.forEach((e) => {
-          videoList.value.push(e)
-        })
-      })
+      pullVideo({ num: 20, tagsName: currentTags.value, searchText: searchText.value }).then(
+        (res: VideoMedia[]) => {
+          res.forEach((e) => {
+            videoList.value.push(e)
+          })
+        }
+      )
     } else {
       // console.log(videoList.value)
       isLoadedAll.value = true
@@ -174,7 +194,10 @@ onUnmounted(() => {
         "
       />
 
-      <div class="list-append-area" :style="{ top: `${videoListHeight + 60}px` }">
+      <div
+        class="list-append-area"
+        :style="{ top: `${currentShowNum >= 5 ? videoListHeight + 60 : 60}px` }"
+      >
         <a-spin class="load-more" dot v-if="!isLoadedAll" :loading="!isLoadedAll" />
       </div>
     </div>

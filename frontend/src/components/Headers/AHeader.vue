@@ -10,6 +10,7 @@ import useLoading from '@/hooks/loading'
 import type { TableData } from '@arco-design/web-vue/es/table/interface'
 import { getRankings } from '@/utils/tools'
 import type { VideoRecord } from '@/api/list'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const storedTokenValue = computed({
@@ -89,6 +90,14 @@ const refreshSearchContent = () => {
 }
 
 const searchPopVisible = ref(false)
+
+const router = useRouter()
+
+const handleSearch = (value: string) => {
+  router.push({ name: 'search', query: { search: value } }).finally(() => {
+    searchPopVisible.value = false
+  })
+}
 </script>
 
 <template>
@@ -114,6 +123,12 @@ const searchPopVisible = ref(false)
           search-button
           :button-props="searchButtonProps"
           ref="searchBar"
+          @search="handleSearch"
+          @keydown.enter="
+            (e: any) => {
+              handleSearch(e.target.value)
+            }
+          "
         >
           <template #button-icon>
             <icon-search :stroke-width="8" :size="15" style="margin-right: -4px" />

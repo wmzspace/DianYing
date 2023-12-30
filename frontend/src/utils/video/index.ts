@@ -5,30 +5,30 @@ import _ from 'lodash'
 import { Message } from '@arco-design/web-vue'
 import type { VideoRecord } from '@/api/list'
 
-export const getVideoById = (videoId: number | string) => {
-  const id = typeof videoId === 'string' ? parseInt(videoId) : videoId
-  return new Promise<VideoMedia | undefined>((resolve, reject) => {
-    fetch(prefix_url + `/video/query?id=${videoId}`)
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((ajaxData: AjaxResponse) => {
-            if (ajaxData.ajax_ok) {
-              const data = ajaxData.ajax_data as RawVideo
-              resolve(parseVideoMedia(data))
-            } else {
-              reject(ajaxData.ajax_msg)
-            }
-          })
-        } else {
-          reject(res.statusText)
-        }
-      })
-      .catch((e) => {
-        reject(e.message)
-      })
-  })
-  // return videos.filter((v) => v.id === id)[0]
-}
+// export const getVideoById = (videoId: number | string) => {
+//   const id = typeof videoId === 'string' ? parseInt(videoId) : videoId
+//   return new Promise<VideoMedia | undefined>((resolve, reject) => {
+//     fetch(prefix_url + `/video/query?id=${videoId}`)
+//       .then((res) => {
+//         if (res.ok) {
+//           res.json().then((ajaxData: AjaxResponse) => {
+//             if (ajaxData.ajax_ok) {
+//               const data = ajaxData.ajax_data as RawVideo
+//               resolve(parseVideoMedia(data))
+//             } else {
+//               reject(ajaxData.ajax_msg)
+//             }
+//           })
+//         } else {
+//           reject(res.statusText)
+//         }
+//       })
+//       .catch((e) => {
+//         reject(e.message)
+//       })
+//   })
+//   // return videos.filter((v) => v.id === id)[0]
+// }
 
 export const deleteVideoById = (videoId: number | string) =>
   new Promise<string>((resolve, reject) => {
@@ -79,6 +79,7 @@ export interface pullVideoRequest {
   tagFilterMode?: 'filterAll' | undefined
   sort?: 'sort' | undefined
   allStatus?: 'all' | undefined
+  searchText?: string | undefined
 }
 export const pullVideo = (request?: pullVideoRequest) =>
   new Promise<VideoMedia[]>((resolve, reject) => {
@@ -96,6 +97,10 @@ export const pullVideo = (request?: pullVideoRequest) =>
     const sortString = request && typeof request.sort !== 'undefined' ? `&sort=${request.sort}` : ''
     const allStatusString =
       request && typeof request.allStatus !== 'undefined' ? `&all_status=${request.allStatus}` : ''
+    const searchString =
+      request && typeof request.searchText !== 'undefined'
+        ? `&search_text=${request.searchText}`
+        : ''
 
     fetch(
       prefix_url
@@ -105,7 +110,8 @@ export const pullVideo = (request?: pullVideoRequest) =>
         .concat(tagString)
         .concat(tagFilterModeString)
         .concat(sortString)
-        .concat(allStatusString),
+        .concat(allStatusString)
+        .concat(searchString),
       {
         method: 'GET'
       }
