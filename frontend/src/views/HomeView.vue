@@ -12,6 +12,8 @@ import {
   useRoute
 } from 'vue-router'
 import { getTagsByChannel } from '@/utils/tag'
+import useLoading from '@/hooks/loading'
+import { Message } from '@arco-design/web-vue'
 
 const videoList = ref<VideoMedia[]>([])
 const currentShowNum = ref(0) // not include new loaded
@@ -37,6 +39,8 @@ const refreshChannelTags = (to: RouteLocationNormalized | RouteLocationNormalize
   }
 }
 
+const noMoreVideos = ref(false)
+
 onBeforeRouteLeave((to) => {
   refreshChannelTags(to)
 })
@@ -51,13 +55,18 @@ watch(
     videoList.value = []
     currentShowNum.value = 0
     videoListHeight.value = 0
-    loadedNum.value = 0
     isLoadedAll.value = false
-    pullVideo({ num: 20, tagsName: value, searchText: searchText.value }).then(
-      (res: VideoMedia[]) => {
-        videoList.value = res
-      }
-    )
+    noMoreVideos.value = false
+    loadedNum.value = 0
+    nextTick(() => {
+      onLoadMore()
+    })
+    // isLoadedAll.value = false
+    // pullVideo({ num: 20, tagsName: value, searchText: searchText.value }).then(
+    //   (res: VideoMedia[]) => {
+    //     videoList.value = res
+    //   }
+    // )
   }
 )
 
@@ -70,21 +79,37 @@ const home = ref()
 
 const onScroll = () => {
   if (home.value.scrollTop + home.value.clientHeight >= videoListHeight.value) {
-    onLoadMore(currentTags.value)
+    if (isLoadedAll.value) {
+      onLoadMore()
+    }
   }
 }
 
-const onLoadMore = (tags: string[]) => {
-  if (isLoadedAll.value) {
-    isLoadedAll.value = false
-    pullVideo({ num: 20, tagsName: tags, searchText: searchText.value }).then(
-      (res: VideoMedia[]) => {
-        res.forEach((e) => {
+const onLoadMore = () => {
+  // if (noMoreVideos.value) {
+  //   return
+  // }
+
+  isLoadedAll.value = false
+  pullVideo({ num: MIN_NUM - 1, tagsName: currentTags.value, searchText: searchText.value }).then(
+    (res: VideoMedia[]) => {
+      let validNum = 0
+      res.forEach((e) => {
+        if (noMoreVideos.value || !videoList.value.map((v) => v.id).includes(e.id)) {
           videoList.value.push(e)
-        })
+          validNum++
+        }
+      })
+      if (validNum === 0) {
+        // Message.info({
+        //   id: 'noMore',
+        //   content: '没有更多视频，正在重复加载'
+        // })
+        noMoreVideos.value = true
+        onLoadMore()
       }
-    )
-  }
+    }
+  )
 }
 
 const onLoadedAll = () => {
@@ -95,16 +120,8 @@ const onLoadedAll = () => {
   nextTick(() => {
     calculateVideoPositions()
     if (videoListHeight.value < window.innerHeight * 1.5) {
-      isLoadedAll.value = false
-      pullVideo({ num: 20, tagsName: currentTags.value, searchText: searchText.value }).then(
-        (res: VideoMedia[]) => {
-          res.forEach((e) => {
-            videoList.value.push(e)
-          })
-        }
-      )
+      onLoadMore()
     } else {
-      // console.log(videoList.value)
       isLoadedAll.value = true
     }
   })
@@ -112,6 +129,7 @@ const onLoadedAll = () => {
 
 const videoListHeight = ref(0)
 
+const loadingPosition = useLoading()
 // let timer
 const calculateVideoPositions = () => {
   if (!isLoadedAll.value) {
@@ -121,6 +139,7 @@ const calculateVideoPositions = () => {
   if (container === null) {
     return
   }
+  loadingPosition.setLoading(true)
   const containerWidth = container.clientWidth
 
   const minColumnWidth = 240
@@ -152,11 +171,14 @@ const calculateVideoPositions = () => {
   })
 
   videoListHeight.value = Math.max(...columnHeights)
+  loadingPosition.setLoading(false)
 }
 
 function resizeEventHandler() {
   if (home.value.scrollTop + home.value.clientHeight >= videoListHeight.value) {
-    onLoadMore(currentTags.value)
+    if (isLoadedAll.value) {
+      onLoadMore()
+    }
   }
   calculateVideoPositions()
 }
@@ -172,6 +194,12 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', caller)
 })
+
+const handleReload = () => {
+  location.reload()
+}
+
+const MIN_NUM = 10
 </script>
 
 <template>
@@ -179,14 +207,17 @@ onUnmounted(() => {
     <div id="waterfall-scroll-container">
       <VideoCard
         v-for="(video, index) in videoList"
-        v-show="index + 1 <= currentShowNum && currentShowNum >= 5"
+        v-show="index + 1 <= currentShowNum && currentShowNum >= MIN_NUM"
         :src="video"
         :key="index"
         @loadeddata="
           (element: HTMLElement) => {
             // video.loaded = true
 
-            if (++loadedNum === videoList.length) {
+            ++loadedNum
+            if (loadedNum > videoList.length) {
+              handleReload()
+            } else if (loadedNum === videoList.length) {
               onLoadedAll()
             }
             // console.log(loadedNum, videoList.length)
@@ -196,9 +227,10 @@ onUnmounted(() => {
 
       <div
         class="list-append-area"
-        :style="{ top: `${currentShowNum >= 5 ? videoListHeight + 60 : 60}px` }"
+        :style="{ top: `${currentShowNum >= MIN_NUM ? videoListHeight + 60 : 60}px` }"
+        style="transition-duration: 200ms"
       >
-        <a-spin class="load-more" dot v-if="!isLoadedAll" :loading="!isLoadedAll" />
+        <a-spin class="load-more" dot v-if="!isLoadedAll" :loading="true" />
       </div>
     </div>
   </div>

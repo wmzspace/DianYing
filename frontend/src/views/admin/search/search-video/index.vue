@@ -168,7 +168,7 @@
       <a-table
         row-key="id"
         :loading="loading || editLoading"
-        :pagination="true"
+        :pagination="pagination"
         :columns="cloneColumns as TableColumnData[]"
         :data="renderData"
         :bordered="false"
@@ -189,10 +189,10 @@
           <!--          <span v-if="record.status === 'offline'" class="circle"></span>-->
           <!--          <span v-else class="circle pass"></span>-->
           <a-select
-            v-model="editingData[rowIndex].status"
+            v-model="editingData[getRecordIndex(rowIndex)].status"
             :options="statusOptions"
             :placeholder="$t('searchTable.form.selectDefault')"
-            v-if="editingData[rowIndex].isEditing"
+            v-if="editingData[getRecordIndex(rowIndex)].isEditing"
           />
           <span
             v-else
@@ -213,9 +213,9 @@
         </template>
         <template #videoTitle="{ record, rowIndex }">
           <a-input
-            v-model.trim="editingData[rowIndex].videoTitle"
+            v-model.trim="editingData[getRecordIndex(rowIndex)].videoTitle"
             :placeholder="$t('searchTable.edit.videoTitle.placeholder')"
-            v-if="editingData[rowIndex].isEditing"
+            v-if="editingData[getRecordIndex(rowIndex)].isEditing"
             :max-length="100"
           />
           <a-tooltip v-else>
@@ -244,8 +244,8 @@
         </template>
         <template #authorName="{ record, rowIndex }">
           <a-input-number
-            v-model="editingData[rowIndex].authorId"
-            v-if="editingData[rowIndex].isEditing"
+            v-model="editingData[getRecordIndex(rowIndex)].authorId"
+            v-if="editingData[getRecordIndex(rowIndex)].isEditing"
             :placeholder="$t('searchTable.edit.authorId.placeholder')"
           />
           <a-tooltip v-else>
@@ -284,14 +284,14 @@
               size="small"
               style="padding: 8px"
               @click="handleSwitchEdit(record, rowIndex)"
-              >{{ editingData[rowIndex].isEditing ? '取消' : '编辑' }}</a-button
+              >{{ editingData[getRecordIndex(rowIndex)].isEditing ? '取消' : '编辑' }}</a-button
             >
             <a-button
               type="text"
               size="small"
               :status="'success'"
               style="padding: 6px"
-              v-if="editingData[rowIndex].isEditing"
+              v-if="editingData[getRecordIndex(rowIndex)].isEditing"
               @click="handleSaveEdit(record, rowIndex)"
             >
               保存
@@ -301,7 +301,7 @@
               size="small"
               :status="'danger'"
               style="padding: 6px"
-              v-if="!editingData[rowIndex].isEditing"
+              v-if="!editingData[getRecordIndex(rowIndex)].isEditing"
               @click="handleDeleteVideo(record, rowIndex)"
             >
               删除
@@ -351,12 +351,17 @@ type Column = TableColumnData & { checked?: true }
 
 const mainStore = useMainStore()
 
+const getRecordIndex = (rowIndex: number) => {
+  return pagination.pageSize * (pagination.current - 1) + rowIndex
+}
+
 const handleSwitchEdit = (record: VideoRecordCanEdit, rowIndex: number) => {
   // editingData.value = _.cloneDeep(renderData.value)
-  if (!editingData.value[rowIndex].isEditing) {
+  if (!editingData.value[getRecordIndex(rowIndex)].isEditing) {
     isEditingTable.value = false
   }
-  editingData.value[rowIndex].isEditing = !editingData.value[rowIndex].isEditing
+  editingData.value[getRecordIndex(rowIndex)].isEditing =
+    !editingData.value[getRecordIndex(rowIndex)].isEditing
 }
 
 const editLoadObject = useLoading()
@@ -364,14 +369,14 @@ const editLoading = editLoadObject.loading
 const setEditLoading = editLoadObject.setLoading
 const handleSaveEdit = (record: VideoRecordCanEdit, rowIndex: number) => {
   setEditLoading(true)
-  if (record.videoId !== editingData.value[rowIndex].videoId) {
+  if (record.videoId !== editingData.value[getRecordIndex(rowIndex)].videoId) {
     Message.error({
       id: 'videoEdit',
       content: '保存失败：数据异常'
     })
     location.reload()
   }
-  const rowEditData = editingData.value[rowIndex]
+  const rowEditData = editingData.value[getRecordIndex(rowIndex)]
   const editForm: EditVideoForm = {
     authorId: rowEditData.authorId,
     status: rowEditData.status,
@@ -389,7 +394,7 @@ const handleSaveEdit = (record: VideoRecordCanEdit, rowIndex: number) => {
 
 const handleDeleteVideo = (record: VideoRecordCanEdit, rowIndex: number) => {
   setEditLoading(true)
-  if (record.videoId !== editingData.value[rowIndex].videoId) {
+  if (record.videoId !== editingData.value[getRecordIndex(rowIndex)].videoId) {
     Message.error({
       id: 'videoEdit',
       content: '删除失败：数据异常'
@@ -444,7 +449,7 @@ const size = ref<SizeProps>('medium')
 
 const basePagination: Pagination = {
   current: 1,
-  pageSize: 20
+  pageSize: 10
 }
 const pagination = reactive({
   ...basePagination
@@ -490,7 +495,7 @@ const columns = computed<TableColumnData[]>(() => [
     title: t('searchTable.columns.index'),
     dataIndex: 'index',
     slotName: 'index',
-    width: 40,
+    width: 75,
     fixed: 'left'
   },
   {
@@ -706,7 +711,7 @@ const fetchData = async (params: PolicyParamsVideo = { current: 1, pageSize: 20 
 
         const data: VideoListRes = {
           list: results,
-          total: 0
+          total: results.length
         }
         const editableList = data.list as VideoRecordCanEdit[]
         editableList.forEach((item) => (item.isEditing = false))
@@ -745,18 +750,6 @@ const handleSelectDensity = (val: string | number | Record<string, any> | undefi
   size.value = val as SizeProps
 }
 
-const handleChange = (
-  checked: boolean | (string | boolean | number)[],
-  column: Column,
-  index: number
-) => {
-  if (!checked) {
-    cloneColumns.value = showColumns.value.filter((item) => item.dataIndex !== column.dataIndex)
-  } else {
-    cloneColumns.value.splice(index, 0, column)
-  }
-}
-
 const exchangeArray = <T extends Array<any>>(
   array: T,
   beforeIdx: number,
@@ -769,21 +762,6 @@ const exchangeArray = <T extends Array<any>>(
     newArray.splice(beforeIdx, 1, newArray.splice(newIdx, 1, newArray[beforeIdx]).pop())
   }
   return newArray
-}
-
-const popupVisibleChange = (val: boolean) => {
-  if (val) {
-    nextTick(() => {
-      const el = document.getElementById('tableSetting') as HTMLElement
-      const sortable = new Sortable(el, {
-        onEnd(e: any) {
-          const { oldIndex, newIndex } = e
-          exchangeArray(cloneColumns.value, oldIndex, newIndex)
-          exchangeArray(showColumns.value, oldIndex, newIndex)
-        }
-      })
-    })
-  }
 }
 
 watch(

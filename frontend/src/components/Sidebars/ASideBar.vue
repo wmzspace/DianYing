@@ -20,6 +20,7 @@ const userStore = useUserStore()
             class="logo-img"
             src="/images/logo/transparent-white-text.png"
             :fit="'contain'"
+            :preview-visible="false"
             width="100%"
             height="100%"
           ></a-image
@@ -27,7 +28,12 @@ const userStore = useUserStore()
       </div>
     </div>
     <div class="scroll-content">
-      <a-menu mode="pop" :selected-keys="[$route.meta.key]" class="nav-menu" :theme="'dark'">
+      <a-menu
+        mode="pop"
+        :selected-keys="[$route.meta.key, $route.params.channelName]"
+        class="nav-menu"
+        :theme="'dark'"
+      >
         <a-menu-item key="1" @click="$router.push({ name: 'discover' })">
           <a class="nav-a">
             <div class="nav-icon" />
@@ -100,7 +106,7 @@ const userStore = useUserStore()
           </a></a-menu-item
         >
         <a-menu-item
-          key="8"
+          key="knowledge"
           @click="
             $router.replace({
               name: 'Channel',
@@ -116,7 +122,7 @@ const userStore = useUserStore()
           </a></a-menu-item
         >
         <a-menu-item
-          key="9"
+          key="hot"
           @click="
             $router.replace({
               name: 'Channel',
@@ -132,7 +138,7 @@ const userStore = useUserStore()
           </a></a-menu-item
         >
         <a-menu-item
-          key="10"
+          key="game"
           @click="
             $router.replace({
               name: 'Channel',
@@ -148,7 +154,7 @@ const userStore = useUserStore()
           </a></a-menu-item
         >
         <a-menu-item
-          key="11"
+          key="entertainment"
           @click="
             $router.replace({
               name: 'Channel',
@@ -164,7 +170,7 @@ const userStore = useUserStore()
           </a>
         </a-menu-item>
         <a-menu-item
-          key="12"
+          key="ACGN"
           @click="
             $router.replace({
               name: 'Channel',
@@ -180,7 +186,7 @@ const userStore = useUserStore()
           </a>
         </a-menu-item>
         <a-menu-item
-          key="13"
+          key="music"
           @click="
             $router.replace({
               name: 'Channel',
@@ -196,7 +202,7 @@ const userStore = useUserStore()
           </a>
         </a-menu-item>
         <a-menu-item
-          key="14"
+          key="delicacy"
           @click="
             $router.push({
               name: 'Channel',
@@ -212,7 +218,7 @@ const userStore = useUserStore()
           </a>
         </a-menu-item>
         <a-menu-item
-          key="15"
+          key="sports"
           @click="
             $router.push({
               name: 'Channel',
@@ -228,7 +234,7 @@ const userStore = useUserStore()
           </a>
         </a-menu-item>
         <a-menu-item
-          key="16"
+          key="fashions"
           @click="
             $router.push({
               name: 'Channel',

@@ -146,22 +146,7 @@ export const useUserStore = defineStore('user', {
           .then((user) => {
             this.isAdmin = false
             this.userData = user
-            // this.userData = {
-            //   likedNum: user.likedNum,
-            //   password: '',
-            //   playedNum: 0,
-            //   videoNum: 0,
-            //   age: user.age,
-            //   area: user.area,
-            //   avatar: user.avatar,
-            //   email: user.email,
-            //   gender: user.gender,
-            //   id: user.id as number,
-            //   nickName: user.nickName,
-            //   registerTime: user.registerTime,
-            //   signature: user.signature
-            // }
-            // localStorage.setItem('currentUser', userId.toString())
+            this.refreshUserLikeTags()
             this.setStoreToken(true)
             const mainStore = useMainStore()
             mainStore.setLoginVisible(false)
@@ -221,6 +206,7 @@ export const useUserStore = defineStore('user', {
     adminLogin() {
       this.isAdmin = true
       this.userData = undefined
+      this.refreshUserLikeTags()
       this.setStoreToken(true)
       const mainStore = useMainStore()
       mainStore.setLoginVisible(false)
@@ -269,9 +255,13 @@ export const useUserStore = defineStore('user', {
       })
     },
     refreshUserLikeTags() {
-      getUserLikeTags(this.getCurrentUserNotAdmin.id).then((tags) => {
-        this.userLikeTags = tags
-      })
+      if (this.isUserNotAdmin()) {
+        getUserLikeTags(this.getCurrentUserNotAdmin.id).then((tags) => {
+          this.userLikeTags = tags
+        })
+      } else {
+        this.userLikeTags = []
+      }
     }
   }
 })

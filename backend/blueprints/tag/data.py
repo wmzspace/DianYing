@@ -28,14 +28,14 @@ def get_tag_statistic():
 
 
 channel_dict = {
-    "knowledge": ["知识"],
-    "hot": ["热点"],
+    "knowledge": ["知识", "ppt教学", "拍摄技巧"],
+    "hot": ["热点", "热门"],
     "game": ["游戏"],
     "entertainment": ["娱乐"],
     "ACGN": ["二次元"],
     "music": ["音乐"],
     "delicacy": ["美食"],
-    "sports": ["体育"],
+    "sports": ["体育", "篮球"],
     "fashions": ["时尚"],
 }
 

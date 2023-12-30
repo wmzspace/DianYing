@@ -114,12 +114,11 @@ const handleSearch = (value: string) => {
 <template>
   <div id="a-header">
     <header>
-      <!--      'hover', 'focus'-->
       <a-popover
         v-model:popup-visible="searchPopVisible"
         position="bottom"
         id="popover-a-search"
-        :trigger="['click']"
+        :trigger="['hover', 'focus']"
         @popup-visible-change="
           (visible) => {
             if (visible) {

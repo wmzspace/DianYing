@@ -49,61 +49,6 @@ getVideoInfoById(props.video_id)
     Message.error(e)
   })
 
-// getVideoById(props.video_id)
-//   .then((res: VideoMedia | undefined) => {
-//     video.value = _.cloneDeep(res)
-//   })
-//   .catch((e) => {
-//     Message.error(e)
-//   })
-
-// const CommentCardRefs = ref()
-// const focusComment = (
-//   finder: CommentFinder,
-//   root_comment: HTMLElement | undefined
-// ): HTMLElement | undefined => {
-//   // if (finder === undefined) {
-//   //   return
-//   // }
-//   // console.log(root_comment)
-//   // console.log(finder)
-//   if (root_comment === undefined) {
-//     let firstElement: HTMLElement | null = document.querySelector('.comment-item')
-//     // console.log(firstElement)
-//     if (firstElement === null) {
-//       return undefined
-//     }
-//
-//     let childNodes = (firstElement.parentNode as HTMLElement).children
-//     let siblingsArray = Array.from(childNodes) as HTMLElement[]
-//     let commentElements = siblingsArray.filter((sibling) => {
-//       return sibling.classList.contains('comment-item')
-//     })
-//     // .querySelectorAll('~ .comment-item')[finder.index]
-//     // console.log('commentElements', commentElements)
-//     return focusComment(finder.children as CommentFinder, commentElements[finder.index])
-//   }
-//   if (finder.children === undefined) {
-//     return root_comment.getElementsByClassName('comment-item')[finder.index] as HTMLElement
-//   }
-//   // nextTick(() => {
-//
-//   let childrenElements = root_comment.getElementsByClassName('comment-item')[finder.index]
-//   return focusComment(finder.children, childrenElements as HTMLElement)
-//
-//   // nextTick(() => {
-//   // })
-//   // let target = comments[i]
-//   // target.scrollIntoView({ behavior: 'smooth' })
-//   // .scrollIntoView({ behavior: 'smooth' })
-//   // console.log(comments[i])
-//   // target.classList.add('animated')
-//   // setTimeout(() => {
-//   // target.classList.remove('animated')
-//   // }, 1000)
-//   // })
-// }
-
 const commentsNum = ref(0)
 const refreshCommentsNum = () => {
   getCommentsByVideoIdOrParent(parseInt(props.video_id), undefined).then((res) => {
@@ -215,49 +160,19 @@ const createPlayer = (video: VideoRecord) => {
     dynamicBg: {
       disable: false
     },
+    controls: true,
+
     screenShot: true, //显示截图按钮
     videoAttributes: {
       crossOrigin: 'anonymous'
     },
     fitVideoSize: video.width > video.height ? 'fixed' : 'fixHeight',
     videoFillMode: video.width > video.height ? 'cover' : undefined,
-    danmu: {
-      comments: [
-        //弹幕数组
-        {
-          duration: 15000, //弹幕持续显示时间,毫秒(最低为5000毫秒)
-          id: '1', //弹幕id，需唯一
-          start: 3000, //弹幕出现时间，毫秒
-          prior: true, //该条弹幕优先显示，默认false
-          color: true, //该条弹幕为彩色弹幕，默认false
-          txt: '长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕长弹幕', //弹幕文字内容
-          style: {
-            //弹幕自定义样式
-            color: '#ff9500',
-            fontSize: '20px',
-            border: 'solid 1px #ff9500',
-            borderRadius: '50px',
-            padding: '5px 11px',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)'
-          },
-          mode: 'top' //显示模式，top顶部居中，bottom底部居中，scroll滚动，默认为scroll
-          // el: DOM //直接传入一个自定义的DOM元素作为弹幕，使用该项的话会忽略所提供的txt
-          // eventListeners: [{ //支持自定义DOM设置DOM监听事件
-          //   event: 'click',
-          //   listener: function (e) {
-          //     console.log('click')
-          //   },
-          //   useCapture: false,
-          // }]
-        }
-      ]
-    },
     url: video.url,
     height: '100%',
     width: '100%',
     autoplayMuted: true,
     autoplay: true,
-    // playsinline: true,
     download: true
   })
 }

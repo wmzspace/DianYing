@@ -335,10 +335,14 @@ def get_video_info(video_id):
 # API: 更新视频信息
 @video_bp.route('/edit', methods=['POST'])
 def edit_video_by_id():
-    video_id = request.args.get('videoId')
-    status = request.args.get('status')
-    video_title = request.args.get('title')
-    author_id = request.args.get('authorId')
+    # video_id = request.args.get('videoId')
+    # status = request.args.get('status')
+    # video_title = request.args.get('title')
+    # author_id = request.args.get('authorId')
+    video_id = request.json.get('videoId')
+    status = request.json.get('status')
+    video_title = request.json.get('title')
+    author_id = request.json.get('authorId')
 
     if status is None or video_title is None or author_id is None or video_id is None:
         return AjaxResponse.error("参数缺失")

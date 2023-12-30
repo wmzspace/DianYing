@@ -98,7 +98,7 @@ export const pullVideo = (request?: pullVideoRequest) =>
     const allStatusString =
       request && typeof request.allStatus !== 'undefined' ? `&all_status=${request.allStatus}` : ''
     const searchString =
-      request && typeof request.searchText !== 'undefined'
+      request && typeof request.searchText !== 'undefined' && request.searchText.length > 0
         ? `&search_text=${request.searchText}`
         : ''
 
@@ -323,17 +323,25 @@ export interface EditVideoForm {
 
 export const editVideoById = (formData: EditVideoForm) =>
   new Promise<void>((resolve, reject) => {
-    fetch(
-      prefix_url
-        .concat('video/edit?')
-        .concat(`&videoId=${formData.videoId}`)
-        .concat(`&title=${formData.title}`)
-        .concat(`&authorId=${formData.authorId}`)
-        .concat(`&status=${formData.status}`),
-      {
-        method: 'POST'
+    // fetch(
+    //   prefix_url
+    //     .concat('video/edit?')
+    //     .concat(`&videoId=${formData.videoId}`)
+    //     .concat(`&title=${formData.title}`)
+    //     .concat(`&authorId=${formData.authorId}`)
+    //     .concat(`&status=${formData.status}`),
+    //   {
+    //     method: 'POST'
+    //   }
+    // )
+
+    fetch(prefix_url.concat('video/edit?'), {
+      method: 'POST',
+      body: JSON.stringify(formData),
+      headers: {
+        'Content-Type': 'application/json'
       }
-    )
+    })
       .then((res) => {
         if (res.ok) {
           res.json().then((ajaxData: AjaxResponse) => {

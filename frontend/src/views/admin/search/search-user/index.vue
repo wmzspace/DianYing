@@ -132,7 +132,7 @@
       <a-table
         row-key="id"
         :loading="loading || editLoading"
-        :pagination="true"
+        :pagination="pagination"
         :columns="cloneColumns as TableColumnData[]"
         :data="renderData"
         :bordered="false"
@@ -271,9 +271,13 @@ const editLoadObject = useLoading()
 const editLoading = editLoadObject.loading
 const setEditLoading = editLoadObject.setLoading
 
+const getRecordIndex = (rowIndex: number) => {
+  return pagination.pageSize * (pagination.current - 1) + rowIndex
+}
+
 const handleDeleteUser = (record: UserRecord, rowIndex: number) => {
   setEditLoading(true)
-  if (record.id !== renderData.value[rowIndex].id) {
+  if (record.id !== renderData.value[getRecordIndex(rowIndex)].id) {
     Message.error({
       id: 'videoEdit',
       content: '删除失败：数据异常'
@@ -311,7 +315,7 @@ const size = ref<SizeProps>('medium')
 
 const basePagination: Pagination = {
   current: 1,
-  pageSize: 20
+  pageSize: 10
 }
 const pagination = reactive({
   ...basePagination
@@ -494,7 +498,7 @@ const fetchData = async (params: PolicyParamsUser = { current: 1, pageSize: 20 }
 
       const data: UserListRes = {
         list: results,
-        total: 0
+        total: results.length
       }
       renderData.value = data.list
       pagination.current = params.current
@@ -509,62 +513,6 @@ const fetchData = async (params: PolicyParamsUser = { current: 1, pageSize: 20 }
       location.reload()
     })
   return
-  // pullVideo({
-  //   tagsName: params.tags,
-  //   tagFilterMode: 'filterAll',
-  //   sort: 'sort'
-  // }).then((videos) => {
-  //   const promises = videos.map(
-  //     async (video): Promise<VideoRecord> =>
-  //       getVideoInfoById(video.id)
-  //         .then((record) => record)
-  //         .catch((e) => {
-  //           // 处理错误
-  //           Message.error({
-  //             id: 'videoList',
-  //             content: e.message
-  //           })
-  //           // 返回一个标记错误的值或者抛出一个新的错误，具体取决于你的需求
-  //           throw e.message
-  //         })
-  //   )
-  //   Promise.all(promises).then((records) => {
-  //     let results = records
-  //     if (params.authorName) {
-  //       results = results.filter((record) =>
-  //         record.authorName.includes(params.authorName as string)
-  //       )
-  //     }
-  //     if (params.videoTitle) {
-  //       results = results.filter((record) =>
-  //         record.videoTitle.includes(params.videoTitle as string)
-  //       )
-  //     }
-  //     if (params.contentType) {
-  //       results = results.filter((record) => record.contentType === params.contentType)
-  //     }
-  //     if (params.status) {
-  //       results = results.filter((record) => record.status === params.status)
-  //     }
-  //     if (params.publishTime && params.publishTime.length === 2) {
-  //       results = results.filter((record) =>
-  //         isTimeInRange(params.publishTime as unknown as string[], record.publishTime)
-  //       )
-  //     }
-  //
-  //     const data: VideoListRes = {
-  //       list: results,
-  //       total: 0
-  //     }
-  //     const editableList = data.list as VideoRecordCanEdit[]
-  //     editableList.forEach((item) => (item.isEditing = false))
-  //     renderData.value = editableList
-  //     editingData.value = _.cloneDeep(renderData.value)
-  //     pagination.current = params.current
-  //     pagination.total = data.total
-  //     setLoading(false)
-  //   })
-  // })
 }
 
 const search = () => {

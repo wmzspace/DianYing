@@ -43,9 +43,6 @@ const createPlay = (video: VideoRecord) => {
       url: video.url,
       width: '100%',
       height: '100%',
-      playNext: {
-        urlList: videoList.value.map((v) => v.url)
-      },
       autoplay: true,
       autoplayMuted: true,
       // fluid: true,
@@ -96,7 +93,7 @@ const handlePlayNext = () => {
       content: '加载中...'
     })
     nextAfterLoad.value = true
-    getMoreVideos(5).then(() => {
+    getMoreVideos(3, false).then(() => {
       Message.success({
         id: 'loadMore',
         content: '更新成功'
@@ -225,28 +222,45 @@ const slideList = ref()
 
 const parentHeight = ref(0)
 
-const getMoreVideos = (num: number) =>
+const getMoreVideos = (num: number, withoutTag: boolean) =>
   new Promise<void>((resolve, reject) => {
     setLoadingVideo(true)
-    pullVideo({ num: num }).then((res: VideoMedia[]) => {
-      const newVideos: VideoRecord[] = []
-      res.forEach((v) => {
-        getVideoInfoById(v.id).then((record) => {
-          newVideos.push(record)
-          if (newVideos.length >= res.length) {
-            _.shuffle(newVideos).forEach((video) => {
-              videoList.value.push(video)
-            })
-            nextTick(() => {
-              setLoadingVideo(false)
-              createPlay(videoList.value[currentPlayIndex.value])
-              refreshVideoLikeAndStar()
-              resolve()
-            })
-          }
+    pullVideo({ num: num, tagsName: withoutTag ? [] : userStore.userLikeTags }).then(
+      (res: VideoMedia[]) => {
+        const newVideos: VideoRecord[] = []
+        res.forEach((v) => {
+          getVideoInfoById(v.id).then((record) => {
+            newVideos.push(record)
+            if (newVideos.length >= res.length) {
+              let validNum = 0
+              _.shuffle(newVideos).forEach((video) => {
+                if (videoList.value.map((v) => v.videoId).includes(video.videoId)) {
+                  //
+                } else {
+                  validNum++
+                  videoList.value.push(video)
+                }
+              })
+              if (validNum === 0) {
+                if (!withoutTag) {
+                  Message.info('暂无更多个性化推荐，正在为您推荐其他类型视频')
+                  getMoreVideos(3, true)
+                } else {
+                  Message.info('暂无更多视频推荐，您可以前往"投稿"发布新视频')
+                }
+              } else {
+                nextTick(() => {
+                  createPlay(videoList.value[currentPlayIndex.value])
+                  refreshVideoLikeAndStar()
+                  resolve()
+                })
+                setLoadingVideo(false)
+              }
+            }
+          })
         })
-      })
-    })
+      }
+    )
   })
 
 const adjustHeight = (animation: boolean) => {
@@ -269,7 +283,7 @@ const resizeEventHandler = () => {
   adjustHeight(false)
 }
 
-getMoreVideos(2).then(() => {
+getMoreVideos(3, true).then(() => {
   watch(
     () => userStore.userData,
     (value) => {
