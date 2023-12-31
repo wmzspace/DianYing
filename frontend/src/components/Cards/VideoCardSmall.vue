@@ -22,7 +22,15 @@ onMounted(() => {
 <template>
   <a-list-item action-layout="vertical">
     <template #extra>
-      <router-link :to="`/video/${props.video.id}`">
+      <a
+        @click="
+          $router.push({
+            name: 'videoDetail',
+            params: { video_id: props.video.id },
+            query: { validate: 'ignore' }
+          })
+        "
+      >
         <div class="image-area">
           <a-image
             alt="related video"
@@ -32,11 +40,20 @@ onMounted(() => {
             :preview="false"
           />
         </div>
-      </router-link>
+      </a>
     </template>
     <a-list-item-meta>
       <template #title>
-        <router-link :to="`/video/${props.video.id}`">{{ props.video.title }} </router-link>
+        <a
+          @click="
+            $router.push({
+              name: 'videoDetail',
+              params: { video_id: props.video.id },
+              query: { validate: 'ignore' }
+            })
+          "
+          >{{ props.video.title }}
+        </a>
       </template>
     </a-list-item-meta>
     <span class="action"> <IconHeart /> <span>1</span> </span>

@@ -36,7 +36,7 @@ const props = defineProps<{
 }>()
 const comments: (Comment | undefined)[] = reactive([])
 
-let relatedList: VideoMedia[] = reactive([])
+let relatedList = ref<VideoMedia[]>([])
 
 const video = ref<VideoRecord | undefined>(undefined)
 const author = ref<UserRecord | undefined>(undefined)
@@ -91,7 +91,7 @@ watch(video, (value) => {
     videoStarShowNum.value = 0
     isStarred.value = false
     author.value = undefined
-    relatedList.splice(0)
+    relatedList.value = []
     commentsNum.value = 0
     userStore.getUserInfoById(value.authorId).then((user) => {
       author.value = user
@@ -108,10 +108,10 @@ watch(video, (value) => {
     isProcessStar.value = false
     isProcessLike.value = false
     refreshRootCommentList()
-    pullVideo({ num: 10 }).then((res) => {
-      relatedList.splice(0)
+    pullVideo({ num: 10, tagsName: value.tags }).then((res) => {
+      relatedList.value = []
       res.forEach((e) => {
-        relatedList.push(e)
+        relatedList.value.push(e)
       })
     })
     player.value?.destroy()
@@ -182,7 +182,6 @@ onBeforeRouteUpdate((to) => {
   // getVideoById(to.params['video_id'][0]).then((res: VideoMedia | undefined) => {
   //   video.value = _.cloneDeep(res)
   // })
-  console.log('!!!', to.params['video_id'][0])
   getVideoInfoById(to.params['video_id'][0])
     .then((record) => {
       video.value = _.cloneDeep(record)
