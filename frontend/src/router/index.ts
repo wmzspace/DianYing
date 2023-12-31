@@ -20,13 +20,6 @@ let routes: Array<RouteRecordRaw> = [
     path: '/:catchAll(.*)', // 不识别的path自动匹配404
     component: () => import('@/views/Status404.vue')
   },
-  // {
-  //   path: '/',
-  //   redirect: '/discover',
-  //   meta: {
-  //     layout: 'a'
-  //   }
-  // },
   {
     path: '/discover',
     name: 'discover',
@@ -70,8 +63,6 @@ let routes: Array<RouteRecordRaw> = [
     meta: {
       layout: 'a',
       key: '5'
-      // requiresAuth: true,
-      // roles: ['user', 'admin']
     },
     component: () => import('@/views/user/profile/UserProfileView.vue'),
     props: true
@@ -162,59 +153,10 @@ let routes: Array<RouteRecordRaw> = [
         component: logView
       }
     ]
-    // component: () => import('@/views/DashboardView.vue')
   },
   CATEGORIES
-  // TODO: EXCEPTION
-  // children: [
-  //   // 当 /user/:id 匹配成功
-  //   // UserHome 将被渲染到 User 的 <router-view> 内部
-  //   { path: '', component: VideoDetailView }
-  //
-  //   // ...其他子路由
-  // ],
-  // {
-  //   path: '/tables',
-  //   name: '明细',
-  //   meta: {
-  //     layout: 'dashboard'
-  //   },
-  //   component: () => import('../views/TablesView.vue')
-  // },
-  // {
-  //   path: '/settings',
-  //   name: '设置',
-  //   meta: {
-  //     layout: 'dashboard'
-  //   },
-  //   component: () => import('../views/SettingsView.vue')
-  // }
-  // {
-  //   path: "/billing",
-  //   name: "记账",
-  //   meta: {
-  //     layout: "dashboard",
-  //   },
-  //   component: () => import("../views/TablesView.vue"),
-  // },
-  // {
-  //   path: "/",
-  //   name: "home",
-  //   component: HomeView,
-  // },
-  // {
-  //   path: "/about",
-  //   name: "about",
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
-  // },
 ]
 
-// Adding layout property from each route to the meta
-// object so it can be accessed later.
 function addLayoutToRoute(route: RouteRecordRaw, parentLayout = 'a') {
   route.meta = route.meta || {}
   route.meta.layout = route.meta.layout || parentLayout
@@ -246,16 +188,9 @@ const router = createRouter({
   }
 })
 
-export const canUserAccess = () =>
-  new Promise((resolve, reject) => {
-    resolve(true)
-  })
-
-// router/index.js
 router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
   const mainStore = useMainStore()
-  // const isAuthenticated = userStore.isAdmin
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
   if (requiresAuth) {

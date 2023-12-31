@@ -134,44 +134,6 @@ export const pullVideo = (request?: pullVideoRequest) =>
       })
   })
 
-// export const getVideoByVideoId = (videoId: number | undefined, parentId: number | undefined) => {
-//   const result: VideoMedia[] = []
-//   const videoString = videoId === undefined ? '' : `&video_id=${videoId}`
-//   const parentString = parentId === undefined ? '' : `&parent_id=${parentId}`
-//   return new Promise<VideoMedia[]>((resolve, reject) => {
-//     fetch(prefix_url.concat(`video/get?`).concat(videoString).concat(parentString), {
-//       method: 'POST'
-//     })
-//       .then((res) => {
-//         if (res.ok) {
-//           res.json().then((ajaxData: AjaxResponse) => {
-//             if (ajaxData.ajax_ok) {
-//               const data = ajaxData.ajax_data as RawVideo[]
-//               data.forEach((e) => {
-//                 const video: VideoMedia = {
-//                   authorId: e.author_id,
-//                   content: e.content,
-//                   publishTime: e.publish_time,
-//                   id: e.id,
-//                   parentId: e.parent_id === null ? undefined : e.parent_id,
-//                   videoId: e.video_id
-//                 }
-//                 result.push(video)
-//               })
-//               resolve(_.cloneDeep(result))
-//             } else {
-//               Message.info(ajaxData.ajax_msg)
-//             }
-//           })
-//         }
-//       })
-//       .catch((e) => {
-//         Message.error(e)
-//         reject(e)
-//       })
-//   })
-// }
-
 export const getVideoActionUsersByVideoId = (videoId: number | string, action: string) =>
   new Promise<number[]>((resolve, reject) => {
     fetch(prefix_url.concat(`video/get/actions?video_id=${videoId}&action=${action}`))
