@@ -344,7 +344,7 @@ const columns = computed<TableColumnData[]>(() => [
     title: t('searchTable.user.columns.index'),
     dataIndex: 'index',
     slotName: 'index',
-    width: 40,
+    width: 75,
     fixed: 'left'
   },
   {

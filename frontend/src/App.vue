@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { onBeforeRouteUpdate, RouterView, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { computed, onBeforeMount, onMounted } from 'vue'
 import { adminUser, useUserStore } from '@/store/user/'
 import LoginCard from '@/components/Cards/LoginCard.vue'
 import { useMainStore } from '@/store/main'
-// import { useUserStore } from '@/store'
-// import { useStore } from '@/store'
 
 const route = useRoute()
 // 配置布局
@@ -16,7 +14,6 @@ const userStore = useUserStore()
 import useLocale from '@/hooks/locale'
 import enUS from '@arco-design/web-vue/es/locale/lang/en-us'
 import zhCN from '@arco-design/web-vue/es/locale/lang/zh-cn'
-import { Message } from '@arco-design/web-vue'
 
 const { currentLocale } = useLocale()
 const locale = computed(() => {
@@ -46,10 +43,6 @@ onBeforeMount(() => {
   }
 })
 
-// onBeforeRouteUpdate(() => {
-//
-// })
-
 onMounted(() => {
   document.documentElement.style.height = `${window.innerHeight}px`
   window.addEventListener('resize', () => {
@@ -75,20 +68,6 @@ onMounted(() => {
     <LoginCard />
   </a-config-provider>
   <!-- Component Library Config Provider-->
-
-  <!--    <header>-->
-  <!--      <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />-->
-  <!--      <div class="wrapper">-->
-  <!--        <HelloWorld msg="You did it!" />-->
-  <!--        <nav>-->
-  <!--          <RouterLink to="/">Home</RouterLink>-->
-  <!--          <RouterLink to="/about">About</RouterLink>-->
-  <!--        </nav>-->
-  <!--      </div>-->
-  <!--    </header>-->
-  <!--  <div class="test">-->
-  <!--    <RouterView />-->
-  <!--  </div>-->
 </template>
 
 <style>

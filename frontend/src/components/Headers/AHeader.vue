@@ -308,15 +308,15 @@ const handleSearch = (value: string) => {
             >
             <template #title>
               <div class="profile-header">
-                <!--                <div class="basic-info">-->
-                <!--                  <a-avatar>-->
-                <!--                    <img alt="avatar" src="/images/avatar.jpeg" />-->
-                <!--                  </a-avatar>-->
                 <div
                   class="name"
                   @click="
                     () => {
                       if (!userStore.isAdmin) {
+                        if (userStore.userData === undefined) {
+                          mainStore.setLoginVisible(true)
+                          return
+                        }
                         $router.push({
                           name: 'userProfile',
                           params: { user_id: userStore.getCurrentUserNotAdmin.id }
@@ -329,10 +329,6 @@ const handleSearch = (value: string) => {
                   {{ userStore.getUserNickname }}
                   <icon-right />
                 </div>
-                <!--                  <div class="statistic">-->
-                <!--                    <span> 关注 <span>10</span></span>-->
-                <!--                    <span> 粉丝 <span>8000</span></span>-->
-                <!--                  </div>-->
                 <div
                   class="trust-login-switch"
                   v-if="userStore.isAdmin || userStore.userData !== undefined"
@@ -347,7 +343,6 @@ const handleSearch = (value: string) => {
                   />
                 </div>
                 <div v-else class="guest-replace-trust-login">登录后可查看喜欢收藏历史</div>
-                <!--                  </div>-->
               </div>
             </template>
             <template #content>
@@ -356,6 +351,11 @@ const handleSearch = (value: string) => {
                 @click="
                   () => {
                     if (!userStore.isAdmin) {
+                      if (userStore.userData === undefined) {
+                        mainStore.setLoginVisible(true)
+                        return
+                      }
+
                       $router.push({
                         name: 'userProfile',
                         params: { user_id: userStore.getCurrentUserNotAdmin.id }
