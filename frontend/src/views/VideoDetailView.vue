@@ -83,49 +83,52 @@ const refreshVideoRecord = () => {
     })
 }
 
-watch(video, (value) => {
-  if (value !== undefined) {
-    videoRecord.value = undefined
-    videoLikeShowNum.value = 0
-    isLiked.value = false
-    videoStarShowNum.value = 0
-    isStarred.value = false
-    author.value = undefined
-    relatedList.value = []
-    commentsNum.value = 0
-    userStore.getUserInfoById(value.authorId).then((user) => {
-      author.value = user
-      if (value.status !== 'online' && !userStore.isAdminOrCurUser(author.value.id)) {
-        Message.warning({
-          id: 'videoNotOnline',
-          content: '视频不存在'
-        })
-        router.replace({ name: 'discover' })
-      }
-    })
-    refreshVideoRecord()
-    refreshVideoLikeAndStar()
-    isProcessStar.value = false
-    isProcessLike.value = false
-    refreshRootCommentList()
-    pullVideo({ num: 10, tagsName: value.tags }).then((res) => {
+watch(
+  () => video.value,
+  (value) => {
+    if (value !== undefined) {
+      videoRecord.value = undefined
+      videoLikeShowNum.value = 0
+      isLiked.value = false
+      videoStarShowNum.value = 0
+      isStarred.value = false
+      author.value = undefined
       relatedList.value = []
-      res.forEach((e) => {
-        relatedList.value.push(e)
+      commentsNum.value = 0
+      userStore.getUserInfoById(value.authorId).then((user) => {
+        author.value = user
+        if (value.status !== 'online' && !userStore.isAdminOrCurUser(author.value.id)) {
+          Message.warning({
+            id: 'videoNotOnline',
+            content: '视频不存在'
+          })
+          router.replace({ name: 'discover' })
+        }
       })
-    })
-    player.value?.destroy()
-    player.value = createPlayer(value)
-    player.value.on(Events.LOADED_DATA, calculateContainerPositions)
-    player.value.on(Events.AUTOPLAY_STARTED, () => {
-      if (userStore.isUserNotAdmin()) {
-        recordVideoPlay(props.video_id, userStore.getCurrentUserNotAdmin.id).catch((msg) => {
-          Message.error('历史记录添加失败: ' + msg)
+      refreshVideoRecord()
+      refreshVideoLikeAndStar()
+      isProcessStar.value = false
+      isProcessLike.value = false
+      refreshRootCommentList()
+      pullVideo({ num: 10, tagsName: value.tags }).then((res) => {
+        relatedList.value = []
+        res.forEach((e) => {
+          relatedList.value.push(e)
         })
-      }
-    })
+      })
+      player.value?.destroy()
+      player.value = createPlayer(value)
+      player.value.on(Events.LOADED_DATA, calculateContainerPositions)
+      player.value.on(Events.AUTOPLAY_STARTED, () => {
+        if (userStore.isUserNotAdmin()) {
+          recordVideoPlay(props.video_id, userStore.getCurrentUserNotAdmin.id).catch((msg) => {
+            Message.error('历史记录添加失败: ' + msg)
+          })
+        }
+      })
+    }
   }
-})
+)
 const calculateContainerPositions = () => {
   if (video.value === undefined) {
     return
@@ -178,11 +181,7 @@ const createPlayer = (video: VideoRecord) => {
 }
 
 onBeforeRouteUpdate((to) => {
-  // console.log(to, from)
-  // getVideoById(to.params['video_id'][0]).then((res: VideoMedia | undefined) => {
-  //   video.value = _.cloneDeep(res)
-  // })
-  getVideoInfoById(to.params['video_id'][0])
+  getVideoInfoById(to.params['video_id'] as string)
     .then((record) => {
       video.value = _.cloneDeep(record)
     })
@@ -205,8 +204,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  console.log('leave detail view')
-
   window.removeEventListener('resize', resizeEventHandler)
 })
 
