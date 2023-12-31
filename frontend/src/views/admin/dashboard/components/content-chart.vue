@@ -9,7 +9,7 @@
       :title="$t('workplace.contentData')"
     >
       <template #extra>
-        <a-link>{{ $t('workplace.viewMore') }}</a-link>
+        <span>最近七天</span>
       </template>
       <Chart height="289px" :option="chartOption" />
     </a-card>

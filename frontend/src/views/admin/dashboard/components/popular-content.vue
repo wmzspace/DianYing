@@ -9,7 +9,8 @@
         {{ $t('workplace.popularContent') }}
       </template>
       <template #extra>
-        <a-link>{{ $t('workplace.viewMore') }}</a-link>
+        <!--        <a-link>{{ $t('workplace.viewMore') }}</a-link>-->
+        <span>热度 Top10</span>
       </template>
       <a-space direction="vertical" :size="10" fill>
         <a-radio-group v-model:model-value="type" type="button">
@@ -104,7 +105,7 @@ const rankingArr = computed(() =>
 setLoading(true)
 getVideoInfoAll()
   .then((records) => {
-    renderList.value = records.sort((a, b) => b.playCount - a.playCount)
+    renderList.value = records.sort((a, b) => b.playCount - a.playCount).slice(0, 10)
   })
   .finally(() => {
     setLoading(false)
