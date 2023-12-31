@@ -20,12 +20,10 @@ class Config:
     # FLASKY_MAIL_SENDER = 'Flasky Admin <flasky@example.com>'
     # FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
     SQLALCHEMY_TRACK_MODIFICATIONS = True  # 动态追踪修改设置
-    # SQLALCHEMY_ECHO = True
     SECRET_KEY = "web2_cwk2"
     username = "web2_cwk2"
     password = SECRET_KEY
     ipaddress = "server.wmzspace.space"
-    # ipaddress = "www.wmzspace.space"
     port = "3306"
     database = "web2_cwk2"
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{username}:{password}@{ipaddress}:{port}/{database}"
@@ -41,6 +39,7 @@ class Config:
         # 执行当前需要的环境的初始化
         CORS(app)
 
+        # 删除过期的验证码记录
         def delete_due_registry(email, code_timestamp):
             with app.app_context():
                 exist = Register.query.filter_by(
@@ -50,7 +49,7 @@ class Config:
                     db.session.flush()
                     db.session.commit()
 
-        # 在记录插入后调度删除任务
+        # 在验证码记录插入后调度删除任务
         @event.listens_for(Register, 'after_insert')
         def schedule_record_deletion(mapper, connection, target: Register):
             scheduler.add_job(delete_due_registry, 'date',
@@ -61,14 +60,6 @@ class Config:
 class DevelopmentConfig(Config):
     # 开发环境
     DEBUG = True
-    # SQLALCHEMY_RECORD_QUERIES = True
-    # MAIL_SERVER = 'smtp.googlemail.com'
-    # MAIL_PORT = 587
-    # MAIL_USE_TLS = True
-    # MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    # MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-    #                           'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 
 class TestingConfig(Config):

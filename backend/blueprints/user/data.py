@@ -11,20 +11,23 @@ from exts import AjaxResponse, db
 from models import User, model2dict
 
 
-# API 获取全部用户信息 Depressed
-@user_bp.route('/all', methods=['GET'])
-def get_all_users():
-    return model2dict(User.query.all())
-
-
-# API 查询用户 Depressed
-@user_bp.route('/get', methods=['GET'])
-def query_user():
-    user_id = request.args.get("id")
-    target = User.query.filter_by(id=user_id).first()
-    if target is None:
-        return model2dict([])
-    return model2dict([target])
+# API: 根据id/全部 查询用户
+@user_bp.route('/info/<param>', methods=['GET'])
+def get_user_info(param):
+    if param == "all":
+        users = User.query.all()
+        result = []
+        for user in users:
+            record = UserRecord(user)
+            result.append(record)
+        return model2dict(result)
+    else:
+        if not str(param).isdigit():
+            return "param应为user_id", 404
+        user = User.query.get(int(param))
+        if user is None:
+            return "用户不存在", 404
+        return UserRecord(user).__dict__
 
 
 # API 获取用户喜欢/收藏/播放了哪些视频
@@ -225,20 +228,17 @@ class UserRecord:
         self.playedNum = len(user.video_play)
 
 
-# API: 全部/根据id查询用户
-@user_bp.route('/info/<param>', methods=['GET'])
-def get_user_info(param):
-    if param == "all":
-        users = User.query.all()
-        result = []
-        for user in users:
-            record = UserRecord(user)
-            result.append(record)
-        return model2dict(result)
-    else:
-        if not str(param).isdigit():
-            return "param应为user_id", 404
-        user = User.query.get(int(param))
-        if user is None:
-            return "用户不存在", 404
-        return UserRecord(user).__dict__
+# API 获取全部用户信息 Depressed
+@user_bp.route('/all', methods=['GET'])
+def get_all_users():
+    return model2dict(User.query.all())
+
+
+# API 查询用户 Depressed
+@user_bp.route('/get', methods=['GET'])
+def query_user():
+    user_id = request.args.get("id")
+    target = User.query.filter_by(id=user_id).first()
+    if target is None:
+        return model2dict([])
+    return model2dict([target])

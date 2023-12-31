@@ -36,6 +36,7 @@ def get_all_videos():
     if tags_name_raw is not None:
         query_tags_name = tags_name_raw.split(',')
 
+    # 处理排序/非上线视频查询
     if sort == "sort":
         if all_status == "all":
             all_videos = Video.query.order_by(db.desc(Video.id)).all()
@@ -47,6 +48,7 @@ def get_all_videos():
         else:
             all_videos = Video.query.filter_by(status="online").order_by(func.random()).all()
 
+    # 处理按搜索词查询
     if search_text is not None and search_text != '':
         def search_video(f_video):
             if search_text in f_video.title or search_text in f_video.author.nickname:
@@ -64,9 +66,12 @@ def get_all_videos():
 
     results = []
     for video in all_videos:
+        # 处理按作者查询
         if author_id is not None and video.author_id != author_id:
             continue
         if len(query_tags_name) > 0:
+            # 处理按标签查询(CORE 用户潜在兴趣推流核心函数)
+
             tags = VTRelation.query.filter_by(video_id=video.id).all()
             if tag_filter_mode == "filterAll":
                 # 返回包含所有标签的视频

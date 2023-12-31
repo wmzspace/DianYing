@@ -34,7 +34,7 @@ config[config_name].init_app(app)
 # sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='gb18030')
 
 def on_before__models_committed(sender, changes):
-    # 处理模型提交事件
+    # 监听提交事件并写入日志数据库
     for change in changes:
         model = change[0]
         if model.__tablename__ != 'database_logs':

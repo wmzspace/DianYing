@@ -1,25 +1,18 @@
 # 导入所需包
 import json
 
-from exts import db, scheduler
+from exts import db
 from exts import PREFIX_URL
 import copy
 import datetime
 from typing import Any
 
-import numpy
-from apscheduler.schedulers.background import BackgroundScheduler
-from flask_sqlalchemy.record_queries import get_recorded_queries
-from flask_sqlalchemy.track_modifications import models_committed
-from sqlalchemy import event
-from flask import current_app, signals
+from flask import current_app
 
 app = current_app
 
 
-# PREFIX_URL = 'http://192.168.1.104:5000/'
-
-
+# 模型转字典
 def model2dict(models: list[Any] | None) -> list[Any]:
     """
         This is model to dict function
@@ -43,6 +36,7 @@ def model2dict(models: list[Any] | None) -> list[Any]:
     return result
 
 
+# MODEL: 定义用户模型
 class User(db.Model):
     __tablename__ = 'users'
     __description__ = '用户'
@@ -123,6 +117,7 @@ class User(db.Model):
             self.register_time = args['register_time']
 
 
+# MODEL: 定义验证码注册模型
 class Register(db.Model):
     __tablename__ = "registers"
     __description__ = '验证码记录'
@@ -142,6 +137,7 @@ class Register(db.Model):
         return f"{self.id}"
 
 
+# MODEL: 定义视频模型
 class Video(db.Model):
     __tablename__ = 'videos'
     __description__ = '视频'
@@ -211,6 +207,7 @@ class Video(db.Model):
             self.publish_time = args['publish_time']
 
 
+# MODEL: 定义视频标签模型
 class VTag(db.Model):
     __tablename__ = 'tags'
     __description__ = '标签'
@@ -277,6 +274,7 @@ class VTag(db.Model):
         pass
 
 
+# MODEL: 定义视频标签关系模型
 class VTRelation(db.Model):
     __tablename__ = 'video_tag_relation'
     __description__ = '视频标签关系'
@@ -322,7 +320,7 @@ class VTRelation(db.Model):
         back_populates="vt_relations")
 
 
-# 定义评论模型
+# MODEL: 定义评论模型
 class Comment(db.Model):
     __tablename__ = 'comments'
     __description__ = '评论'
@@ -396,7 +394,7 @@ class Comment(db.Model):
             self.publish_time = args['publish_time']
 
 
-# 定义视频播放统计模型
+# MODEL: 定义视频播放统计模型
 class VideoPlay(db.Model):
     __tablename__ = 'video_plays'
     __description__ = '视频播放记录'
@@ -427,7 +425,7 @@ class VideoPlay(db.Model):
     video = db.relationship("Video", back_populates="video_played")
 
 
-# 定义视频点赞统计模型
+# MODEL: 定义视频点赞统计模型
 class VideoLike(db.Model):
     __tablename__ = 'video_likes'
     __description__ = '视频点赞记录'
@@ -458,7 +456,7 @@ class VideoLike(db.Model):
     video = db.relationship("Video", back_populates="video_liked")
 
 
-# 定义视频收藏统计模型
+# MODEL: 定义视频收藏统计模型
 class VideoStar(db.Model):
     __tablename__ = 'video_stars'
     __description__ = '视频收藏记录'
@@ -488,7 +486,7 @@ class VideoStar(db.Model):
     video = db.relationship("Video", back_populates="video_starred")
 
 
-# 定义评论点赞统计模型
+# MODEL: 定义评论点赞统计模型
 class CommentLike(db.Model):
     __tablename__ = 'comment_likes'
     __description__ = '评论点赞记录'
@@ -523,6 +521,7 @@ class CommentLike(db.Model):
     )
 
 
+# MODEL: 定义数据库备份模型
 class DatabaseBackup(db.Model):
     __tablename__ = 'database_backup'
     __description__ = '数据备份记录'
@@ -542,6 +541,7 @@ class DatabaseBackup(db.Model):
         nullable=False)
 
 
+# MODEL: 定义数据库日志模型
 class DatabaseLog(db.Model):
     __tablename__ = 'database_logs'
     __description__ = '日志记录'
