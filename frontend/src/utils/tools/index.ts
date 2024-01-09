@@ -106,13 +106,10 @@ export const getTimeDiffUntilNow = (datetimeString: string) => {
   const years = Math.floor(days / 365)
 
   // 根据时间差返回相应的描述
-  // if (years > 0) {
-  //   return `${years}年前`
-  // } else if (months > 0) {
-  //   return `${months}个月前`
-  // }
-  if (days > 7) {
-    return datetimeString
+  if (years > 0) {
+    return `${years}年前`
+  } else if (months > 0) {
+    return `${months}个月前`
   } else if (days > 0) {
     return `${days}天前`
   } else if (hours > 0) {
