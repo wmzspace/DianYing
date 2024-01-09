@@ -90,7 +90,6 @@ export const simplifyNumber = (value: number, fix: number, unit = 'EN') => {
 export const getTimeDiffUntilNow = (datetimeString: string) => {
   // 将日期时间字符串转换为日期对象
   const datetime = new Date(datetimeString)
-
   // 获取当前时间
   const now = new Date()
 
@@ -117,7 +116,7 @@ export const getTimeDiffUntilNow = (datetimeString: string) => {
   } else if (minutes > 0) {
     return `${minutes}分钟前`
   } else {
-    return `${seconds}秒前`
+    return `1分钟内`
   }
 }
 
